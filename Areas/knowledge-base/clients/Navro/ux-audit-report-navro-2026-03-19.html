@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Audit Report — Navro</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #0d0d14;
+      --bg-card: #16161f;
+      --bg-card-alt: #1c1c28;
+      --accent-pink: #e01ee6;
+      --accent-purple: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #e01ee6 0%, #8b5cf6 100%);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6b6b80;
+      --border-subtle: rgba(255,255,255,0.06);
+      --severity-critical: #ef4444;
+      --severity-major: #f59e0b;
+      --severity-minor: #3b82f6;
+      --effort-low: #10b981;
+      --effort-med: #f59e0b;
+      --effort-high: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* Header */
+    .report-header {
+      padding: 80px 0 60px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--accent-pink);
+      margin-bottom: 16px;
+    }
+
+    .report-title {
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 12px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .report-caption {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+
+    .report-caption a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    /* Profile Grid */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 32px;
+      margin-bottom: 32px;
+    }
+
+    .profile-item {
+      display: flex;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .profile-label {
+      color: var(--text-muted);
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+
+    .profile-value {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* Methodology Block */
+    .methodology-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin: 40px 0;
+    }
+
+    .methodology-block h3 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-pink);
+      margin-bottom: 12px;
+    }
+
+    .methodology-block p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .methodology-block p:last-child { margin-bottom: 0; }
+
+    /* Findings Section */
+    .findings-section {
+      padding: 60px 0;
+    }
+
+    .findings-header {
+      margin-bottom: 48px;
+    }
+
+    .findings-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .findings-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* Finding Card */
+    .finding-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 36px;
+      margin-bottom: 24px;
+      transition: border-color 0.2s;
+    }
+
+    .finding-card:hover {
+      border-color: rgba(224, 30, 230, 0.2);
+    }
+
+    .finding-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .finding-number {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--bg-dark);
+      background: var(--accent-gradient);
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .finding-dimension {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+      display: inline-block;
+    }
+
+    .badge-critical {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--severity-critical);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .badge-major {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--severity-major);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .finding-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .finding-body p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .finding-body strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .finding-subsection {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .finding-subsection h4 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent-purple);
+      margin-bottom: 8px;
+    }
+
+    .finding-subsection p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Tags row */
+    .tags-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 100px;
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+
+    .tag-effort-low { color: var(--effort-low); border-color: rgba(16, 185, 129, 0.3); }
+    .tag-effort-med { color: var(--effort-med); border-color: rgba(245, 158, 11, 0.3); }
+    .tag-impact-high { color: var(--severity-critical); border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); }
+
+    /* CTA / Footer */
+    .report-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 48px 0 80px;
+    }
+
+    .footer-cta {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 36px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .footer-cta h3 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .footer-cta p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .disclaimer {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .brand-footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .brand-footer span {
+      color: var(--accent-pink);
+      font-weight: 600;
+    }
+
+    /* Criterion ID */
+    .criterion-id {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      color: var(--accent-purple);
+      background: rgba(139, 92, 246, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      .report-title { font-size: 32px; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .finding-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <header class="report-header">
+      <div class="eyebrow">UX Audit Report</div>
+      <h1 class="report-title">Navro</h1>
+      <p class="report-caption">
+        <a href="https://www.navro.com">navro.com</a> &nbsp;|&nbsp; March 19, 2026
+      </p>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span class="profile-label">Industry</span>
+          <span class="profile-value">Fintech &mdash; Cross-border Payments</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Stage</span>
+          <span class="profile-value">Series B ($84.6M total)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">GTM Model</span>
+          <span class="profile-value">Sales-Led Growth</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Conversion Goal</span>
+          <span class="profile-value">Demo Request / Schedule a Call</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Customer Type</span>
+          <span class="profile-value">B2B Enterprise</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Competitors</span>
+          <span class="profile-value">Airwallex, Wise Platform, Payoneer</span>
+        </div>
+      </div>
+
+      <div class="methodology-block">
+        <h3>Methodology</h3>
+        <p>This audit evaluates Navro's marketing website across 11 UX dimensions using a structured reference checklist of 80+ criteria, supplemented by automated accessibility scanning, SEO metadata extraction, and visual inspection.</p>
+
+        <h3>Evaluation Lens</h3>
+        <p>Framed for a Series B, sales-led B2B fintech selling payments infrastructure to enterprise buyers &mdash; meaning the website must function as a credibility engine that converts high-intent visitors into demo requests while clearly routing multiple personas to relevant value propositions.</p>
+
+        <h3>Why This Matters</h3>
+        <p>For a Series B cross-border payments company in a crowded competitive landscape, website friction directly translates to lost pipeline. Enterprise buyers who can't quickly understand Navro's differentiation will bounce to a competitor before ever booking a demo. At this growth stage, every qualified demo request has outsized revenue impact.</p>
+      </div>
+    </header>
+
+    <!-- Findings -->
+    <section class="findings-section">
+      <div class="findings-header">
+        <h2>Top 5 Findings</h2>
+        <p>Selected for business impact, evidence quality, and relevance to Navro's growth stage and GTM model.</p>
+      </div>
+
+      <!-- Finding 1 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">1</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Zero social proof on the homepage</h3>
+        <div class="finding-body">
+          <p>The homepage contains <strong>no customer logos, testimonials, case study snippets, named quotes, or quantified results</strong>. The only external validation appears in the News section (press releases about partnerships and hiring), which is not positioned as social proof.</p>
+          <p><strong>Why this matters for Navro:</strong> Enterprise B2B buyers rely heavily on social proof to validate purchasing decisions. Without evidence that real companies use and benefit from Navro, the website asks visitors to trust claims on faith alone. Competitors like Airwallex and Wise Platform prominently feature customer logos and quantified results above the fold. For a Series B company competing against $5B+ incumbents, social proof isn't a nice-to-have &mdash; it's the difference between a demo request and a bounce.</p>
+          <p><span class="criterion-id">CRO-06</span> Trust Signal Placement &nbsp;&nbsp; <span class="criterion-id">CRO-07</span> Social Proof Depth</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Add a customer logo bar near the hero section (even 4-5 logos significantly increase credibility). Add 2-3 named testimonials with titles and company affiliations near CTAs. Include quantified results where possible. Place trust signals at decision points &mdash; near CTAs, after bold claims, and before the ask.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- Finding 2 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">2</div>
+          <span class="finding-dimension">CRO / Copywriting</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Hero section fails the 5-second test</h3>
+        <div class="finding-body">
+          <p>The hero headline &ldquo;The payments curation platform&rdquo; is a <strong>category label, not a value proposition</strong>. It describes what Navro is, not what it does for the customer. There is no subheading explaining the customer benefit. Combined with a ~3 second animation delay before any content appears, a first-time visitor cannot answer three critical questions within 5 seconds: What does this product do? Who is it for? What should I do next?</p>
+          <p><strong>Why this matters for Navro:</strong> The hero section is the single highest-impact real estate on any B2B website. For a sales-led model, failing the 5-second test means high-intent visitors from paid channels, referrals, or organic search cannot quickly confirm they're in the right place. "Payments curation" is a Navro-specific term &mdash; not an established category term that prospects search for. This directly impacts bounce rate and pipeline conversion.</p>
+          <p><span class="criterion-id">CRO-01</span> Above-the-Fold Clarity &nbsp;&nbsp; <span class="criterion-id">COPY-02</span> Benefit-Led Framing &nbsp;&nbsp; <span class="criterion-id">COPY-03</span> Headline Specificity</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Reframe the hero to lead with customer benefit: e.g., &ldquo;Move Money to 200+ Territories Through One Connection&rdquo; with &ldquo;The payments curation platform&rdquo; as a supporting descriptor. Add a benefit-led subheading that communicates the outcome. Ensure content renders instantly without animation dependency.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- Finding 3 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">3</div>
+          <span class="finding-dimension">Accessibility (WCAG 2.1 AA)</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">All 33 images have empty alt text</h3>
+        <div class="finding-body">
+          <p>Every image on the homepage (33 total) has <strong>alt=""</strong>, marking them all as decorative. This includes solution card images, the hero visual, the Chaos vs. Curation product diagram, news thumbnails, and the company logo. None of these are purely decorative &mdash; they all convey meaningful information.</p>
+          <p><strong>Why this matters for Navro:</strong> This violates WCAG 2.1 AA (a legal compliance standard in the UK, EU, and US) and eliminates all image SEO value. Screen reader users &mdash; including potential customers and partners &mdash; receive no information about any visual content. The Chaos vs. Curation diagram, Navro's strongest visual asset, is completely invisible to assistive technology. Additionally, enterprise procurement teams increasingly evaluate accessibility compliance as part of vendor assessment.</p>
+          <p><span class="criterion-id">ACC-01</span> Non-text Content (WCAG 1.1.1) &nbsp;&nbsp; <span class="criterion-id">SEO-05</span> Image Alt Text</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Audit every image and add descriptive alt text to all informational images. Example for the comparison diagram: &ldquo;Diagram comparing fragmented multi-provider payment setup versus unified single-connection setup with Navro.&rdquo; Keep alt="" only for truly decorative elements (background patterns, spacers).</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- Finding 4 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">4</div>
+          <span class="finding-dimension">Visual &amp; Brand Design</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Hero renders as a blank dark screen for ~3 seconds</h3>
+        <div class="finding-body">
+          <p>The initial visual impression upon landing on navro.com is a <strong>dark navy/black screen with only the navigation bar visible</strong>. The hero content &mdash; headline, stats, CTAs, and product visuals &mdash; are all hidden behind a JavaScript animation that takes approximately 3 seconds to execute. Additionally, when the content does appear, the headline text is clipped on the left edge of the viewport.</p>
+          <p><strong>Why this matters for Navro:</strong> Enterprise fintech buyers form trust judgments within milliseconds. A blank screen signals potential technical issues and fails to communicate professionalism. For a payments infrastructure provider &mdash; a category where reliability is the core value proposition &mdash; a visually broken first impression is particularly damaging. Competitors show fully rendered, polished heroes on first paint.</p>
+          <p><span class="criterion-id">VD-01</span> First Impression and Credibility &nbsp;&nbsp; <span class="criterion-id">N-01</span> Visibility of System Status</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Render hero content server-side or via CSS-first approach so it's visible on first contentful paint. Animation can enhance the experience but should never gate it. Fix the viewport clipping bug (likely a CSS overflow or transform issue) to ensure all content is fully visible at standard breakpoints.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- Finding 5 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">5</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">No engagement path variety for different intent levels</h3>
+        <div class="finding-body">
+          <p>The site offers only two conversion actions: <strong>&ldquo;Schedule a Call&rdquo; (high intent) and &ldquo;Learn More&rdquo; (links to product pages)</strong>. There are no mid-funnel engagement paths: no product tours, interactive demos, case study downloads, whitepapers, ROI calculators, or newsletter signups.</p>
+          <p><strong>Why this matters for Navro:</strong> Not all visitors arrive ready to speak with sales. Mid-funnel visitors &mdash; those researching, comparing, or building a business case internally &mdash; have no way to engage without committing to a sales conversation. This means Navro captures only high-intent visitors and loses the larger pool of mid-intent traffic that could be nurtured into pipeline. Given Navro's relatively low brand awareness compared to Airwallex or Payoneer, many visitors will be in research mode.</p>
+          <p><span class="criterion-id">CRO-04</span> Engagement Path Variety</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Add at least one mid-funnel engagement path (product tour, downloadable guide, or interactive demo). Consider a secondary hero CTA that's lower commitment than &ldquo;Schedule a Call&rdquo; &mdash; e.g., &ldquo;See How It Works.&rdquo; Add a newsletter or content signup in the footer. This creates a nurture path for visitors who aren't yet ready for sales.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="report-footer">
+      <div class="footer-cta">
+        <h3>Want the complete picture?</h3>
+        <p>This report covers the top 5 findings from a 29-finding evaluation across 11 UX dimensions. The full audit includes detailed recommendations for SEO, information architecture, content strategy, and more.</p>
+      </div>
+
+      <div class="disclaimer">
+        This audit is based solely on publicly available information from Navro's marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.
+      </div>
+
+      <div class="brand-footer">
+        <span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; March 2026
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

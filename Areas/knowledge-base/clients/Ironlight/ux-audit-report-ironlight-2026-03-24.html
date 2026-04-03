@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Audit Report — Ironlight</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #0d0d14;
+      --bg-card: #16161f;
+      --bg-card-alt: #1c1c28;
+      --accent-pink: #e01ee6;
+      --accent-purple: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #e01ee6 0%, #8b5cf6 100%);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6b6b80;
+      --border-subtle: rgba(255,255,255,0.06);
+      --severity-critical: #ef4444;
+      --severity-major: #f59e0b;
+      --severity-minor: #3b82f6;
+      --effort-low: #10b981;
+      --effort-med: #f59e0b;
+      --effort-high: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* Header */
+    .report-header {
+      padding: 80px 0 60px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--accent-pink);
+      margin-bottom: 16px;
+    }
+
+    .report-title {
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 12px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .report-caption {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+    }
+
+    .report-caption a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    /* Profile Grid */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 32px;
+      margin-bottom: 32px;
+    }
+
+    .profile-item {
+      display: flex;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .profile-label {
+      color: var(--text-muted);
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+
+    .profile-value {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* Methodology Block */
+    .methodology-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin: 40px 0;
+    }
+
+    .methodology-block h3 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent-pink);
+      margin-bottom: 12px;
+    }
+
+    .methodology-block p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .methodology-block p:last-child { margin-bottom: 0; }
+
+    /* Findings Section */
+    .findings-section {
+      padding: 60px 0;
+    }
+
+    .findings-header {
+      margin-bottom: 48px;
+    }
+
+    .findings-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .findings-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    /* Finding Card */
+    .finding-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 36px;
+      margin-bottom: 24px;
+      transition: border-color 0.2s;
+    }
+
+    .finding-card:hover {
+      border-color: rgba(224, 30, 230, 0.2);
+    }
+
+    .finding-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .finding-number {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--bg-dark);
+      background: var(--accent-gradient);
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .finding-dimension {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+      display: inline-block;
+    }
+
+    .badge-critical {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--severity-critical);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .badge-major {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--severity-major);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .finding-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .finding-body p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    .finding-body strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .finding-subsection {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .finding-subsection h4 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent-purple);
+      margin-bottom: 8px;
+    }
+
+    .finding-subsection p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Tags row */
+    .tags-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 100px;
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+
+    .tag-effort-low { color: var(--effort-low); border-color: rgba(16, 185, 129, 0.3); }
+    .tag-effort-med { color: var(--effort-med); border-color: rgba(245, 158, 11, 0.3); }
+    .tag-impact-high { color: var(--severity-critical); border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); }
+
+    /* CTA / Footer */
+    .report-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 48px 0 80px;
+    }
+
+    .footer-cta {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 36px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .footer-cta h3 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .footer-cta p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .disclaimer {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .brand-footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .brand-footer span {
+      color: var(--accent-pink);
+      font-weight: 600;
+    }
+
+    /* Criterion ID */
+    .criterion-id {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 11px;
+      color: var(--accent-purple);
+      background: rgba(139, 92, 246, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      .report-title { font-size: 32px; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .finding-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <header class="report-header">
+      <div class="eyebrow">UX Audit Report</div>
+      <h1 class="report-title">Ironlight</h1>
+      <p class="report-caption">
+        <a href="https://ironlight.io">ironlight.io</a> &nbsp;|&nbsp; March 24, 2026
+      </p>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span class="profile-label">Industry</span>
+          <span class="profile-value">Fintech &mdash; Tokenized Securities</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Stage</span>
+          <span class="profile-value">Series A ($21M)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">GTM Model</span>
+          <span class="profile-value">Sales-Led Growth</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Conversion Goal</span>
+          <span class="profile-value">Contact / Demo Request</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Customer Type</span>
+          <span class="profile-value">B2B Institutional</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Competitors</span>
+          <span class="profile-value">Securitize, tZERO, INX, Ondo Finance</span>
+        </div>
+      </div>
+
+      <div class="methodology-block">
+        <h3>Methodology</h3>
+        <p>This audit evaluates Ironlight's marketing website across 11 UX dimensions using a structured reference checklist of 80+ criteria, supplemented by SEO metadata extraction, competitive analysis, and visual inspection of all publicly accessible pages.</p>
+
+        <h3>Evaluation Lens</h3>
+        <p>Framed for a Series A, sales-led B2B fintech selling regulated tokenization infrastructure to institutional buyers &mdash; meaning the website must establish credibility with compliance-conscious financial institutions while clearly differentiating from 228+ competitors in a rapidly expanding market.</p>
+
+        <h3>Why This Matters</h3>
+        <p>For a freshly funded Series A company in the tokenized securities space, the website is the first credibility checkpoint for broker-dealers and issuers evaluating whether to trust Ironlight with regulated financial transactions. Unclear messaging or missing trust signals don&rsquo;t just cost page views &mdash; they cost enterprise deals where individual contracts represent six- and seven-figure revenue.</p>
+      </div>
+    </header>
+
+    <!-- Findings -->
+    <section class="findings-section">
+      <div class="findings-header">
+        <h2>Top 5 Findings</h2>
+        <p>Selected for business impact, evidence quality, and relevance to Ironlight's Series A stage and institutional buyer audience.</p>
+      </div>
+
+      <!-- Finding 1 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">1</div>
+          <span class="finding-dimension">Competitor Benchmarking / Copywriting</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">FINRA-regulated ATS advantage is buried &mdash; not led with</h3>
+        <div class="finding-body">
+          <p>Ironlight&rsquo;s ATS operates under <strong>SEC Regulation ATS with FINRA oversight</strong> &mdash; a significant competitive differentiator in a market where many tokenization platforms operate in regulatory gray areas. However, this regulatory status is <strong>not mentioned anywhere on the homepage</strong>. It appears only deep in product sub-pages under vague phrases like &ldquo;regulator-first approach&rdquo; and &ldquo;compliance-led.&rdquo;</p>
+          <p><strong>Why this matters for Ironlight:</strong> In the competitive landscape, regulatory credibility is Ironlight&rsquo;s most defensible moat. For the institutional buyers Ironlight is targeting &mdash; broker-dealers, wealth advisors, and issuers &mdash; regulatory compliance is the #1 evaluation criterion. A broker-dealer will not engage a platform that doesn&rsquo;t immediately signal regulatory approval. Burying FINRA/SEC status in sub-pages means the majority of visitors who don&rsquo;t navigate beyond the homepage never see Ironlight&rsquo;s strongest differentiator. Competitors like Securitize and tZERO lead with their regulatory positioning.</p>
+          <p><span class="criterion-id">COPY-03</span> Headline Specificity &nbsp;&nbsp; <span class="criterion-id">COPY-08</span> Proof and Credibility</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Feature FINRA and SEC regulatory status prominently on the homepage &mdash; in the hero subheading, as a trust badge near the CTA, and in the &ldquo;Why Ironlight?&rdquo; section. Consider reframing the hero: &ldquo;The Only FINRA-Regulated ATS with On-Chain Atomic Settlement&rdquo; would be a significantly stronger headline than &ldquo;Tokenization for Traditional Finance.&rdquo; Regulatory positioning should be the first thing an institutional buyer sees.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- Finding 2 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">2</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">No engagement paths for different buyer intent levels</h3>
+        <div class="finding-body">
+          <p>The entire website relies on a <strong>single conversion action: &ldquo;GET IN TOUCH&rdquo;</strong> via a generic contact form. Every page, every section funnels to the same endpoint. There are no product tours, downloadable whitepapers, case study pages, ROI calculators, webinar recordings, or newsletter signups. Ironlight offers only &ldquo;talk to sales or leave&rdquo; &mdash; nothing in between.</p>
+          <p><strong>Why this matters for Ironlight:</strong> Broker-dealers conducting vendor due diligence, compliance officers evaluating regulatory posture, and wealth advisors comparing platforms need mid-funnel content to build conviction before engaging sales. A single binary choice means Ironlight captures only the highest-intent visitors and loses the larger pool of evaluators who need more information. For a Series A company with lower brand recognition than Securitize or tZERO, most visitors will be in research mode &mdash; and there&rsquo;s nothing to keep them engaged.</p>
+          <p><span class="criterion-id">CRO-04</span> Engagement Path Variety &nbsp;&nbsp; <span class="criterion-id">CRO-02</span> CTA Specificity</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Add at least 2&ndash;3 engagement paths: (1) High intent: &ldquo;Request a Demo&rdquo; with direct Calendly scheduling; (2) Mid intent: downloadable one-pager or product tour video; (3) Low intent: newsletter or market updates signup. The Calendly booking link already exists on the contact page &mdash; promote it as the primary high-intent CTA sitewide.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- Finding 3 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">3</div>
+          <span class="finding-dimension">Content &amp; Copywriting</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">&ldquo;Trusted by top financial institutions&rdquo; with zero supporting evidence</h3>
+        <div class="finding-body">
+          <p>The homepage claims &ldquo;Trusted by top financial institutions and asset managers globally&rdquo; above unnamed partner logos. There are <strong>no named institutions, no testimonials, no case study snippets, no transaction volume figures, and no quantified results</strong> anywhere on the site. The $21M Series A (closed March 16, 2026, covered by Axios and The Block) is also completely absent from the website.</p>
+          <p><strong>Why this matters for Ironlight:</strong> Institutional buyers are trained to evaluate evidence, not claims. A compliance officer at a broker-dealer reading &ldquo;top financial institutions&rdquo; without named partners will interpret it as marketing puffery, not social proof. This is compounded by the recent funding round &mdash; the absence of any press coverage, investor validation, or growth signals makes the site feel static when the company is actually gaining momentum. For a Series A competing against established players, every piece of third-party validation is a conversion accelerator.</p>
+          <p><span class="criterion-id">CRO-06</span> Trust Signal Placement &nbsp;&nbsp; <span class="criterion-id">CRO-07</span> Social Proof Depth &nbsp;&nbsp; <span class="criterion-id">COPY-08</span> Proof and Credibility</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Name all partner logos with visible captions. Add 2&ndash;3 testimonials from institutional clients with titles and affiliations. Include the Series A announcement and press coverage (Axios, The Block, CryptoBriefing) as a &ldquo;News&rdquo; or &ldquo;Press&rdquo; section. Add verifiable metrics: transaction volume, number of broker-dealer integrations, or AUM under management. Lead with regulatory credentials (FINRA, SEC) as the most verifiable trust signal.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- Finding 4 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">4</div>
+          <span class="finding-dimension">CRO / Copywriting</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Hero headline is a category label, not a value proposition</h3>
+        <div class="finding-body">
+          <p>The hero reads <strong>&ldquo;Tokenization for Traditional Finance&rdquo;</strong> with no subheading, no benefit statement, and no indication of who the product is for. The first descriptive text frames the product as &ldquo;bringing DeFi to TradFi&rdquo; &mdash; centering the crypto narrative rather than the institutional buyer&rsquo;s perspective. A first-time visitor can identify the category but cannot answer &ldquo;what does this do for me?&rdquo; or &ldquo;who is this for?&rdquo; within 5 seconds.</p>
+          <p><strong>Why this matters for Ironlight:</strong> The hero is the single highest-impact real estate on any B2B website. &ldquo;Tokenization for Traditional Finance&rdquo; could describe any of 228+ competitors in the space &mdash; it provides zero differentiation. For a Series A company that needs every page visit to count, the hero must do the heaviest lifting: convey differentiation, target the right buyer, and drive action. The &ldquo;DeFi to TradFi&rdquo; framing may also trigger skepticism from compliance-conscious buyers who associate &ldquo;DeFi&rdquo; with regulatory risk.</p>
+          <p><span class="criterion-id">COPY-01</span> 5-Second Test &nbsp;&nbsp; <span class="criterion-id">COPY-02</span> Benefit-Led Framing &nbsp;&nbsp; <span class="criterion-id">CRO-01</span> Above-the-Fold Clarity</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Reframe the hero to lead with the buyer&rsquo;s outcome and Ironlight&rsquo;s differentiator: e.g., &ldquo;Trade Tokenized Securities on a FINRA-Regulated Marketplace&rdquo; with a benefit-led subheading: &ldquo;Integrated issuance, distribution, and atomic settlement &mdash; built for broker-dealers, advisors, and issuers.&rdquo; Remove &ldquo;DeFi&rdquo; from customer-facing copy &mdash; it&rsquo;s a technology detail, not a value proposition for TradFi buyers.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- Finding 5 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">5</div>
+          <span class="finding-dimension">SEO &amp; Discoverability</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">No H1 tag, missing meta description, broken heading hierarchy</h3>
+        <div class="finding-body">
+          <p>The homepage has <strong>no H1 tag</strong> &mdash; headings begin at H3 and jump to H2 with no logical nesting. The meta description is missing entirely. Image alt text is absent across most images. These are foundational SEO elements that directly impact how Google indexes and ranks the site.</p>
+          <p><strong>Why this matters for Ironlight:</strong> For a Series A company building market presence, organic discoverability is a compounding growth channel. Without an H1, Google has a weaker signal for the page&rsquo;s primary topic. Without a meta description, the search result snippet is uncontrolled. Without image alt text, product diagrams and platform screenshots provide zero SEO value. In a market where &ldquo;tokenized securities platform&rdquo; and &ldquo;regulated ATS&rdquo; are high-value keywords, these gaps mean Ironlight is leaving organic traffic on the table for competitors to capture.</p>
+          <p><span class="criterion-id">SEO-02</span> Meta Description &nbsp;&nbsp; <span class="criterion-id">SEO-03</span> H1 Tag &nbsp;&nbsp; <span class="criterion-id">SEO-04</span> Heading Hierarchy &nbsp;&nbsp; <span class="criterion-id">SEO-05</span> Image Alt Text</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Add an H1 containing the primary keyword: &ldquo;Tokenization Infrastructure for Traditional Finance.&rdquo; Add a meta description (150&ndash;160 chars): &ldquo;Ironlight provides SEC-regulated infrastructure for tokenizing and trading real-world assets. Trusted by broker-dealers and institutions. Request a demo.&rdquo; Add descriptive alt text to all informational images. Restructure headings sequentially (H1 &rarr; H2 &rarr; H3).</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="report-footer">
+      <div class="footer-cta">
+        <h3>Want the complete picture?</h3>
+        <p>This report covers the top 5 findings from a 29-finding evaluation across 11 UX dimensions. The full audit includes detailed recommendations for information architecture, accessibility, performance, content strategy, and more.</p>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid var(--border-subtle); margin-bottom: 24px;">
+
+      <div class="disclaimer">
+        This audit is based solely on publicly available information from Ironlight's marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.
+      </div>
+
+      <div class="brand-footer">
+        <span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; March 2026
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

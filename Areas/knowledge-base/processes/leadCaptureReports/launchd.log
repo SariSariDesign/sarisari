@@ -1,0 +1,21 @@
+I've got the ICP loaded, but the pipeline can't run today. Here's what's missing:
+
+**Blockers:**
+
+| Required Tool | Status |
+|---|---|
+| Gmail MCP (admin@sarisari.design) | Not connected — needed to pull Google Alert emails |
+| HubSpot MCP | Not connected — needed to search/create CRM contacts |
+| Apollo.io | No API integration available — needed to find target contacts |
+
+**What's working:**
+- ICP file found at `Areas/knowledge-base/company/ideal-client-profile.md`
+- Report directory exists at `knowledge-base/processes/leadGenReports/`
+
+**To get the pipeline running, you'll need to set up:**
+
+1. **Gmail MCP server** — e.g., the `@anthropic/gmail-mcp` or similar, configured for `admin@sarisari.design` with read access to pull Google Alert emails.
+2. **HubSpot MCP server** — connects to your HubSpot account for CRM operations (search, create contacts, add notes).
+3. **Apollo.io access** — either an MCP server or an API key I can call via HTTP to search for contacts by company name.
+
+Once these are connected, I can run the full pipeline end-to-end. Want me to help you set up any of these integrations?
