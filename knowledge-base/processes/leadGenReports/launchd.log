@@ -1,0 +1,20 @@
+The report write was blocked by permissions. Here's the situation:
+
+## Lead Gen Pipeline — 2026-04-02: Blocked
+
+The pipeline could not execute today. **All required integrations are unavailable:**
+
+| Integration | Status |
+|---|---|
+| **Gmail MCP** | Not connected — can't retrieve Google Alerts |
+| **Apollo MCP** | Not connected — can't search for contacts |
+| **HubSpot MCP** | Listed in permissions but not loaded as a tool |
+| **WebSearch** | Permission denied as fallback |
+
+### To get this running again:
+
+1. **Reconnect the MCP servers** — The HubSpot, Gmail, and Apollo MCP servers need to be configured and running. Check your Claude Code MCP settings (in the Claude desktop app or `~/.claude/settings.json`).
+2. **Grant WebSearch permission** — This would allow fallback signal collection if Gmail MCP is down.
+3. **Re-run `/lead-gen`** once integrations are restored to catch alerts from April 1–2.
+
+I also attempted to save the daily report to `Areas/knowledge-base/processes/leadCaptureReports/2026-04-02-dailyLeadCaptureReport.md` but file write permission was denied. Would you like me to retry the report write, or would you prefer to fix the MCP connections first and re-run the full pipeline?

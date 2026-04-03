@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# Environment / secrets
+.env
+.env.*
+
+# Node (for sari-sari-website sub-project)
+node_modules/

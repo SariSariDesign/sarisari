@@ -1,0 +1,23 @@
+{
+  "skill_name": "lead-check-in",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "hey can you check my pipeline? want to see who i need to follow up with today",
+      "expected_output": "A prioritized report showing all leads from HubSpot organized by urgency (overdue, due soon, on track), with specific SOP step recommendations for each",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "morning check-in - what does my outreach look like this week?",
+      "expected_output": "Same pipeline scan but with a focus on the weekly cadence targets (10-15 connections, 3-5 DMs) and what's coming up in the next few days",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "run the pipeline check. i feel like some leads have been sitting there for a while and i haven't touched them",
+      "expected_output": "Pipeline scan with emphasis on stale/unworked leads (NEW status, old createdate) and overdue follow-ups, organized by urgency with actionable next steps",
+      "files": []
+    }
+  ]
+}

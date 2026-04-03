@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# Pre-commit hook: syncs Resources/skills/ → .claude/skills/
+#
+# Resources/skills/ is the human-friendly "development" folder where
+# skills are edited and reviewed. .claude/skills/ is where Cowork
+# actually reads them from. This hook keeps the two in sync.
+#
+# How it works:
+#   - Copies every skill folder from Resources/skills/ into .claude/skills/
+#   - Overwrites .claude/skills/ versions if Resources/skills/ has changes
+#   - Does NOT delete skills that only exist in .claude/skills/
+#     (so Cowork-only or experimental skills are safe)
+#   - Auto-stages the updated .claude/skills/ files into the commit
+#
+# Setup (run once per machine):
+#   git config core.hooksPath .githooks
+#
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+SOURCE="$REPO_ROOT/Resources/skills"
+DEST="$REPO_ROOT/.claude/skills"
+
+# Only run if Resources/skills/ exists
+if [ ! -d "$SOURCE" ]; then
+    exit 0
+fi
+
+# Ensure destination exists
+mkdir -p "$DEST"
+
+SYNCED=0
+
+# Copy each skill folder from source to destination
+for skill_dir in "$SOURCE"/*/; do
+    # Skip if no subdirectories found (glob didn't match)
+    [ -d "$skill_dir" ] || continue
+
+    skill_name="$(basename "$skill_dir")"
+
+    # Use rsync if available (preserves structure, handles nested files)
+    # Fall back to cp if rsync isn't installed
+    if command -v rsync &> /dev/null; then
+        rsync -a --delete "$skill_dir" "$DEST/$skill_name/"
+    else
+        rm -rf "$DEST/$skill_name"
+        cp -R "$skill_dir" "$DEST/$skill_name"
+    fi
+
+    SYNCED=$((SYNCED + 1))
+done
+
+# If we synced anything, stage the updated .claude/skills/ files
+if [ $SYNCED -gt 0 ]; then
+    git add "$DEST"
+    echo "✓ Synced $SYNCED skill(s) from Resources/skills/ → .claude/skills/"
+fi
+
+exit 0
