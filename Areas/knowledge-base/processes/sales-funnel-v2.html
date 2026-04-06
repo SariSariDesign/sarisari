@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sari Sari Design — Sales & Marketing Funnel v2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fafafa; padding: 40px; color: #1a1a1a; }
+  h1 { text-align: center; font-size: 28px; font-weight: 600; margin-bottom: 8px; }
+  .subtitle { text-align: center; font-size: 14px; color: #666; margin-bottom: 40px; }
+
+  /* Stage headers */
+  .stage-bar { display: flex; gap: 12px; margin-bottom: 32px; justify-content: center; flex-wrap: wrap; }
+  .stage-label { padding: 8px 24px; border-radius: 6px; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
+  .stage-leadgen { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
+  .stage-awareness { background: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
+  .stage-intent { background: #FFF3E0; color: #E65100; border: 1px solid #FFCC80; }
+  .stage-decision { background: #FCE4EC; color: #C62828; border: 1px solid #EF9A9A; }
+
+  /* Main flow area */
+  .flow-container { position: relative; min-height: 900px; margin-bottom: 40px; }
+
+  /* Boxes */
+  .box { position: absolute; background: #fff; border: 2px solid #ddd; border-radius: 8px; padding: 14px 16px; width: 190px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .box h3 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .box p, .box li { font-size: 11px; color: #555; line-height: 1.5; }
+  .box ul { padding-left: 14px; margin-top: 4px; }
+  .box.highlight-blue { border-color: #1565C0; }
+  .box.highlight-green { border-color: #2E7D32; }
+  .box.highlight-orange { border-color: #E65100; }
+  .box.highlight-red { border-color: #C62828; }
+  .box.highlight-purple { border-color: #6A1B9A; background: #F3E5F9; }
+  .box.highlight-amber { border-color: #F57F17; background: #FFFDE7; }
+  .box.highlight-grey { border-color: #78909C; background: #ECEFF1; }
+  .box .tag { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; padding: 2px 6px; border-radius: 3px; margin-bottom: 6px; }
+  .tag-skill { background: #E8EAF6; color: #283593; }
+  .tag-manual { background: #FFF9C4; color: #F57F17; }
+  .tag-detection { background: #F3E5F9; color: #6A1B9A; }
+  .tag-new { background: #C8E6C9; color: #1B5E20; }
+
+  /* SVG arrows */
+  svg.arrows { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+  .arrow-solid { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+  .arrow-dashed { stroke: #999; stroke-width: 1.5; fill: none; stroke-dasharray: 6,4; marker-end: url(#arrowhead-grey); }
+  .arrow-dotted-red { stroke: #C62828; stroke-width: 1.5; fill: none; stroke-dasharray: 4,4; marker-end: url(#arrowhead-red); }
+  .arrow-label { font-size: 10px; fill: #666; font-style: italic; }
+
+  /* Research parallel track */
+  .research-track { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+  .research-band { position: absolute; background: rgba(106, 27, 154, 0.04); border: 1px dashed #CE93D8; border-radius: 8px; }
+
+  /* PARA section */
+  .para-section { border: 2px dashed #EF5350; border-radius: 12px; padding: 24px; margin-top: 60px; position: relative; }
+  .para-section h2 { position: absolute; top: -14px; left: 20px; background: #fafafa; padding: 0 8px; font-size: 14px; color: #C62828; }
+  .para-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .para-col h4 { font-size: 12px; font-weight: 700; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 2px solid #ddd; }
+  .para-item { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 10px; margin-bottom: 8px; }
+  .para-item h5 { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+  .para-item p { font-size: 10px; color: #666; line-height: 1.4; }
+
+  /* Tools section */
+  .tools-section { margin-top: 32px; text-align: center; }
+  .tools-section h2 { font-size: 14px; font-weight: 600; margin-bottom: 16px; color: #333; }
+  .tools-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .tool-chip { background: #FFF9C4; border: 1px solid #F9A825; border-radius: 20px; padding: 6px 16px; font-size: 12px; font-weight: 600; color: #5D4037; }
+  .tool-chip.primary { background: #FFECB3; border-color: #FF8F00; }
+
+  /* Legend */
+  .legend { display: flex; gap: 20px; justify-content: center; margin: 24px 0; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #666; }
+  .legend-swatch { width: 24px; height: 12px; border-radius: 3px; border: 1.5px solid; }
+
+  /* NEW label */
+  .new-badge { position: absolute; top: -8px; right: -8px; background: #4CAF50; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+  .changed-badge { position: absolute; top: -8px; right: -8px; background: #FF9800; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+</style>
+</head>
+<body>
+
+<h1>Sales and Marketing</h1>
+<p class="subtitle">Sari Sari Design — Process Map v2 (First Half: Lead Gen → Buy Signal) — Updated April 2026</p>
+
+<!-- Stage Headers -->
+<div class="stage-bar">
+  <span class="stage-label stage-leadgen">Lead Gen</span>
+  <span class="stage-label stage-awareness">Awareness</span>
+  <span class="stage-label stage-intent">Intent</span>
+  <span class="stage-label stage-decision">Decision / Close</span>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#E8EAF6; border-color:#283593;"></div> Skill (automatable)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#FFF9C4; border-color:#F57F17;"></div> Manual / human review</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#F3E5F9; border-color:#6A1B9A;"></div> Research (parallel track)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#ECEFF1; border-color:#78909C;"></div> Exit ramp</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#C8E6C9; border-color:#1B5E20;"></div> New / changed from v1</div>
+</div>
+
+<!-- Flow -->
+<div class="flow-container" style="height: 820px;">
+
+  <!-- SVG Arrows -->
+  <svg class="arrows" viewBox="0 0 1300 820" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#333"/></marker>
+      <marker id="arrowhead-grey" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#999"/></marker>
+      <marker id="arrowhead-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#C62828"/></marker>
+    </defs>
+
+    <!-- Main flow arrows -->
+    <!-- Inbound Referrals → Qualification Research -->
+    <path class="arrow-solid" d="M 145,95 L 145,145"/>
+    <!-- Outbound Lead Gen → Lead Gen Skill -->
+    <path class="arrow-solid" d="M 350,95 L 350,145"/>
+    <!-- Lead Gen Skill → Qualification Research -->
+    <path class="arrow-solid" d="M 350,225 L 250,250 L 145,250"/>
+    <!-- Qualification Research → Lead Capture -->
+    <path class="arrow-solid" d="M 240,295 L 370,295"/>
+    <!-- Lead Capture → Lead Connection -->
+    <path class="arrow-solid" d="M 555,295 L 605,295"/>
+    <!-- Lead Connection → Lead Nurture -->
+    <path class="arrow-solid" d="M 800,295 L 850,295"/>
+    <!-- Lead Nurture → Call Booked (via Buy Signal detection) -->
+    <path class="arrow-solid" d="M 1045,280 L 1120,280"/>
+    <text class="arrow-label" x="1050" y="270">Buy signal</text>
+    <text class="arrow-label" x="1050" y="282">detected</text>
+
+    <!-- Nurture → UX Audit (if connected) -->
+    <path class="arrow-dashed" d="M 950,375 L 950,430"/>
+    <text class="arrow-label" x="960" y="410">if connected</text>
+
+    <!-- Nurture loop back -->
+    <path class="arrow-dashed" d="M 850,375 L 800,400 L 700,400 L 700,355"/>
+    <text class="arrow-label" x="720" y="415">re-engage</text>
+
+    <!-- Exit ramps to Archived -->
+    <path class="arrow-dotted-red" d="M 700,355 L 570,520"/>
+    <text class="arrow-label" x="590" y="460" fill="#C62828">never connected</text>
+    <path class="arrow-dotted-red" d="M 950,375 L 720,520"/>
+    <text class="arrow-label" x="790" y="470" fill="#C62828">gone cold</text>
+
+    <!-- Archived re-evaluation loop -->
+    <path class="arrow-dashed" d="M 570,560 L 145,560 L 145,345"/>
+    <text class="arrow-label" x="280" y="555">re-evaluate (new signal)</text>
+
+    <!-- Research track dotted connections -->
+    <path class="arrow-dashed" d="M 145,345 L 145,430"/>
+    <path class="arrow-dashed" d="M 950,530 L 950,580 L 300,580 L 300,490"/>
+  </svg>
+
+  <!-- Research parallel band -->
+  <div class="research-band" style="left: 20px; top: 415px; width: 320px; height: 100px;"></div>
+
+  <!-- === ENTRY POINTS === -->
+  <div class="box highlight-blue" style="left: 50px; top: 30px; width: 180px;">
+    <span class="tag tag-manual">MANUAL (for now)</span>
+    <h3>Inbound Referrals</h3>
+    <p>Email follow-up to current clients for referrals</p>
+    <p style="margin-top:4px; font-size:10px; color:#999;">Future: automate with triggers</p>
+  </div>
+
+  <div class="box highlight-blue" style="left: 260px; top: 30px; width: 190px;">
+    <span class="tag tag-skill">SKILL</span>
+    <h3>Outbound Lead Gen</h3>
+    <p>Search for companies matching ICP based on purchasing signals:</p>
+    <ul>
+      <li>Google Alerts</li>
+      <li>Job boards / hiring</li>
+      <li>LinkedIn</li>
+      <li>Funding announcements</li>
+    </ul>
+  </div>
+
+  <!-- === LEAD GEN SKILL (batch collector) === -->
+  <div class="box highlight-blue" style="left: 260px; top: 155px; width: 190px;">
+    <div class="changed-badge">CHANGED</div>
+    <span class="tag tag-skill">SKILL — Lead Gen</span>
+    <h3>Batch Signal Collection</h3>
+    <p>Collects from all sources first, then passes full batch to Qualification Research.</p>
+    <p style="margin-top:4px; font-size:10px; color:#1565C0;">Designed for easy addition of new sources.</p>
+  </div>
+
+  <!-- === QUALIFICATION RESEARCH === -->
+  <div class="box highlight-purple" style="left: 50px; top: 245px; width: 190px;">
+    <div class="changed-badge">CHANGED</div>
+    <span class="tag tag-detection">SKILL — Qualification Research</span>
+    <h3>Qualification Research</h3>
+    <ul>
+      <li>Core product, offers, value prop</li>
+      <li>Competitors, revenue, tech stack</li>
+      <li>Company size</li>
+      <li>Decision-makers (CEO, CTO, Head of Product)</li>
+      <li>Are they hiring a designer?</li>
+    </ul>
+    <p style="margin-top:6px; font-size:10px; color:#6A1B9A;">Saves artifact to Resources/[Company]/</p>
+  </div>
+
+  <!-- === LEAD CAPTURE === -->
+  <div class="box highlight-blue" style="left: 370px; top: 255px; width: 185px;">
+    <div class="new-badge">NEW</div>
+    <span class="tag tag-skill">SKILL — Lead Capture</span>
+    <h3>Lead Capture</h3>
+    <p>Takes qualified company + research and writes to HubSpot CRM:</p>
+    <ul>
+      <li>Company record</li>
+      <li>Decision-maker contacts</li>
+      <li>Qualification status</li>
+    </ul>
+    <p style="margin-top:4px; font-size:10px; color:#999;">Thin skill — no research, just CRM write.</p>
+  </div>
+
+  <!-- === LEAD CONNECTION === -->
+  <div class="box highlight-green" style="left: 605px; top: 245px; width: 195px;">
+    <div class="changed-badge">CHANGED</div>
+    <span class="tag tag-skill">SKILL — Lead Connection</span>
+    <span class="tag tag-manual">HUMAN REVIEW</span>
+    <h3>Lead Connection</h3>
+    <ul>
+      <li>Checks CRM for prior outreach to anyone at this company</li>
+      <li>Drafts first-touch message</li>
+      <li>Channel: LinkedIn first, email fallback</li>
+      <li>Tone: casual, not salesy</li>
+    </ul>
+    <p style="margin-top:4px; font-size:10px; color:#2E7D32;">Contact: design lead if they have one, else whoever owns the hiring decision.</p>
+  </div>
+
+  <!-- === LEAD NURTURE === -->
+  <div class="box highlight-green" style="left: 850px; top: 245px; width: 195px;">
+    <div class="changed-badge">CHANGED</div>
+    <span class="tag tag-skill">SKILL — Lead Nurture</span>
+    <span class="tag tag-manual">HUMAN REVIEW</span>
+    <h3>Lead Nurture</h3>
+    <ul>
+      <li>Scheduled scan for overdue follow-ups</li>
+      <li>Checks for re-engagement signals (replies, activity)</li>
+      <li>Drafts follow-up using UX audit insights</li>
+      <li>LinkedIn engagement + DMs</li>
+    </ul>
+    <p style="margin-top:4px; font-size:10px; color:#999;">Future: email campaigns, newsletter</p>
+  </div>
+
+  <!-- === BUY SIGNAL (detection layer) === -->
+  <div class="box highlight-orange" style="left: 1120px; top: 225px; width: 165px;">
+    <div class="changed-badge">CHANGED</div>
+    <span class="tag tag-detection">DETECTION LAYER</span>
+    <h3>Buy Signal → Call Booked</h3>
+    <ul>
+      <li>3+ substantive replies in 2 weeks</li>
+      <li>Asked about services/pricing</li>
+      <li>Calendly booking (auto-advance)</li>
+      <li>New external signal (funding, hiring) while in nurture</li>
+    </ul>
+    <p style="margin-top:6px; font-size:10px; color:#E65100;">Runs continuously during Nurture, not a separate stage.</p>
+  </div>
+
+  <!-- === UX AUDIT (triggered by connection) === -->
+  <div class="box highlight-green" style="left: 855px; top: 440px; width: 190px;">
+    <span class="tag tag-skill">SKILL — UX Audit</span>
+    <h3>Website UX Audit</h3>
+    <p>Auto-generated when lead status = "connected"</p>
+    <ul>
+      <li>Checks if audit already exists before running</li>
+      <li>Report saved to Resources/[Company]/</li>
+      <li>Findings fuel nurture messages</li>
+    </ul>
+    <p style="margin-top:4px; font-size:10px; color:#2E7D32;">Also feeds cross-industry pattern analysis over time.</p>
+  </div>
+
+  <!-- === ARCHIVED / COLD === -->
+  <div class="box highlight-grey" style="left: 570px; top: 510px; width: 190px;">
+    <div class="new-badge">NEW</div>
+    <h3>Archived / Cold</h3>
+    <p>Leads that exit the active pipeline:</p>
+    <ul>
+      <li>No response after X touches across channels</li>
+      <li>Connected but zero engagement after follow-ups</li>
+      <li>No longer fits ICP</li>
+      <li>Explicit "not interested"</li>
+    </ul>
+    <p style="margin-top:6px; font-size:10px; color:#546E7A;">Not permanent — periodic re-evaluation on new signals. Soft pause option for warm-then-quiet leads.</p>
+  </div>
+
+  <!-- === QUALIFICATION RESEARCH ARTIFACT === -->
+  <div class="box highlight-purple" style="left: 50px; top: 435px; width: 250px;">
+    <span class="tag tag-detection">RESEARCH ARTIFACT</span>
+    <h3>Resources / [Company Name]</h3>
+    <ul>
+      <li><strong>Company Research</strong> — products, value prop, competitors, tech stack</li>
+      <li><strong>Website UX Audit</strong> — 5 critiques of website</li>
+      <li><strong>Decision Makers</strong> — key contacts and reachability</li>
+    </ul>
+    <p style="margin-top:4px; font-size:10px; color:#6A1B9A;">Persistent, referenceable by all downstream stages. Lives in PARA structure, not just CRM.</p>
+  </div>
+
+</div>
+
+<!-- PARA Structure -->
+<div class="para-section">
+  <h2>PARA Structure (Knowledge & Resources)</h2>
+  <div class="para-grid">
+    <div class="para-col">
+      <h4>Projects</h4>
+      <div class="para-item">
+        <h5>[Company Name] Deliverables</h5>
+        <p>Client-specific deliverables once engaged</p>
+      </div>
+    </div>
+    <div class="para-col">
+      <h4>Areas</h4>
+      <div class="para-item">
+        <h5>Knowledge Base</h5>
+        <p>ICP, Brand Voice, UX Audit Checklist, Services, Lead Connection SOP, Lead Nurture SOP</p>
+      </div>
+    </div>
+    <div class="para-col">
+      <h4>Resources</h4>
+      <div class="para-item" style="border-color: #6A1B9A;">
+        <h5>[Company Name] Resources</h5>
+        <p>Company Research artifact, Website UX Audit, Decision Makers, Deal Prep (future)</p>
+      </div>
+    </div>
+    <div class="para-col">
+      <h4>Archive</h4>
+      <div class="para-item">
+        <h5>Inactive experiments</h5>
+        <p>Old skills, past exports</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tools -->
+<div class="tools-section">
+  <h2>Integrations</h2>
+  <div class="tools-grid">
+    <span class="tool-chip primary">Claude Cowork / Code</span>
+    <span class="tool-chip">HubSpot CRM</span>
+    <span class="tool-chip">Apollo (swappable)</span>
+    <span class="tool-chip">LinkedIn</span>
+    <span class="tool-chip">Gmail</span>
+    <span class="tool-chip">Google Calendar</span>
+    <span class="tool-chip">Calendly</span>
+    <span class="tool-chip">Notion</span>
+    <span class="tool-chip">GitHub</span>
+    <span class="tool-chip">Google Drive</span>
+    <span class="tool-chip">Zoom</span>
+    <span class="tool-chip">Figma</span>
+  </div>
+</div>
+
+</body>
+</html>

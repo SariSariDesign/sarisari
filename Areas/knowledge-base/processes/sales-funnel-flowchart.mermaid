@@ -1,0 +1,50 @@
+flowchart TD
+    %% Pre-Funnel Activities
+    LG["<b>Lead Generation</b><br/>Inbound: content, SEO, referrals<br/>Outbound: cold outreach, alerts, lists"]
+
+    LG --> AW
+
+    %% Core Funnel Stages
+    AW["<b>Awareness</b><br/>Prospect learns you exist"]
+    IN["<b>Interest</b><br/>Prospect engages: visits site,<br/>opens email, downloads resource"]
+    CO["<b>Consideration</b><br/>Prospect evaluates you vs. alternatives:<br/>case studies, discovery calls"]
+    IT["<b>Intent</b><br/>Prospect signals buying action:<br/>requests proposal, asks pricing"]
+    DE["<b>Decision / Close</b><br/>Contract signed, deal won or lost"]
+    RE["<b>Retention / Post-Sale</b><br/>Onboarding, delivering value,<br/>relationship management"]
+
+    AW --> IN
+    IN --> CO
+    CO --> IT
+    IT --> DE
+    DE --> RE
+
+    %% Referral Loop
+    RE -- "Referrals generate<br/>new leads" --> LG
+
+    %% Nurture Loop
+    CO -- "Goes cold" --> NU["<b>Nurture</b><br/>Re-engage with<br/>content and touchpoints"]
+    IT -- "Goes cold" --> NU
+    NU -- "Re-engaged" --> IN
+
+    %% Research & Enrichment (parallel track)
+    R1["<b>Qualification Research</b><br/>ICP fit, company size,<br/>industry match"]
+    R2["<b>Preparation Research</b><br/>Tech stack, pain points,<br/>decision-makers"]
+    R3["<b>Deal Research</b><br/>Budget cycle, org structure,<br/>competing priorities"]
+
+    LG -.- R1
+    IN -.- R2
+    CO -.- R2
+    IT -.- R3
+
+    %% Styling
+    style LG fill:#4A90D9,stroke:#2C5F8A,color:#fff
+    style AW fill:#5BA85B,stroke:#3D7A3D,color:#fff
+    style IN fill:#5BA85B,stroke:#3D7A3D,color:#fff
+    style CO fill:#5BA85B,stroke:#3D7A3D,color:#fff
+    style IT fill:#5BA85B,stroke:#3D7A3D,color:#fff
+    style DE fill:#5BA85B,stroke:#3D7A3D,color:#fff
+    style RE fill:#5BA85B,stroke:#3D7A3D,color:#fff
+    style NU fill:#E8A838,stroke:#B07D20,color:#fff
+    style R1 fill:#8B6DB0,stroke:#5E4580,color:#fff
+    style R2 fill:#8B6DB0,stroke:#5E4580,color:#fff
+    style R3 fill:#8B6DB0,stroke:#5E4580,color:#fff

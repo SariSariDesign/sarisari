@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Audit Report — littlefish</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #0d0d14;
+      --bg-card: #16161f;
+      --bg-card-alt: #1c1c28;
+      --accent-pink: #e01ee6;
+      --accent-purple: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #e01ee6 0%, #8b5cf6 100%);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6b6b80;
+      --border-subtle: rgba(255,255,255,0.06);
+      --severity-critical: #ef4444;
+      --severity-major: #f59e0b;
+      --severity-minor: #3b82f6;
+      --effort-low: #10b981;
+      --effort-med: #f59e0b;
+      --effort-high: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── Header ── */
+    .report-header { padding: 80px 0 60px; border-bottom: 1px solid var(--border-subtle); }
+
+    .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 16px;
+    }
+
+    .report-title {
+      font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 12px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .report-caption { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; }
+    .report-caption a { color: var(--text-secondary); text-decoration: none; }
+
+    /* ── Profile Grid ── */
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 32px; }
+    .profile-item { display: flex; gap: 8px; font-size: 13px; }
+    .profile-label { color: var(--text-muted); min-width: 100px; flex-shrink: 0; }
+    .profile-value { color: var(--text-secondary); font-weight: 500; }
+
+    /* ── Methodology Block ── */
+    .methodology-block {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 28px 32px; margin: 40px 0;
+    }
+    .methodology-block h3 {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 12px;
+    }
+    .methodology-block p {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px;
+    }
+    .methodology-block p:last-child { margin-bottom: 0; }
+
+    /* ── Findings Section ── */
+    .findings-section { padding: 60px 0; }
+    .findings-header { margin-bottom: 48px; }
+    .findings-header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .findings-header p { font-size: 14px; color: var(--text-secondary); }
+
+    /* ── Finding Card ── */
+    .finding-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; margin-bottom: 24px; transition: border-color 0.2s;
+    }
+    .finding-card:hover { border-color: rgba(224, 30, 230, 0.2); }
+
+    .finding-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .finding-number {
+      font-size: 12px; font-weight: 700; color: var(--bg-dark);
+      background: var(--accent-gradient); width: 28px; height: 28px;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .finding-dimension {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    .badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
+    }
+    .badge-critical { background: rgba(239,68,68,0.15); color: var(--severity-critical); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-major { background: rgba(245,158,11,0.15); color: var(--severity-major); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-minor { background: rgba(59,130,246,0.15); color: var(--severity-minor); border: 1px solid rgba(59,130,246,0.3); }
+
+    .finding-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; line-height: 1.3; }
+
+    .finding-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+    .finding-body strong { color: var(--text-primary); font-weight: 600; }
+
+    .finding-subsection { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle); }
+    .finding-subsection h4 {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--accent-purple); margin-bottom: 8px;
+    }
+    .finding-subsection p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+    .criterion-id {
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px;
+      color: var(--accent-purple); background: rgba(139,92,246,0.1);
+      padding: 2px 8px; border-radius: 4px;
+    }
+
+    .tags-row { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+    .tag {
+      font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 100px;
+      background: var(--bg-card-alt); border: 1px solid var(--border-subtle); color: var(--text-muted);
+    }
+    .tag-effort-low { color: var(--effort-low); border-color: rgba(16,185,129,0.3); }
+    .tag-effort-med { color: var(--effort-med); border-color: rgba(245,158,11,0.3); }
+    .tag-effort-high { color: var(--effort-high); border-color: rgba(239,68,68,0.3); }
+    .tag-impact-high { color: var(--severity-critical); border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.05); }
+    .tag-impact-med { color: var(--effort-med); border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.05); }
+    .tag-impact-low { color: var(--text-muted); }
+
+    /* ── Footer ── */
+    .report-footer { border-top: 1px solid var(--border-subtle); padding: 48px 0 80px; }
+    .footer-cta {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; text-align: center; margin-bottom: 40px;
+    }
+    .footer-cta h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .footer-cta p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 600px; margin: 0 auto; }
+
+    .disclaimer {
+      font-size: 12px; color: var(--text-muted); line-height: 1.7;
+      text-align: center; padding-top: 24px; border-top: 1px solid var(--border-subtle);
+    }
+    .brand-footer { text-align: center; margin-top: 32px; font-size: 12px; color: var(--text-muted); }
+    .brand-footer span { color: var(--accent-pink); font-weight: 600; }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      .report-title { font-size: 32px; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .finding-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- ── HEADER ── -->
+    <header class="report-header">
+      <div class="eyebrow">UX Audit Report</div>
+      <h1 class="report-title">littlefish</h1>
+      <p class="report-caption">
+        <a href="https://littlefishapp.com">littlefishapp.com</a> &nbsp;|&nbsp; March 31, 2026
+      </p>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span class="profile-label">Industry</span>
+          <span class="profile-value">Fintech / Financial Infrastructure</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Stage</span>
+          <span class="profile-value">Series A ($9.5M, March 2026)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">GTM Model</span>
+          <span class="profile-value">Sales-led Growth (Enterprise)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Conversion Goal</span>
+          <span class="profile-value">Demo Request / Sales Inquiry</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Customer Type</span>
+          <span class="profile-value">B2B — Tier 1 African Banks</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Competitors</span>
+          <span class="profile-value">Paystack, Flutterwave, DPO Group</span>
+        </div>
+      </div>
+
+      <div class="methodology-block">
+        <h3>Methodology</h3>
+        <p>This audit evaluated littlefishapp.com across 11 UX dimensions using 80+ criteria spanning usability heuristics, accessibility standards, conversion optimization, SEO, and content strategy — yielding 25 total findings.</p>
+        <h3>Evaluation Lens</h3>
+        <p>This audit is framed for a Series A B2B fintech selling enterprise infrastructure to Africa's largest banks, where every website visit from a decision-maker is high-value and where credibility, clarity, and proof are the primary conversion levers.</p>
+        <h3>Why This Matters</h3>
+        <p>For a sales-led enterprise platform, the website is the first credibility checkpoint before a bank executive agrees to take a meeting. Friction, vagueness, or missing proof at this stage doesn't just reduce form submissions — it filters out the highest-value prospects who have the least patience for ambiguity.</p>
+      </div>
+    </header>
+
+    <!-- ── FINDINGS ── -->
+    <section class="findings-section">
+      <div class="findings-header">
+        <h2>Top 5 Findings</h2>
+        <p>Selected for business impact, evidence quality, and relevance to littlefish's growth stage and sales-led GTM model.</p>
+      </div>
+
+      <!-- FINDING 1 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">1</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">The Funding Banner Hijacks Your Most Valuable Real Estate</h3>
+        <div class="finding-body">
+          <p>The homepage opens with a large news banner announcing the $9.5M Series A, complete with its own headline, body copy, image, and CTA. This banner occupies roughly 40% of the above-the-fold viewport, pushing the actual product hero ("Powering banks in the fintech era") below the visual priority line. A bank executive visiting for the first time sees a press release — not why they should care about littlefish.</p>
+          <p><strong>Why this matters for littlefish:</strong> In a sales-led model where each qualified visit represents significant pipeline value, the above-the-fold space is the highest-impact conversion surface on the entire site. The 5-second test — Can a visitor immediately answer "What does this do? Who is it for? What should I do next?" — fails because the funding news answers none of those questions. The visitors who bounce fastest are often the most senior, because they have the least patience for irrelevant content.</p>
+          <p><span class="criterion-id">CRO-01</span> Above-the-Fold Clarity &nbsp;&nbsp; <span class="criterion-id">COPY-01</span> 5-Second Test &nbsp;&nbsp; <span class="criterion-id">N-08</span> Aesthetic and Minimalist Design</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Reduce the news banner to a slim, single-line notification bar (e.g., "We just raised $9.5M Series A — Read more →") that sits above the nav without pushing the hero down. This preserves the announcement while ensuring the product value proposition is the undisputed first thing visitors see. Alternatively, move the announcement to the Resources section and let the hero do its job.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 2 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">2</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">No Way to Capture Mid-Funnel Interest</h3>
+        <div class="finding-body">
+          <p>The site offers two engagement paths: "Learn more" (navigates to a product page) and "Get in touch" (contact form). There are no mid-intent engagement options — no downloadable case studies, product tour videos, ROI calculators, whitepapers, or gated resources that would allow littlefish to capture the email of an interested but not-yet-ready visitor.</p>
+          <p><strong>Why this matters for littlefish:</strong> Enterprise sales cycles for banking infrastructure run 6 to 18 months. A Head of Merchant Acquiring at a Tier 1 African bank will not fill out a contact form on their first visit — they're researching, comparing, building internal business cases. Without a mid-intent conversion path, littlefish loses the majority of qualified traffic: visitors who are interested enough to explore but not ready to talk to sales. There is currently no mechanism to turn anonymous interest into a known lead that the sales team can nurture.</p>
+          <p><span class="criterion-id">CRO-04</span> Engagement Path Variety</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Add at least one mid-intent conversion path gated behind an email capture. The strongest option: a downloadable case study (e.g., "How Absa Launched Digital Merchant Services in 90 Days"). Alternatives include a recorded product overview, a "Merchant Acquiring Modernization Guide," or an ROI assessment tool. This single addition creates a lead capture mechanism for the 80%+ of qualified visitors who aren't ready for a sales conversation yet.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 3 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">3</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Proof Points Without Attribution Don't Build Enterprise Trust</h3>
+        <div class="finding-body">
+          <p>The homepage presents three statistics — "90 days implementation time," "40% revenue increase," and "60% cost reduction" — without attributing them to a specific client, time period, or methodology. The site also shows only one case study reference (Absa's ShopRed), presented as a press quote rather than a results-oriented success story. Additional case studies appear to exist behind a carousel but require user interaction to discover.</p>
+          <p><strong>Why this matters for littlefish:</strong> Bank procurement teams are trained skeptics. Unattributed statistics trigger the same response as unsubstantiated marketing claims — they're ignored or, worse, they erode credibility. When a CDO is building an internal business case to bring littlefish to their board, they need specific, attributable proof they can cite: "Absa achieved X result in Y timeframe." The current proof layer is the weakest link in an otherwise well-structured homepage — it's where the page asks for trust but doesn't earn it.</p>
+          <p><span class="criterion-id">CRO-07</span> Social Proof Depth &nbsp;&nbsp; <span class="criterion-id">COPY-08</span> Proof and Credibility in Copy</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Attribute each statistic to a named client or cohort: "Absa saw a 40% increase in merchant revenue within 12 months of launch." Surface 2-3 case study cards directly on the homepage (not behind a carousel) with client name, quantified outcome, and a named spokesperson. Even one fully attributed case study with before/after metrics would significantly strengthen the proof layer.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 4 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">4</div>
+          <span class="finding-dimension">Information Architecture</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">"About Us" Leads to Careers — Missing the Credibility Page Banks Expect</h3>
+        <div class="finding-body">
+          <p>Clicking "About us" in the main navigation leads to a careers and team culture page with job listings, perks, and the application process. There is no traditional About page with the company's founding story, leadership team bios, investor information, board members, or strategic vision accessible from the primary navigation. The page also renders with roughly 80% empty space above the fold — no headline or content is visible until the user scrolls.</p>
+          <p><strong>Why this matters for littlefish:</strong> For enterprise B2B buyers, the About page is a critical credibility evaluation step. A bank executive will check: Who founded this? Who's backing them? What's their track record? Are there people I know on the board? By routing "About us" to a careers page — and one that appears visually broken above the fold — littlefish misses the opportunity to answer the trust questions that gate enterprise purchasing decisions. The company has strong credibility signals (Partech, TLcom, Visa partnership, Tier 1 bank clients) that are simply not surfaced where buyers look for them.</p>
+          <p><span class="criterion-id">IA-01</span> Navigation Clarity &nbsp;&nbsp; <span class="criterion-id">IA-05</span> Content Grouping Logic &nbsp;&nbsp; <span class="criterion-id">VD-02</span> Visual Hierarchy</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Create a dedicated About page with: company founding story, leadership bios with professional headshots, investor logos (Partech, TLcom) and board members, key milestones and traction metrics, and the African impact thesis. Rename the current page to "Careers" or "Join Us" and make it a sub-item under the About dropdown. Fix the above-the-fold rendering issue so the page headline is visible without scrolling.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 5 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">5</div>
+          <span class="finding-dimension">Content &amp; Copywriting</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">The Hero Headline Is Aspirational Where It Needs to Be Specific</h3>
+        <div class="finding-body">
+          <p>The H1 headline — "Powering banks in the fintech era" — communicates audience (banks) and context (fintech) but not what littlefish specifically does, what outcome it delivers, or how it differs from competitors. The subheadline ("Full stack enterprise platform that extends your infrastructure, instead of replacing it") is more specific, but it sits in a secondary visual position. Meanwhile, unattributed claims of "90 days implementation" and "40% revenue increase" are buried near the bottom of the page rather than reinforcing the headline.</p>
+          <p><strong>Why this matters for littlefish:</strong> littlefish's strongest differentiator — that it extends a bank's existing infrastructure rather than replacing it — addresses the single biggest fear enterprise banks have about platform adoption: the rip-and-replace risk. This differentiator is currently buried in the subheadline. In a competitive landscape with Paystack, Flutterwave, and global players, specificity is what makes littlefish memorable. An aspirational headline that any fintech infrastructure company could claim wastes the most impactful piece of copy on the site.</p>
+          <p><span class="criterion-id">COPY-03</span> Headline Specificity &nbsp;&nbsp; <span class="criterion-id">COPY-02</span> Benefit-Led Framing &nbsp;&nbsp; <span class="criterion-id">CRO-05</span> Value Proposition Clarity</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Lead with the specific, quantified outcome: "Launch merchant services in 90 days — without replacing your core banking stack." This is specific (90 days), addresses the key fear (no rip-and-replace), and differentiates littlefish from competitors who require banks to rebuild. The current aspirational headline can serve as a supporting tagline. Bring the strongest proof points (implementation speed, client results) into the hero area rather than the page footer.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer class="report-footer">
+      <div class="footer-cta">
+        <h3>Want the complete picture?</h3>
+        <p>This report covers the top 5 findings from a 25-finding evaluation across 11 UX dimensions. The full audit includes detailed recommendations for SEO, accessibility, information architecture, visual design, and more — with specific, actionable fixes prioritized by effort and impact.</p>
+      </div>
+
+      <div class="disclaimer">
+        This audit is based solely on publicly available information from littlefish's marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.
+      </div>
+
+      <div class="brand-footer">
+        <span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; March 2026
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>
