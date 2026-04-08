@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Audit Report — Theia Insights</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #0d0d14;
+      --bg-card: #16161f;
+      --bg-card-alt: #1c1c28;
+      --accent-pink: #e01ee6;
+      --accent-purple: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #e01ee6 0%, #8b5cf6 100%);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6b6b80;
+      --border-subtle: rgba(255,255,255,0.06);
+      --severity-critical: #ef4444;
+      --severity-major: #f59e0b;
+      --severity-minor: #3b82f6;
+      --effort-low: #10b981;
+      --effort-med: #f59e0b;
+      --effort-high: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── Header ── */
+    .report-header { padding: 80px 0 60px; border-bottom: 1px solid var(--border-subtle); }
+
+    .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 16px;
+    }
+
+    .report-title {
+      font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 12px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .report-caption { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; }
+    .report-caption a { color: var(--text-secondary); text-decoration: none; }
+
+    /* ── Profile Grid ── */
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 32px; }
+    .profile-item { display: flex; gap: 8px; font-size: 13px; }
+    .profile-label { color: var(--text-muted); min-width: 100px; flex-shrink: 0; }
+    .profile-value { color: var(--text-secondary); font-weight: 500; }
+
+    /* ── Methodology Block ── */
+    .methodology-block {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 28px 32px; margin: 40px 0;
+    }
+    .methodology-block h3 {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 12px;
+    }
+    .methodology-block p {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px;
+    }
+    .methodology-block p:last-child { margin-bottom: 0; }
+
+    /* ── Findings Section ── */
+    .findings-section { padding: 60px 0; }
+    .findings-header { margin-bottom: 48px; }
+    .findings-header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .findings-header p { font-size: 14px; color: var(--text-secondary); }
+
+    /* ── Finding Card ── */
+    .finding-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; margin-bottom: 24px; transition: border-color 0.2s;
+    }
+    .finding-card:hover { border-color: rgba(224, 30, 230, 0.2); }
+
+    .finding-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .finding-number {
+      font-size: 12px; font-weight: 700; color: var(--bg-dark);
+      background: var(--accent-gradient); width: 28px; height: 28px;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .finding-dimension {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    .badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
+    }
+    .badge-critical { background: rgba(239,68,68,0.15); color: var(--severity-critical); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-major { background: rgba(245,158,11,0.15); color: var(--severity-major); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-minor { background: rgba(59,130,246,0.15); color: var(--severity-minor); border: 1px solid rgba(59,130,246,0.3); }
+
+    .finding-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; line-height: 1.3; }
+
+    .finding-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+    .finding-body strong { color: var(--text-primary); font-weight: 600; }
+
+    .finding-subsection { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle); }
+    .finding-subsection h4 {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--accent-purple); margin-bottom: 8px;
+    }
+    .finding-subsection p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+    .criterion-id {
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px;
+      color: var(--accent-purple); background: rgba(139,92,246,0.1);
+      padding: 2px 8px; border-radius: 4px;
+    }
+
+    .tags-row { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+    .tag {
+      font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 100px;
+      background: var(--bg-card-alt); border: 1px solid var(--border-subtle); color: var(--text-muted);
+    }
+    .tag-effort-low { color: var(--effort-low); border-color: rgba(16,185,129,0.3); }
+    .tag-effort-med { color: var(--effort-med); border-color: rgba(245,158,11,0.3); }
+    .tag-effort-high { color: var(--effort-high); border-color: rgba(239,68,68,0.3); }
+    .tag-impact-high { color: var(--severity-critical); border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.05); }
+    .tag-impact-med { color: var(--effort-med); border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.05); }
+    .tag-impact-low { color: var(--text-muted); }
+
+    /* ── Footer ── */
+    .report-footer { border-top: 1px solid var(--border-subtle); padding: 48px 0 80px; }
+    .footer-cta {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; text-align: center; margin-bottom: 40px;
+    }
+    .footer-cta h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .footer-cta p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 600px; margin: 0 auto; }
+
+    .disclaimer {
+      font-size: 12px; color: var(--text-muted); line-height: 1.7;
+      text-align: center; padding-top: 24px; border-top: 1px solid var(--border-subtle);
+    }
+    .brand-footer { text-align: center; margin-top: 32px; font-size: 12px; color: var(--text-muted); }
+    .brand-footer span { color: var(--accent-pink); font-weight: 600; }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      .report-title { font-size: 32px; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .finding-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- ── HEADER ── -->
+    <header class="report-header">
+      <div class="eyebrow">UX Audit Report</div>
+      <h1 class="report-title">Theia Insights</h1>
+      <p class="report-caption">
+        <a href="https://www.theiainsights.com/">theiainsights.com</a> &nbsp;|&nbsp; April 7, 2026
+      </p>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span class="profile-label">Industry</span>
+          <span class="profile-value">Financial Data Infrastructure / Capital Markets AI</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Stage</span>
+          <span class="profile-value">Series A ($14.5M total raised)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">GTM Model</span>
+          <span class="profile-value">Sales-Led Growth (Enterprise)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Conversion Goal</span>
+          <span class="profile-value">Demo Request / Sales Conversation</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Customer Type</span>
+          <span class="profile-value">B2B Institutional (Banks, Asset Managers, Hedge Funds)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Competitors</span>
+          <span class="profile-value">MSCI (GICS), FTSE Russell (ICB), FactSet, Refinitiv</span>
+        </div>
+      </div>
+
+      <div class="methodology-block">
+        <h3>Methodology</h3>
+        <p>This audit evaluated theiainsights.com across 11 UX dimensions using 90+ criteria from the Sari Sari Design reference checklist, supplemented by automated SEO and accessibility analysis.</p>
+        <h3>Evaluation Lens</h3>
+        <p>This audit is framed through the lens of a Series A financial data company running a sales-led GTM motion, where the website's primary job is to convert qualified institutional buyers into demo conversations. Every finding is weighted by its impact on pipeline generation and credibility with sophisticated financial professionals.</p>
+        <h3>Why This Matters</h3>
+        <p>For a company selling data infrastructure to index providers, banks, and asset managers, the website is often the first credibility checkpoint before a prospect agrees to take a meeting. Friction, ambiguity, or a lack of institutional polish on the site can kill pipeline before sales even gets a chance to make the case.</p>
+      </div>
+    </header>
+
+    <!-- ── FINDINGS ── -->
+    <section class="findings-section">
+      <div class="findings-header">
+        <h2>Top 5 Findings</h2>
+        <p>Selected for business impact, evidence quality, and relevance to Theia Insights' growth stage and sales-led GTM model.</p>
+      </div>
+
+      <!-- FINDING 1 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">1</div>
+          <span class="finding-dimension">Content &amp; Copywriting</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Hero Headline Speaks Product Architecture, Not Buyer Language</h3>
+        <div class="finding-body">
+          <p>The homepage headline reads "Dynamic Ontology for Global Financial Markets." While technically accurate, "ontology" is a knowledge engineering term — not how index construction teams, portfolio managers, or quant researchers describe what they're looking for. The tagline underneath does a better job explaining the value, but the headline is what visitors read first, and it requires decoding.</p>
+          <p><strong>Why this matters for Theia Insights:</strong> In a sales-led model targeting institutional buyers, the homepage headline is often the only thing a prospect reads before deciding whether to scroll or bounce. Using internal product language rather than buyer language creates unnecessary friction at the exact moment you need to capture attention. The About page already has a stronger articulation — "a living map of the economy" — that communicates the same idea in language any financial professional would immediately understand.</p>
+          <p><span class="criterion-id">COPY-01</span> 5-Second Test &nbsp;&nbsp; <span class="criterion-id">COPY-02</span> Benefit-Led Framing &nbsp;&nbsp; <span class="criterion-id">COPY-03</span> Headline Specificity &nbsp;&nbsp; <span class="criterion-id">N-02</span> Match Between System and Real World</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Lead with the outcome institutional buyers care about, not the technical architecture. Test alternatives such as "See What Companies Actually Do — Updated Daily" or "The Living Map of the Global Economy." Use the subheadline to explain the how (AI-driven dynamic classification that goes beyond GICS and ICB). Reserve "ontology" for technical documentation where the audience self-selects.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+      <!-- END FINDING 1 -->
+
+      <!-- FINDING 2 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">2</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">"Register Interest" CTA Signals Beta, Not Enterprise-Ready</h3>
+        <div class="finding-body">
+          <p>The primary CTA across the entire site is "Register Interest." This is a passive, ambiguous call to action that doesn't tell visitors what they will get, what happens next, or what to expect. For a company that already powers the S&P Digital Markets 50 Index and counts major banks among its clients, this language signals early-stage waitlist rather than a product in production with tier-one institutional customers.</p>
+          <p><strong>Why this matters for Theia Insights:</strong> Institutional data buyers are evaluating Theia against vendors like MSCI and FactSet, whose sites use confident, specific CTAs ("Request a Demo," "Contact Sales," "Get Started"). "Register Interest" creates a perception gap between the maturity of Theia's product and the maturity of its go-to-market. It may also lower conversion rates — buyers who are ready to engage want a clear, professional next step, not an ambiguous one.</p>
+          <p><span class="criterion-id">CRO-02</span> CTA Specificity &nbsp;&nbsp; <span class="criterion-id">CRO-09</span> Urgency and Motivation &nbsp;&nbsp; <span class="criterion-id">CRO-10</span> Post-CTA Expectation Setting</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Replace "Register Interest" site-wide with "Request a Demo" or "See the Platform in Action." On the contact page, add expectation-setting copy: "Submit your details and a member of our team will be in touch within one business day to schedule a personalized walkthrough." This simple language change signals confidence and professionalism.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+      <!-- END FINDING 2 -->
+
+      <!-- FINDING 3 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">3</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Strongest Proof Point Is Buried in a Blog Post, Not on the Homepage</h3>
+        <div class="finding-body">
+          <p>Theia powers the S&P Digital Markets 50 Index — a genuine institutional proof point that would immediately build credibility with any data buyer. But this information only exists in a blog post from March 2026. The homepage logo bar shows S&P Dow Jones Indices alongside investor logos and tech partner logos with no labels or context, so a visitor cannot tell whether S&P is a client, an investor, or a technology partner.</p>
+          <p><strong>Why this matters for Theia Insights:</strong> For a Series A company competing against deeply entrenched incumbents, the S&P partnership is arguably the single most important trust signal available. Burying it in a blog post while showing an unlabeled logo bar on the homepage is a significant missed opportunity. Institutional buyers who see "Powering the S&P Digital Markets 50 Index" on the homepage will immediately understand that Theia's data is production-grade and trusted at the highest level.</p>
+          <p><span class="criterion-id">CRO-06</span> Trust Signal Placement &nbsp;&nbsp; <span class="criterion-id">CRO-07</span> Social Proof Depth &nbsp;&nbsp; <span class="criterion-id">VD-06</span> Imagery Quality</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Surface the S&P partnership prominently on the homepage — either as a featured callout ("Powering the S&P Digital Markets 50 Index") or as a mini case study near the primary CTA. Separate the logo bar into labeled sections: "Trusted By" (clients), "Backed By" (investors), and "Built On" (technology partners). Add at least one named client quote if available.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+      <!-- END FINDING 3 -->
+
+      <!-- FINDING 4 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">4</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">No Mid-Funnel Engagement Paths for Long Institutional Sales Cycles</h3>
+        <div class="finding-body">
+          <p>The entire site funnels every visitor to a single conversion action: fill out the contact form. There are no downloadable resources (white papers, methodology documentation), no product tours or demo videos, no interactive tools, and no prominent newsletter signup. The blog exists but consists mostly of monthly thematic dashboard updates. A qualified visitor who is researching data vendors but not yet ready for a sales call has no reason to engage.</p>
+          <p><strong>Why this matters for Theia Insights:</strong> Institutional data buying cycles run 3 to 12 months. Many qualified visitors — portfolio managers evaluating classification alternatives, index teams benchmarking against GICS — are in research mode. They want to understand Theia's methodology and data quality before committing to a demo. Without mid-funnel content, these visitors leave and may never return. Post-Series A, this is pipeline leakage at scale.</p>
+          <p><span class="criterion-id">CRO-04</span> Engagement Path Variety &nbsp;&nbsp; <span class="criterion-id">N-07</span> Flexibility and Efficiency of Use</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Introduce at least two additional engagement tiers: (1) a mid-intent asset like a downloadable methodology white paper or a 2-minute product overview video; (2) a low-intent path like a prominent newsletter signup or access to a sample thematic dashboard. Gate mid-intent content behind email capture to build a nurture list. This turns the website from a single-shot conversion tool into a pipeline-building engine.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+      <!-- END FINDING 4 -->
+
+      <!-- FINDING 5 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">5</div>
+          <span class="finding-dimension">SEO &amp; Discoverability</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Homepage Title and H1 Optimized for Internal Terminology, Not Search Intent</h3>
+        <div class="finding-body">
+          <p>The homepage H1 — "Dynamic Ontology for Global Financial Markets" — uses the term "ontology," which has near-zero search volume in the financial data buyer's vocabulary. Prospects searching for solutions like Theia's are more likely to search for "AI industry classification," "dynamic company classification," "thematic investment data," or "real-time sector mapping." The current H1 may be invisible to the exact audience Theia wants to attract organically.</p>
+          <p><strong>Why this matters for Theia Insights:</strong> Post-Series A, organic search becomes a critical pipeline channel. If the homepage H1 and title tag don't match how institutional buyers search for classification and thematic data solutions, Theia misses out on high-intent organic traffic. This is especially important given the recent $8M raise and associated press coverage — prospective buyers searching for Theia's category should find the homepage.</p>
+          <p><span class="criterion-id">SEO-01</span> Page Title &nbsp;&nbsp; <span class="criterion-id">SEO-03</span> H1 Tag</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Conduct keyword research for high-volume terms in the dynamic classification and thematic data space. Optimize the page title to something like "Theia Insights — AI-Powered Industry Classification for Financial Markets." Align the H1 with the same intent. This does not require changing the brand or product positioning — just the specific words used in the two most SEO-important elements on the page.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+      <!-- END FINDING 5 -->
+
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer class="report-footer">
+      <div class="footer-cta">
+        <h3>Want the complete picture?</h3>
+        <p>This report covers the top 5 findings from a 20-finding evaluation across 11 UX dimensions. The full audit includes detailed recommendations for information architecture, accessibility, visual design, content strategy, and more.</p>
+      </div>
+
+      <div class="disclaimer">
+        This audit is based solely on publicly available information from Theia Insights' marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.
+      </div>
+
+      <div class="brand-footer">
+        <span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; April 2026
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

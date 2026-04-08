@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Audit Report — Equal Parts</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #0d0d14;
+      --bg-card: #16161f;
+      --bg-card-alt: #1c1c28;
+      --accent-pink: #e01ee6;
+      --accent-purple: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #e01ee6 0%, #8b5cf6 100%);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6b6b80;
+      --border-subtle: rgba(255,255,255,0.06);
+      --severity-critical: #ef4444;
+      --severity-major: #f59e0b;
+      --severity-minor: #3b82f6;
+      --effort-low: #10b981;
+      --effort-med: #f59e0b;
+      --effort-high: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+    .report-header { padding: 80px 0 60px; border-bottom: 1px solid var(--border-subtle); }
+
+    .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 16px;
+    }
+
+    .report-title {
+      font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 12px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .report-caption { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; }
+    .report-caption a { color: var(--text-secondary); text-decoration: none; }
+
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 32px; }
+    .profile-item { display: flex; gap: 8px; font-size: 13px; }
+    .profile-label { color: var(--text-muted); min-width: 100px; flex-shrink: 0; }
+    .profile-value { color: var(--text-secondary); font-weight: 500; }
+
+    .methodology-block {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 28px 32px; margin: 40px 0;
+    }
+    .methodology-block h3 {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 12px;
+    }
+    .methodology-block p {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px;
+    }
+    .methodology-block p:last-child { margin-bottom: 0; }
+
+    .findings-section { padding: 60px 0; }
+    .findings-header { margin-bottom: 48px; }
+    .findings-header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .findings-header p { font-size: 14px; color: var(--text-secondary); }
+
+    .finding-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; margin-bottom: 24px; transition: border-color 0.2s;
+    }
+    .finding-card:hover { border-color: rgba(224, 30, 230, 0.2); }
+
+    .finding-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .finding-number {
+      font-size: 12px; font-weight: 700; color: var(--bg-dark);
+      background: var(--accent-gradient); width: 28px; height: 28px;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .finding-dimension {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    .badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
+    }
+    .badge-critical { background: rgba(239,68,68,0.15); color: var(--severity-critical); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-major { background: rgba(245,158,11,0.15); color: var(--severity-major); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-minor { background: rgba(59,130,246,0.15); color: var(--severity-minor); border: 1px solid rgba(59,130,246,0.3); }
+
+    .finding-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; line-height: 1.3; }
+
+    .finding-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+    .finding-body strong { color: var(--text-primary); font-weight: 600; }
+
+    .finding-subsection { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle); }
+    .finding-subsection h4 {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--accent-purple); margin-bottom: 8px;
+    }
+    .finding-subsection p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+    .criterion-id {
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px;
+      color: var(--accent-purple); background: rgba(139,92,246,0.1);
+      padding: 2px 8px; border-radius: 4px;
+    }
+
+    .tags-row { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+    .tag {
+      font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 100px;
+      background: var(--bg-card-alt); border: 1px solid var(--border-subtle); color: var(--text-muted);
+    }
+    .tag-effort-low { color: var(--effort-low); border-color: rgba(16,185,129,0.3); }
+    .tag-effort-med { color: var(--effort-med); border-color: rgba(245,158,11,0.3); }
+    .tag-effort-high { color: var(--effort-high); border-color: rgba(239,68,68,0.3); }
+    .tag-impact-high { color: var(--severity-critical); border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.05); }
+    .tag-impact-med { color: var(--effort-med); border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.05); }
+    .tag-impact-low { color: var(--text-muted); }
+
+    .report-footer { border-top: 1px solid var(--border-subtle); padding: 48px 0 80px; }
+    .footer-cta {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; text-align: center; margin-bottom: 40px;
+    }
+    .footer-cta h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .footer-cta p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 600px; margin: 0 auto; }
+
+    .disclaimer {
+      font-size: 12px; color: var(--text-muted); line-height: 1.7;
+      text-align: center; padding-top: 24px; border-top: 1px solid var(--border-subtle);
+    }
+    .brand-footer { text-align: center; margin-top: 32px; font-size: 12px; color: var(--text-muted); }
+    .brand-footer span { color: var(--accent-pink); font-weight: 600; }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      .report-title { font-size: 32px; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .finding-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="report-header">
+      <div class="eyebrow">UX Audit Report</div>
+      <h1 class="report-title">Equal Parts</h1>
+      <p class="report-caption">
+        <a href="https://www.equalparts.ai/">equalparts.ai</a> &nbsp;|&nbsp; April 7, 2026
+      </p>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span class="profile-label">Industry</span>
+          <span class="profile-value">InsurTech</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Stage</span>
+          <span class="profile-value">Series A ($23M)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">GTM Model</span>
+          <span class="profile-value">Sales-Led + Acquisition-Led</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Conversion Goal</span>
+          <span class="profile-value">Book a Consultation / Start a Quote</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Customer Type</span>
+          <span class="profile-value">B2B + B2B2C</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Competitors</span>
+          <span class="profile-value">Hub International, Acrisure, Newfront, Embroker</span>
+        </div>
+      </div>
+
+      <div class="methodology-block">
+        <h3>Methodology</h3>
+        <p>This audit evaluated equalparts.ai across 8 standardized UX dimensions — including usability heuristics, conversion optimization, information architecture, accessibility, SEO, visual design, performance, and content strategy — using automated scanning, DOM analysis, and manual visual inspection.</p>
+        <h3>Evaluation Lens</h3>
+        <p>This audit is framed through the lens of a Series A InsurTech company with a dual-audience homepage. At this stage, the website is the company's primary credibility signal for both agency partners and insurance buyers, and every conversion path needs to be clear enough that visitors self-route without friction.</p>
+        <h3>Why This Matters</h3>
+        <p>For a company whose growth depends on acquiring insurance agencies and winning insurance buyers simultaneously, website friction directly costs pipeline on both fronts. Agency owners scrutinize professionalism and clarity; insurance buyers comparing options bounce if the value proposition isn't immediately obvious.</p>
+      </div>
+    </header>
+
+    <section class="findings-section">
+      <div class="findings-header">
+        <h2>Top 5 Findings</h2>
+        <p>Selected for business impact, evidence quality, and relevance to Equal Parts' growth stage and GTM model.</p>
+      </div>
+
+      <!-- FINDING 1 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">1</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Hero Headline Fails the 5-Second Test</h3>
+        <div class="finding-body">
+          <p>The hero headline — "We believe AI should enhance, not replace, the power of human connection in insurance" — is a philosophy statement, not a value proposition. A first-time visitor cannot answer "What does this company do?" or "Who is this for?" within 5 seconds of landing. The eyebrow text "Introducing Equal Parts" reinforces the announcement framing rather than solving the clarity problem.</p>
+          <p><strong>Why this matters for Equal Parts:</strong> As a Series A company that most visitors haven't heard of, the hero is your one shot at earning 5 more seconds of attention. Agency owners evaluating acquisition partners and insurance buyers comparing providers will both bounce before scrolling if they can't immediately tell what Equal Parts does differently for them. Every visitor lost here never sees the rest of the site.</p>
+          <p><span class="criterion-id">CRO-01</span> Above-the-Fold Clarity &nbsp;&nbsp; <span class="criterion-id">COPY-01</span> 5-Second Test</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Replace the belief statement with a benefit-led headline that answers "what" and "who" in one line. For example: "Better insurance for growing companies — powered by AI, delivered by people who know your industry." Reserve the philosophy for a supporting subheadline or About page. The hero should sell the outcome, not the worldview.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 2 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">2</div>
+          <span class="finding-dimension">SEO &amp; Discoverability</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Five H1 Tags Competing for SEO Priority on a Single Page</h3>
+        <div class="finding-body">
+          <p>The homepage contains five separate H1 elements, each making a different claim about the company. Best practice is exactly one H1 per page — it signals to search engines what the page's primary topic is. Five H1s dilute that signal entirely and create a broken heading hierarchy (H1 → H1 → H2 → H3 → H1 → H1) that confuses both crawlers and assistive technology.</p>
+          <p><strong>Why this matters for Equal Parts:</strong> Post-Series A, organic search visibility is a compounding asset. Every month this isn't fixed, Google is indexing the homepage without a clear keyword signal — meaning Equal Parts is losing ground on search queries like "AI insurance platform" or "commercial insurance for startups" to competitors with cleaner heading structures. This is a low-effort, high-return fix.</p>
+          <p><span class="criterion-id">SEO-03</span> H1 Tag &nbsp;&nbsp; <span class="criterion-id">SEO-04</span> Heading Hierarchy &nbsp;&nbsp; <span class="criterion-id">ACC-20</span> Headings and Labels</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Designate a single H1 that includes the primary keyword (e.g., "AI-Powered Insurance for Growing Companies"). Demote the remaining four to H2 or H3 based on hierarchy. Ensure the heading structure follows a logical H1 → H2 → H3 progression throughout the page. This is a 30-minute fix in Webflow with measurable SEO upside.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 3 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">3</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Three Competing CTAs With No Clear Primary Action</h3>
+        <div class="finding-body">
+          <p>The hero presents "Book a Consultation" and "Start a Quote" side by side with nearly identical visual weight. The navigation adds a third option — "Get Started" — in a prominent blue button. All three link to different URLs. There is no visual or informational hierarchy signaling which action is primary, and the labels require visitors to already understand the company's process to choose correctly.</p>
+          <p><strong>Why this matters for Equal Parts:</strong> Decision paralysis is a conversion killer, especially with two distinct audiences (agency owners and insurance buyers) who need different actions. When three CTAs compete for attention with no guidance, conversion rates drop on all three. This is compounded by the fact that the hero copy doesn't explain the difference between the three options — visitors are left guessing.</p>
+          <p><span class="criterion-id">CRO-02</span> CTA Specificity and Placement &nbsp;&nbsp; <span class="criterion-id">CRO-03</span> CTA Redundancy and Dilution</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Establish one primary CTA for the majority audience (likely "Start a Quote" for insurance buyers). Make it visually dominant with a solid fill and contrasting color. Demote the secondary action to a text link or ghost button. Align the nav CTA with the primary hero CTA. Consider adding persona-routing first ("I need insurance" vs. "I own an agency") to present the right CTA to each audience.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 4 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">4</div>
+          <span class="finding-dimension">Accessibility</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">90% of Images Missing Meaningful Alt Text</h3>
+        <div class="finding-body">
+          <p>Of 62 images on the homepage, 56 have empty alt attributes (alt="") and only 6 have descriptive text. While empty alt is correct for decorative images, this ratio is unrealistic — team headshots, product visuals, and informational graphics almost certainly require descriptive alt text. Screen reader users encounter a page where the vast majority of visual content is invisible to them.</p>
+          <p><strong>Why this matters for Equal Parts:</strong> In insurance and financial services, accessibility compliance isn't optional — it carries legal weight. Beyond compliance, alt text is also an SEO signal. Every image without descriptive alt text is a missed opportunity for Google image search visibility and a liability for ADA compliance. With 56 images to fix, this is a bulk task but each one is straightforward.</p>
+          <p><span class="criterion-id">ACC-01</span> 1.1.1 Non-text Content &nbsp;&nbsp; <span class="criterion-id">SEO-05</span> Image Alt Text</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Audit all 62 images. Add descriptive alt text to every image that conveys meaning: team photos should include name and title, product screenshots should describe what's shown, icons should describe their function. Reserve alt="" only for purely decorative elements (background textures, spacing graphics). This can be done in a single Webflow editing session.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 5 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">5</div>
+          <span class="finding-dimension">Content Strategy</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Page Narrative Is Company-Out, Not User-In</h3>
+        <div class="finding-body">
+          <p>The page follows a company-centric arc: philosophy → approach → technology → team → mission → contact form. The user's problem is never explicitly stated. There is no "problem" section that mirrors what the target buyer is experiencing before presenting Equal Parts as the solution. Every major heading leads with what the company believes or does, rather than what the visitor gains.</p>
+          <p><strong>Why this matters for Equal Parts:</strong> Visitors don't care about your philosophy until they care about their problem. An agency owner considering selling their agency wants to see "We help agency owners grow revenue 2x while you stay in the driver's seat" — not "We believe AI should enhance human connection." A startup founder shopping for insurance wants "Get covered in 48 hours, not 4 weeks." Without a user-in narrative, both audiences must work to find their own reason to stay.</p>
+          <p><span class="criterion-id">COPY-05</span> Narrative Flow and Page Arc &nbsp;&nbsp; <span class="criterion-id">COPY-02</span> Benefit-Led vs. Feature-Led &nbsp;&nbsp; <span class="criterion-id">CRO-05</span> Value Proposition Clarity</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Restructure the page to follow a problem → solution → proof → action arc. Open with the buyer's pain point, present Equal Parts as the answer, prove it with quantified results and named testimonials, then close with a clear CTA. Move the philosophy and team sections below the proof layer. This is a content restructure, not a redesign — the existing visual system can support a new narrative order.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+    </section>
+
+    <footer class="report-footer">
+      <div class="footer-cta">
+        <h3>Want the complete picture?</h3>
+        <p>This report covers the top 5 findings from an 18-finding evaluation across 8 UX dimensions. The full audit includes detailed recommendations for accessibility, information architecture, performance, and more — with specific criterion IDs and implementation guidance.</p>
+      </div>
+
+      <div class="disclaimer">
+        This audit is based solely on publicly available information from Equal Parts' marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.
+      </div>
+
+      <div class="brand-footer">
+        <span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; April 2026
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

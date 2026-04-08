@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Audit Report — Profound</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #0d0d14;
+      --bg-card: #16161f;
+      --bg-card-alt: #1c1c28;
+      --accent-pink: #e01ee6;
+      --accent-purple: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #e01ee6 0%, #8b5cf6 100%);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6b6b80;
+      --border-subtle: rgba(255,255,255,0.06);
+      --severity-critical: #ef4444;
+      --severity-major: #f59e0b;
+      --severity-minor: #3b82f6;
+      --effort-low: #10b981;
+      --effort-med: #f59e0b;
+      --effort-high: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── Header ── */
+    .report-header { padding: 80px 0 60px; border-bottom: 1px solid var(--border-subtle); }
+
+    .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 16px;
+    }
+
+    .report-title {
+      font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 12px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .report-caption { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; }
+    .report-caption a { color: var(--text-secondary); text-decoration: none; }
+
+    /* ── Profile Grid ── */
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 32px; }
+    .profile-item { display: flex; gap: 8px; font-size: 13px; }
+    .profile-label { color: var(--text-muted); min-width: 100px; flex-shrink: 0; }
+    .profile-value { color: var(--text-secondary); font-weight: 500; }
+
+    /* ── Methodology Block ── */
+    .methodology-block {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 28px 32px; margin: 40px 0;
+    }
+    .methodology-block h3 {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 12px;
+    }
+    .methodology-block p {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px;
+    }
+    .methodology-block p:last-child { margin-bottom: 0; }
+
+    /* ── Findings Section ── */
+    .findings-section { padding: 60px 0; }
+    .findings-header { margin-bottom: 48px; }
+    .findings-header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .findings-header p { font-size: 14px; color: var(--text-secondary); }
+
+    /* ── Finding Card ── */
+    .finding-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; margin-bottom: 24px; transition: border-color 0.2s;
+    }
+    .finding-card:hover { border-color: rgba(224, 30, 230, 0.2); }
+
+    .finding-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .finding-number {
+      font-size: 12px; font-weight: 700; color: var(--bg-dark);
+      background: var(--accent-gradient); width: 28px; height: 28px;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .finding-dimension {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    .badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
+    }
+    .badge-critical { background: rgba(239,68,68,0.15); color: var(--severity-critical); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-major { background: rgba(245,158,11,0.15); color: var(--severity-major); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-minor { background: rgba(59,130,246,0.15); color: var(--severity-minor); border: 1px solid rgba(59,130,246,0.3); }
+
+    .finding-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; line-height: 1.3; }
+
+    .finding-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+    .finding-body strong { color: var(--text-primary); font-weight: 600; }
+
+    .finding-subsection { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle); }
+    .finding-subsection h4 {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--accent-purple); margin-bottom: 8px;
+    }
+    .finding-subsection p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+    .criterion-id {
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px;
+      color: var(--accent-purple); background: rgba(139,92,246,0.1);
+      padding: 2px 8px; border-radius: 4px;
+    }
+
+    .tags-row { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+    .tag {
+      font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 100px;
+      background: var(--bg-card-alt); border: 1px solid var(--border-subtle); color: var(--text-muted);
+    }
+    .tag-effort-low { color: var(--effort-low); border-color: rgba(16,185,129,0.3); }
+    .tag-effort-med { color: var(--effort-med); border-color: rgba(245,158,11,0.3); }
+    .tag-effort-high { color: var(--effort-high); border-color: rgba(239,68,68,0.3); }
+    .tag-impact-high { color: var(--severity-critical); border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.05); }
+    .tag-impact-med { color: var(--effort-med); border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.05); }
+    .tag-impact-low { color: var(--text-muted); }
+
+    /* ── Footer ── */
+    .report-footer { border-top: 1px solid var(--border-subtle); padding: 48px 0 80px; }
+    .footer-cta {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; text-align: center; margin-bottom: 40px;
+    }
+    .footer-cta h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .footer-cta p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 600px; margin: 0 auto; }
+
+    .disclaimer {
+      font-size: 12px; color: var(--text-muted); line-height: 1.7;
+      text-align: center; padding-top: 24px; border-top: 1px solid var(--border-subtle);
+    }
+    .brand-footer { text-align: center; margin-top: 32px; font-size: 12px; color: var(--text-muted); }
+    .brand-footer span { color: var(--accent-pink); font-weight: 600; }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      .report-title { font-size: 32px; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .finding-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- ── HEADER ── -->
+    <header class="report-header">
+      <div class="eyebrow">UX Audit Report</div>
+      <h1 class="report-title">Profound</h1>
+      <p class="report-caption">
+        <a href="https://www.tryprofound.com">tryprofound.com</a> &nbsp;|&nbsp; April 7, 2026
+      </p>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span class="profile-label">Industry</span>
+          <span class="profile-value">AI Marketing Intelligence / AEO</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Stage</span>
+          <span class="profile-value">Series B ($155M raised, Sequoia-led)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">GTM Model</span>
+          <span class="profile-value">Sales-Led Growth + PLG elements</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Conversion Goal</span>
+          <span class="profile-value">Enterprise demo request</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Customer Type</span>
+          <span class="profile-value">B2B Enterprise</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Competitors</span>
+          <span class="profile-value">SEMrush, Ahrefs, Otterly.ai, Peec.ai</span>
+        </div>
+      </div>
+
+      <div class="methodology-block">
+        <h3>Methodology</h3>
+        <p>This evaluation assessed tryprofound.com across 9 UX dimensions using automated accessibility and SEO audits, DOM inspection, content analysis, and structured heuristic evaluation against enterprise SaaS best practices.</p>
+        <h3>Evaluation Lens</h3>
+        <p>This audit is framed through the lens of a Series B enterprise SaaS company defining a new category (Answer Engine Optimization). At this stage, the website must simultaneously educate the market about the problem, establish credibility against well-funded competitors, and efficiently convert high-intent enterprise buyers into demo requests.</p>
+        <h3>Why This Matters</h3>
+        <p>For a sales-led enterprise SaaS company, the website is the single highest-leverage asset in the pipeline. A VP of Marketing evaluating Profound alongside SEMrush or Ahrefs will make a snap judgment based on design quality, messaging clarity, and social proof within 10 seconds. The current homepage has structural issues that undermine all three.</p>
+      </div>
+    </header>
+
+    <!-- ── FINDINGS ── -->
+    <section class="findings-section">
+      <div class="findings-header">
+        <h2>Top 5 Findings</h2>
+        <p>Selected for business impact, evidence quality, and relevance to Profound's growth stage and GTM model.</p>
+      </div>
+
+      <!-- FINDING 1 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">1</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Scroll-Triggered Animations Hide ~80% of Homepage Content</h3>
+        <div class="finding-body">
+          <p>The homepage uses JavaScript-driven scroll animations to reveal content as users scroll. When these animations don't fire — which happens on slow connections, with script-blocking browser extensions, for screen readers, or for search engine crawlers — visitors see a massive black void between the hero section and footer. Out of a 9,281px page height, only the hero (~800px) renders without JavaScript animation triggers. DOM inspection confirmed 79 elements with <code>visibility:hidden</code> that depend entirely on scroll position to become visible.</p>
+          <p><strong>Why this matters for Profound:</strong> Enterprise buyers evaluating your platform won't scroll through empty black space — they'll bounce. Equally damaging, search engine and AI crawlers (the exact audience Profound helps brands reach) cannot index 80% of the homepage content. For a company defining the AEO category, this means the homepage can't rank for the educational terms that drive top-of-funnel awareness. The irony is significant: Profound helps brands be visible to AI, but its own website is largely invisible to crawlers.</p>
+          <p><span class="criterion-id">CRO-01</span> Above-the-Fold Clarity &nbsp;&nbsp; <span class="criterion-id">ACC-03</span> Meaningful Sequence &nbsp;&nbsp; <span class="criterion-id">SEO-12</span> Page Indexability</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Restructure the homepage so all content is visible by default. Use progressive enhancement: add scroll animations as a visual enhancement for capable browsers, but render content without JavaScript dependency. Replace <code>visibility:hidden</code> with CSS-only transitions (e.g., opacity via Intersection Observer with a no-JS fallback) that degrade gracefully. Validate by disabling JavaScript and confirming all sections are readable.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: Critical</span>
+        </div>
+      </div>
+
+      <!-- FINDING 2 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">2</div>
+          <span class="finding-dimension">Content Hierarchy & Copywriting</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Homepage Messaging Assumes Market Already Understands AEO</h3>
+        <div class="finding-body">
+          <p>The homepage never defines what Answer Engine Optimization is or why it matters. The hero reads "Marketing agents to win in [rotating AI platform names]" with a subheadline about reaching consumers using AI — but there's no explanation of the problem Profound solves, how AEO differs from traditional SEO, or why a VP of Marketing should care about this shift now. The term "Answer Engine Optimization" appears only once across the entire homepage, with no definition.</p>
+          <p><strong>Why this matters for Profound:</strong> Profound is a category-defining company. That means the website's first job isn't selling the product — it's selling the problem. A VP of Marketing currently spending $200K/year on SEMrush needs to understand why AEO is a separate, urgent problem before they'll evaluate any solution. Without that education moment on the homepage, the sales team carries the full burden of market education in every discovery call, which extends the sales cycle and limits pipeline velocity.</p>
+          <p><span class="criterion-id">COPY-01</span> 5-Second Test &nbsp;&nbsp; <span class="criterion-id">COPY-02</span> Benefit-Led vs. Feature-Led Framing &nbsp;&nbsp; <span class="criterion-id">COPY-04</span> Audience Clarity</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Add a "The Problem" section immediately below the hero that contrasts traditional search with AI-generated answers. Define AEO in plain language: what it is, why it's different from SEO, and what's at stake for brands that ignore it. Lead with a market statistic (e.g., the "100M+ daily AI searchers" already on the page) and connect it to a pain point the target persona already feels. This section should be the bridge between "I'm curious" and "I need this."</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 3 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">3</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Social Proof Section Relies on a Single Testimonial</h3>
+        <div class="finding-body">
+          <p>The homepage social proof section contains one testimonial from Ramp's VP of Growth and a link to a case study. The enterprise page references Ramp (7x visibility increase), Airbyte (tripled in one week), and press mentions from Fortune, WSJ, TechCrunch, and others — but none of this appears on the homepage where conversion decisions are made. Enterprise metrics (1B+ citations, 30B+ crawler visits) are presented without context, making them meaningless to a first-time visitor.</p>
+          <p><strong>Why this matters for Profound:</strong> Enterprise buyers evaluate vendors in comparison. SEMrush displays hundreds of customer logos and detailed case studies with ROI metrics on their homepage. Profound showing a single quote from one customer creates a trust gap that's especially damaging for a younger company asking enterprises to adopt a new category. The Ramp and Airbyte results are compelling — they just aren't where prospects can see them during their evaluation.</p>
+          <p><span class="criterion-id">CRO-06</span> Trust Signal Placement &nbsp;&nbsp; <span class="criterion-id">CRO-07</span> Social Proof Depth &nbsp;&nbsp; <span class="criterion-id">COPY-11</span> Social Proof Copy</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Surface the strongest proof points onto the homepage: add a customer logo bar (Ramp, Airbyte, and others), inline 2-3 case study cards with quantified results (e.g., "Ramp: 7x AI visibility increase in 90 days"), and add the media logo bar (Fortune, WSJ, TechCrunch) near the primary CTA. Position social proof at decision points — after bold claims and directly before the demo request CTA — not in a separate section that users may never reach.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 4 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">4</div>
+          <span class="finding-dimension">Content Hierarchy & Copywriting</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Rotating Hero Headline Slows Comprehension of Core Value Proposition</h3>
+        <div class="finding-body">
+          <p>The H1 reads "Marketing agents to win in" followed by rotating AI platform names (Perplexity, ChatGPT, Claude, Gemini, Grok, etc.). The text changes automatically while the user is reading, creating visual movement that competes with message comprehension. The rotating element also implies that Profound's value differs by platform, when the core value is platform-agnostic. On each visit, the user sees a different completion to the headline, reducing memorability and making it harder to articulate what Profound does.</p>
+          <p><strong>Why this matters for Profound:</strong> For a company asking enterprises to adopt a new category, the headline has roughly 3 seconds to communicate a clear value proposition. Animation in the H1 trades clarity for visual novelty. When a VP of Marketing shares the site with their team in Slack, the preview will show an incomplete headline. When they try to recall what Profound does from memory, the rotating text means they have no single phrase to anchor to.</p>
+          <p><span class="criterion-id">COPY-01</span> 5-Second Test &nbsp;&nbsp; <span class="criterion-id">COPY-03</span> Headline Specificity &nbsp;&nbsp; <span class="criterion-id">N-01</span> Visibility of System Status</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Replace the rotating headline with a single, static value proposition that can stand on its own. Use the platform logos as a supporting visual element below the headline (a logo bar or carousel) to demonstrate breadth without sacrificing clarity. Test options like: "Own your brand's visibility in every AI answer" or "The platform for Answer Engine Optimization." A strong H1 should be quotable, scannable, and complete in a single read.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 5 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">5</div>
+          <span class="finding-dimension">Accessibility</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Multiple Accessibility Gaps: No Skip Nav, No Form Labels, Broken Heading Hierarchy</h3>
+        <div class="finding-body">
+          <p>The homepage has three compounding accessibility issues. First, there is no skip-navigation link, forcing keyboard and screen reader users to tab through 100+ navigation links before reaching content. Second, both form fields on the page use placeholder-only labels with no associated <code>&lt;label&gt;</code> elements — screen readers cannot announce the field purpose. Third, the heading hierarchy is broken: the page has two H1 tags (hero and conference promo) and skips from H2 directly to H4 in the conference section, bypassing H3 entirely.</p>
+          <p><strong>Why this matters for Profound:</strong> Enterprise procurement increasingly includes accessibility compliance as a vendor requirement. A prospect's accessibility team running a quick audit would flag these issues immediately, potentially disqualifying Profound before the sales team even gets a call. Beyond compliance, these issues affect anyone using assistive technology, keyboard navigation, or even just tabbing through a form on mobile — which includes a meaningful share of the enterprise buyer population.</p>
+          <p><span class="criterion-id">ACC-16</span> Bypass Blocks &nbsp;&nbsp; <span class="criterion-id">ACC-26</span> Labels or Instructions &nbsp;&nbsp; <span class="criterion-id">SEO-04</span> Heading Hierarchy &nbsp;&nbsp; <span class="criterion-id">ACC-02</span> Info and Relationships</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Three targeted fixes: (1) Add a skip-navigation link as the first focusable element on the page, visually hidden until focused. (2) Add explicit <code>&lt;label&gt;</code> elements to all form fields, programmatically associated via the <code>for</code> attribute. (3) Demote the "Zero Click" conference section from H1 to H2, and restructure the conference sub-headings (San Francisco, New York City) from H4 to H3. These are low-effort changes that immediately improve compliance posture.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-med">Impact: Medium</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer class="report-footer">
+      <div class="footer-cta">
+        <h3>Want the complete picture?</h3>
+        <p>This report covers the top 5 findings from a 20-finding evaluation across 9 UX dimensions. The full audit includes detailed recommendations for SEO, information architecture, visual design, performance, and more — with specific implementation guidance and prioritized roadmap.</p>
+      </div>
+
+      <div class="disclaimer">
+        This audit is based solely on publicly available information from Profound's marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.
+      </div>
+
+      <div class="brand-footer">
+        <span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; April 2026
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

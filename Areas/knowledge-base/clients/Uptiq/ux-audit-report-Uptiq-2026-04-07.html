@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Audit Report — Uptiq</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #0d0d14;
+      --bg-card: #16161f;
+      --bg-card-alt: #1c1c28;
+      --accent-pink: #e01ee6;
+      --accent-purple: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #e01ee6 0%, #8b5cf6 100%);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6b6b80;
+      --border-subtle: rgba(255,255,255,0.06);
+      --severity-critical: #ef4444;
+      --severity-major: #f59e0b;
+      --severity-minor: #3b82f6;
+      --effort-low: #10b981;
+      --effort-med: #f59e0b;
+      --effort-high: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-dark); color: var(--text-primary); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+    .report-header { padding: 80px 0 60px; border-bottom: 1px solid var(--border-subtle); }
+    .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent-pink); margin-bottom: 16px; }
+    .report-title { font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .report-caption { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; }
+    .report-caption a { color: var(--text-secondary); text-decoration: none; }
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 32px; }
+    .profile-item { display: flex; gap: 8px; font-size: 13px; }
+    .profile-label { color: var(--text-muted); min-width: 100px; flex-shrink: 0; }
+    .profile-value { color: var(--text-secondary); font-weight: 500; }
+    .methodology-block { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 28px 32px; margin: 40px 0; }
+    .methodology-block h3 { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-pink); margin-bottom: 12px; }
+    .methodology-block p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
+    .methodology-block p:last-child { margin-bottom: 0; }
+    .findings-section { padding: 60px 0; }
+    .findings-header { margin-bottom: 48px; }
+    .findings-header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .findings-header p { font-size: 14px; color: var(--text-secondary); }
+    .finding-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 36px; margin-bottom: 24px; transition: border-color 0.2s; }
+    .finding-card:hover { border-color: rgba(224, 30, 230, 0.2); }
+    .finding-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .finding-number { font-size: 12px; font-weight: 700; color: var(--bg-dark); background: var(--accent-gradient); width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .finding-dimension { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
+    .badge { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; }
+    .badge-critical { background: rgba(239,68,68,0.15); color: var(--severity-critical); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-major { background: rgba(245,158,11,0.15); color: var(--severity-major); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-minor { background: rgba(59,130,246,0.15); color: var(--severity-minor); border: 1px solid rgba(59,130,246,0.3); }
+    .finding-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; line-height: 1.3; }
+    .finding-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+    .finding-body strong { color: var(--text-primary); font-weight: 600; }
+    .finding-subsection { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle); }
+    .finding-subsection h4 { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent-purple); margin-bottom: 8px; }
+    .finding-subsection p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+    .criterion-id { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; color: var(--accent-purple); background: rgba(139,92,246,0.1); padding: 2px 8px; border-radius: 4px; }
+    .tags-row { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+    .tag { font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 100px; background: var(--bg-card-alt); border: 1px solid var(--border-subtle); color: var(--text-muted); }
+    .tag-effort-low { color: var(--effort-low); border-color: rgba(16,185,129,0.3); }
+    .tag-effort-med { color: var(--effort-med); border-color: rgba(245,158,11,0.3); }
+    .tag-effort-high { color: var(--effort-high); border-color: rgba(239,68,68,0.3); }
+    .tag-impact-high { color: var(--severity-critical); border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.05); }
+    .tag-impact-med { color: var(--effort-med); border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.05); }
+    .tag-impact-low { color: var(--text-muted); }
+    .report-footer { border-top: 1px solid var(--border-subtle); padding: 48px 0 80px; }
+    .footer-cta { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 36px; text-align: center; margin-bottom: 40px; }
+    .footer-cta h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .footer-cta p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 600px; margin: 0 auto; }
+    .disclaimer { font-size: 12px; color: var(--text-muted); line-height: 1.7; text-align: center; padding-top: 24px; border-top: 1px solid var(--border-subtle); }
+    .brand-footer { text-align: center; margin-top: 32px; font-size: 12px; color: var(--text-muted); }
+    .brand-footer span { color: var(--accent-pink); font-weight: 600; }
+    @media (max-width: 640px) { .container { padding: 0 20px; } .report-title { font-size: 32px; } .profile-grid { grid-template-columns: 1fr; } .finding-card { padding: 24px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="report-header">
+      <div class="eyebrow">UX Audit Report</div>
+      <h1 class="report-title">Uptiq Top 5 Findings</h1>
+      <p class="report-caption">Enterprise AI platform for financial services. Audit date: <strong>April 7, 2026</strong> | <a href="https://uptiq.ai/">uptiq.ai</a></p>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span class="profile-label">Industry</span>
+          <span class="profile-value">Financial Services AI / Enterprise Fintech</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Stage</span>
+          <span class="profile-value">Series B (~$37M raised)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">GTM Model</span>
+          <span class="profile-value">Sales-Led Growth</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Primary Goal</span>
+          <span class="profile-value">Book Discovery Call</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Customer Type</span>
+          <span class="profile-value">B2B Enterprise (Banks, Credit Unions, Lenders)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Key Competitors</span>
+          <span class="profile-value">nCino, Blend, Temenos, Salesforce FSC</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- METHODOLOGY -->
+    <div class="methodology-block">
+      <h3>Evaluation Methodology</h3>
+      <p><strong>Scope:</strong> This audit evaluated uptiq.ai across 11 UX dimensions using 90+ criteria from the Sari Sari Design reference checklist, supplemented by automated accessibility scanning, SEO metadata extraction, and browser-based rendering analysis.</p>
+      <p><strong>Lens:</strong> Evaluated through the perspective of a Series B enterprise AI platform selling to conservative financial institutions, where the website must communicate both technical sophistication and institutional trustworthiness. Every finding is weighted by its impact on whether a VP of Lending or CIO at a bank would trust Uptiq enough to book a discovery call.</p>
+      <p><strong>Why This Matters:</strong> Financial institutions are among the most risk-averse buyers in enterprise software. They need to see compliance readiness, institutional credibility, and proof that the vendor understands their specific workflows before engaging. A website that feels too startup-y, too generic, or too jargon-heavy will lose these buyers to incumbents projecting stability.</p>
+    </div>
+
+    <!-- FINDINGS -->
+    <div class="findings-section">
+      <div class="findings-header">
+        <h2>Top 5 Findings</h2>
+        <p>All findings ranked by business impact and relevance to enterprise buyer decision-making.</p>
+      </div>
+
+      <!-- FINDING 1 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">1</div>
+          <div class="finding-dimension">Content & Copywriting</div>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Hero Headline Is Generic and Subheading Is Impenetrable Jargon</h3>
+        <div class="finding-body">
+          <p>The homepage headline <strong>"Financial Services, Reimagined"</strong> could apply to any of the 10,000+ fintech companies in the market. It communicates nothing specific about what Uptiq does or why it is different. The subheading compounds this: <strong>"The Intelligent Operating Layer that unifies growth, origination, and continuous service suites — orchestrating your systems, processes, and teams without replacing what already works"</strong> is 25 words of product architecture language that a bank VP would need to read twice to parse. The <strong>"AI Digital Workers"</strong> framing that appears lower on the page is far stronger and more immediately understood.</p>
+
+          <div class="finding-subsection">
+            <h4>Why This Matters for Uptiq</h4>
+            <p>A VP of Lending at a community bank lands on this page and reads "Financial Services, Reimagined" — they have no idea what Uptiq does. They will bounce. The strongest messaging on the site ("AI Digital Workers for Banks, Credit Unions, Wealth Firms") appears below the hero but should BE the hero. In a sales-led model where every qualified visitor matters, losing them at the headline means losing the demo.</p>
+          </div>
+
+          <div class="finding-subsection">
+            <h4>Criteria Referenced</h4>
+            <p><span class="criterion-id">COPY-01</span> <span class="criterion-id">COPY-02</span> <span class="criterion-id">COPY-03</span> <span class="criterion-id">COPY-04</span> <span class="criterion-id">N-02</span></p>
+          </div>
+
+          <div class="finding-subsection">
+            <h4>Recommendation</h4>
+            <p>Lead with what makes Uptiq specific. Change the headline to <strong>"AI Digital Workers for Financial Institutions"</strong> with the subheading <strong>"Automate lending, servicing, and growth workflows without replacing your core systems."</strong> This passes the 5-second test and immediately communicates the what, who, and how.</p>
+          </div>
+
+          <div class="tags-row">
+            <span class="tag tag-effort-low">Effort: Low</span>
+            <span class="tag tag-impact-high">Impact: High</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINDING 2 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">2</div>
+          <div class="finding-dimension">Accessibility</div>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">138 of 151 Images Marked as Decorative, Zero Form Fields Labeled</h3>
+        <div class="finding-body">
+          <p>The automated accessibility scan found that <strong>138 of 151 images</strong> on the homepage have empty alt attributes (alt=""), meaning they are all marked as decorative. While some may genuinely be decorative, client logos, product illustrations, and industry icons almost certainly convey meaning and need descriptive alt text. Additionally, <strong>none of the 2 form fields on the page have programmatic labels</strong> — the newsletter email input relies on placeholder text only, which disappears when a user starts typing and is invisible to screen readers.</p>
+
+          <div class="finding-subsection">
+            <h4>Why This Matters for Uptiq</h4>
+            <p>Enterprise financial institutions increasingly require WCAG 2.1 AA compliance from their vendors as part of procurement. Banks and credit unions are subject to ADA requirements and evaluate vendor accessibility as part of due diligence. Mass-marking images as decorative and having unlabeled form fields are WCAG violations <span class="criterion-id">1.1.1</span> <span class="criterion-id">3.3.2</span> that could surface during an enterprise security/compliance review and create friction in the sales process.</p>
+          </div>
+
+          <div class="finding-subsection">
+            <h4>Recommendation</h4>
+            <p>Audit all 151 images and add descriptive alt text to any that convey information (logos, product diagrams, icons). Add proper <strong>label</strong> elements to all form fields — the newsletter email input needs a visible or aria-label. Also add a skip navigation link (missing per accessibility standard ACC-16).</p>
+          </div>
+
+          <div class="finding-subsection">
+            <h4>Criteria Referenced</h4>
+            <p><span class="criterion-id">ACC-01</span> <span class="criterion-id">ACC-02</span> <span class="criterion-id">ACC-26</span> <span class="criterion-id">SEO-05</span></p>
+          </div>
+
+          <div class="tags-row">
+            <span class="tag tag-effort-med">Effort: Medium</span>
+            <span class="tag tag-impact-high">Impact: High</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINDING 3 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">3</div>
+          <div class="finding-dimension">Conversion & CRO</div>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">No Mid-Funnel Engagement for Risk-Averse Enterprise Buyers</h3>
+        <div class="finding-body">
+          <p>The entire site funnels to a single CTA: <strong>"Book a Discovery Call."</strong> There are no mid-intent engagement paths — no product demo video, no downloadable guides (the "Guides & Playbooks" nav link exists but is behind a menu), no ROI calculator, no interactive product tour. The newsletter signup exists but is buried at the very bottom. For a company selling to conservative financial institutions with 6-12 month buying cycles, the absence of low-commitment engagement options means every visitor who isn't ready for a sales call today is lost.</p>
+
+          <div class="finding-subsection">
+            <h4>Why This Matters for Uptiq</h4>
+            <p>Bank and credit union buyers do extensive internal evaluation before engaging a vendor. A CIO evaluating Uptiq against nCino or Temenos wants to read a methodology white paper, watch a product walkthrough, or see a detailed case study before booking time with a salesperson. Without these mid-funnel assets prominently placed, Uptiq leaks qualified pipeline from visitors who are researching but not yet ready to talk.</p>
+          </div>
+
+          <div class="finding-subsection">
+            <h4>Recommendation</h4>
+            <p>Surface mid-funnel content prominently: add a product overview video in the hero area, make downloadable guides more accessible (linked from main content sections, not just the nav), and promote case studies on the homepage. Add a secondary CTA like <strong>"Watch the Platform in Action"</strong> alongside the primary <strong>"Book a Discovery Call."</strong></p>
+          </div>
+
+          <div class="finding-subsection">
+            <h4>Criteria Referenced</h4>
+            <p><span class="criterion-id">CRO-04</span> <span class="criterion-id">N-07</span> <span class="criterion-id">CRO-06</span></p>
+          </div>
+
+          <div class="tags-row">
+            <span class="tag tag-effort-med">Effort: Medium</span>
+            <span class="tag tag-impact-high">Impact: High</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINDING 4 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">4</div>
+          <div class="finding-dimension">SEO & Technical</div>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Four H1 Tags, Missing Canonical, and Overly Long Title Undermine Discoverability</h3>
+        <div class="finding-body">
+          <p>The homepage has <strong>four H1 tags</strong>: "Financial Services, Reimagined" plus three stats ("150+", "$15B+", "320+") incorrectly wrapped in H1 elements. There should be exactly one H1 per page. The page title is <strong>77 characters</strong> (recommended: 50-60). The meta description uses "revolutionizes" (a banned cliché) and is generic. <strong>No canonical tag is present</strong>, which can cause duplicate content issues. Heading hierarchy also skips from H3 to H5 in the platform section.</p>
+
+          <div class="finding-subsection">
+            <h4>Why This Matters for Uptiq</h4>
+            <p>Post-Series B, organic search becomes critical for pipeline. These are foundational SEO hygiene issues that signal to Google that the page structure is poorly organized. The missing canonical tag means any www vs. non-www or trailing-slash variations could split page authority. The multiple H1s dilute the page's keyword focus. For searches like "AI for banking" or "AI lending automation," these technical issues put Uptiq at a disadvantage against competitors with cleaner technical SEO.</p>
+          </div>
+
+          <div class="finding-subsection">
+            <h4>Recommendation</h4>
+            <p>Change the stat numbers from H1 to span or p elements with a visual class. Keep only "Financial Services, Reimagined" (or the improved headline from Finding 1) as the single H1. Add a self-referencing canonical tag. Shorten the page title to under 60 characters: <strong>"Uptiq — AI Digital Workers for Financial Services."</strong> Rewrite the meta description to be specific and benefit-led, removing marketing clichés.</p>
+          </div>
+
+          <div class="finding-subsection">
+            <h4>Criteria Referenced</h4>
+            <p><span class="criterion-id">SEO-01</span> <span class="criterion-id">SEO-03</span> <span class="criterion-id">SEO-04</span> <span class="criterion-id">SEO-06</span> <span class="criterion-id">SEO-02</span> <span class="criterion-id">ACC-02</span></p>
+          </div>
+
+          <div class="tags-row">
+            <span class="tag tag-effort-low">Effort: Low</span>
+            <span class="tag tag-impact-high">Impact: High</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINDING 5 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">5</div>
+          <div class="finding-dimension">Social Proof & CRO</div>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Social Proof Is Thin — One Testimonial for 150+ Claimed Clients</h3>
+        <div class="finding-body">
+          <p>The homepage claims <strong>"150+ Institutions Trust Uptiq"</strong> and <strong>"$15B+ Financial Transactions Processed"</strong> — impressive numbers. But the actual proof backing these claims is a <strong>single testimonial</strong> from one person (Doug Hogan, TransPecos Banks). There are no other named testimonials, no case study snippets with quantified outcomes, and no explanation of what the 150+ institutions are actually using Uptiq for. The client logo carousel exists but the logos are not identified. Additionally, the About page shows <strong>"140+ institutions"</strong> while the homepage shows <strong>"150+"</strong> — a credibility-damaging inconsistency.</p>
+
+          <div class="finding-subsection">
+            <h4>Why This Matters for Uptiq</h4>
+            <p>Enterprise financial buyers are deeply skeptical. Claiming 150+ clients but showing only one testimonial creates a "prove it" reaction. Competitors like nCino have extensive case study libraries with named banks, quantified results, and video testimonials. The stats inconsistency (140 vs. 150) is the kind of detail a thorough procurement team will catch, and it undermines trust in all other claims.</p>
+          </div>
+
+          <div class="finding-subsection">
+            <h4>Recommendation</h4>
+            <p>Add 3-5 named testimonials from different verticals (banking, credit union, wealth, equipment finance) with quantified outcomes. Surface the before/after metrics (e.g., "36% reduction in lending turnaround time") with client attribution. Fix the stats inconsistency — use one number across the entire site. Make client logos identifiable with names on hover or with inline labels below the carousel.</p>
+          </div>
+
+          <div class="finding-subsection">
+            <h4>Criteria Referenced</h4>
+            <p><span class="criterion-id">CRO-06</span> <span class="criterion-id">CRO-07</span> <span class="criterion-id">COPY-08</span> <span class="criterion-id">VD-06</span></p>
+          </div>
+
+          <div class="tags-row">
+            <span class="tag tag-effort-med">Effort: Medium</span>
+            <span class="tag tag-impact-high">Impact: High</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="report-footer">
+      <div class="footer-cta">
+        <h3>Next Steps</h3>
+        <p>This audit covers the Top 5 highest-impact findings across Content, Accessibility, Conversion, SEO, and Social Proof. A comprehensive full-scope review identified 25 total findings across 11 UX dimensions. With direct access to the product, supporting flows, and performance data, we can conduct a more comprehensive, strategy-led review reflecting our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.</p>
+      </div>
+
+      <div class="disclaimer">
+        <p><strong>Scope & Limitations:</strong> This audit is based solely on publicly available information from Uptiq's marketing website. Testing was conducted on April 7, 2026, using automated accessibility scanning, SEO metadata analysis, and manual UI/UX evaluation. Findings reflect the desktop experience and are current as of the audit date.</p>
+      </div>
+
+      <div class="brand-footer">
+        <p>Prepared by <span>Sari Sari Design</span> — Operations hub for fintech UX strategy</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
