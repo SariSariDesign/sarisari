@@ -10,7 +10,7 @@ For client-facing or brand communications, use `brand-voice.md` as the primary r
 
 Never use these in any personal message drafted for Zach. No exceptions.
 
-**Specific banned words:** bro, hey there, just wondering, sup, guys, stuff, things, interesting, amazing. 
+**Specific banned words:** bro, hey there, just wondering, sup, guys, stuff, things, interesting, amazing. perchance 
 
 **Corporate buzzwords:** synergy, circle back, leverage, touch base, deep dive, align, bandwidth, move the needle, low-hanging fruit, value-add, ecosystem, holistic, robust, streamline
 
