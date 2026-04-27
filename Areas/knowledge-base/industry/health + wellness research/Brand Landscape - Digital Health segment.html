@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Health Brand Landscape — SSD</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    --ink: #0d0d0b;
+    --paper: #f7f4ef;
+    --cream: #ede8df;
+    --warm-white: #faf8f4;
+    --rust: #b84a2a;
+    --rust-light: #f5e0d8;
+    --sage: #5c7a5e;
+    --sage-light: #dce8dc;
+    --gold: #b8922a;
+    --gold-light: #f5ead8;
+    --slate: #495568;
+    --muted: #8a8680;
+    --rule: #ddd8cf;
+    --high: #2e6e3a;
+    --high-bg: #dff0e2;
+    --med: #8a6a10;
+    --med-bg: #f7edcc;
+    --low: #8a3a20;
+    --low-bg: #f7ddd5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* ========= MASTHEAD ========= */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 64px 56px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .masthead-decoration {
+    position: absolute;
+    right: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px;
+    height: 300px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .masthead-decoration::after {
+    content: '';
+    position: absolute;
+    inset: 24px;
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+  .studio-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .masthead h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(38px, 6vw, 62px);
+    font-weight: 400;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    max-width: 720px;
+  }
+  .masthead h1 em { color: rgba(255,255,255,0.4); font-style: italic; }
+  .masthead-sub {
+    font-size: 14px;
+    color: rgba(247,244,239,0.5);
+    font-family: 'DM Mono', monospace;
+    margin-top: 28px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .masthead-sub span::before { content: '·'; margin-right: 8px; color: var(--rust); }
+  .masthead-sub span:first-child::before { content: ''; margin-right: 0; }
+
+  /* ========= TLDR ========= */
+  .tldr-bar {
+    background: var(--rust);
+    color: white;
+    padding: 40px 56px;
+  }
+  .tldr-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 20px;
+  }
+  .tldr-bullets {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+  .tldr-bullet {
+    font-size: 13.5px;
+    line-height: 1.55;
+    padding-left: 16px;
+    position: relative;
+    color: rgba(255,255,255,0.9);
+  }
+  .tldr-bullet::before { content: '→'; position: absolute; left: 0; opacity: 0.6; }
+  .tldr-bullet strong { color: white; font-weight: 700; }
+
+  /* ========= LAYOUT ========= */
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 48px; }
+  
+  section { padding: 72px 0; border-bottom: 1px solid var(--rule); }
+  section:last-of-type { border-bottom: none; }
+
+  .section-eye {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .section-eye::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+  h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(26px, 3.5vw, 38px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .section-lead {
+    font-size: 15px;
+    color: var(--slate);
+    margin-bottom: 40px;
+    max-width: 620px;
+    font-weight: 400;
+    line-height: 1.65;
+  }
+
+  /* ========= BRAND CARDS ========= */
+  .brand-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 720px) { .brand-grid { grid-template-columns: 1fr; } }
+
+  .brand-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    transition: box-shadow 0.25s;
+  }
+  .brand-card:hover { box-shadow: 0 12px 48px rgba(0,0,0,0.1); }
+
+  .card-header {
+    padding: 24px 28px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--cream);
+  }
+  .brand-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .brand-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .conf-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .conf-high { background: var(--high-bg); color: var(--high); }
+  .conf-med { background: var(--med-bg); color: var(--med); }
+  .conf-low { background: var(--low-bg); color: var(--low); }
+
+  .card-body { padding: 20px 28px 24px; }
+
+  .prop-block {
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--cream);
+  }
+  .prop-block:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .prop-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .prop-label .c { font-size: 8px; padding: 2px 6px; border-radius: 2px; }
+  .prop-val {
+    font-size: 13.5px;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+  .prop-val strong { color: var(--ink); font-weight: 600; }
+
+  .gap-tag {
+    display: inline-block;
+    background: var(--rust-light);
+    color: var(--rust);
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    padding: 3px 9px;
+    border-radius: 3px;
+    margin: 2px 3px 2px 0;
+  }
+
+  /* ========= QUICK TABLE ========= */
+  .quick-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .quick-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--cream);
+    border-bottom: 2px solid var(--ink);
+  }
+  .quick-table td {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.5;
+    color: var(--slate);
+  }
+  .quick-table tr:hover td { background: var(--warm-white); }
+  .quick-table .brand-col { font-weight: 600; color: var(--ink); font-size: 13.5px; }
+
+  /* ========= MAP ========= */
+  .axes-rationale {
+    background: var(--cream);
+    padding: 20px 24px;
+    border-radius: 6px;
+    margin-bottom: 28px;
+    font-size: 13.5px;
+    color: var(--slate);
+    line-height: 1.65;
+    border-left: 3px solid var(--gold);
+  }
+  .axes-rationale strong { color: var(--ink); }
+  .chart-wrap {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 32px;
+  }
+
+  /* ========= PATTERNS ========= */
+  .pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .pattern-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px;
+  }
+  .pattern-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pattern-name .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-rust { background: var(--rust); }
+  .dot-gold { background: var(--gold); }
+  .dot-sage { background: var(--sage); }
+  .dot-slate { background: var(--slate); }
+  .dot-ink { background: var(--ink); }
+
+  .pattern-meaning {
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.65;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--cream);
+  }
+  .pattern-brands {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .pattern-brands strong { color: var(--ink); font-weight: 600; }
+
+  /* ========= GAPS ========= */
+  .gap-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .gap-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 90px;
+    gap: 24px;
+    align-items: start;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .gap-row:first-child { border-top: 1px solid var(--rule); }
+  .gap-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 17px;
+    color: var(--rust);
+    line-height: 1.3;
+  }
+  .gap-desc { font-size: 13.5px; color: var(--slate); line-height: 1.65; }
+  .gap-desc strong { color: var(--ink); font-weight: 600; }
+  .gap-prev {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--ink);
+    text-align: right;
+    line-height: 1;
+  }
+  .gap-prev span { display: block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+  /* ========= OPPORTUNITY ========= */
+  .opp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 680px) { .opp-grid { grid-template-columns: 1fr; } }
+  .opp-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px;
+  }
+  .opp-card.featured { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .opp-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .opp-card.featured .opp-label { color: var(--gold); }
+  .opp-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 19px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  .opp-body {
+    font-size: 13.5px;
+    color: var(--slate);
+    line-height: 1.65;
+  }
+  .opp-card.featured .opp-body { color: rgba(247,244,239,0.8); }
+  .opp-versus {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--cream);
+    border-radius: 4px;
+    font-size: 12.5px;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+  .opp-versus em { font-style: italic; color: var(--muted); display: block; margin-bottom: 4px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .opp-card.featured .opp-versus { background: rgba(255,255,255,0.08); color: rgba(247,244,239,0.75); }
+
+  /* ========= STRATEGIC REC ========= */
+  .rec-wrap {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .rec-header {
+    padding: 32px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .rec-title-wrap h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.15;
+  }
+  .rec-title-wrap .sub {
+    font-size: 13px;
+    color: rgba(247,244,239,0.5);
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+  .rec-body-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  @media (max-width: 700px) { .rec-body-grid { grid-template-columns: 1fr; } }
+  .rec-cell {
+    padding: 28px 32px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+  .rec-cell:last-child { border-right: none; }
+  .rec-cell-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .rec-cell-val {
+    font-size: 13.5px;
+    color: rgba(247,244,239,0.8);
+    line-height: 1.65;
+  }
+  .rec-cell-val strong { color: var(--paper); font-weight: 600; }
+  .rec-rationale {
+    padding: 24px 32px;
+    background: rgba(255,255,255,0.04);
+    font-size: 13px;
+    color: rgba(247,244,239,0.6);
+    line-height: 1.7;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .rec-rationale strong { color: rgba(247,244,239,0.85); }
+
+  /* ========= FOOTER ========= */
+  .footer {
+    background: var(--cream);
+    padding: 28px 56px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-decoration"></div>
+  <div class="studio-tag">Sari Sari Design · Brand Landscape Analysis</div>
+  <h1>DTC Digital Health<br><em>Brand Landscape</em></h1>
+  <div class="masthead-sub">
+    <span>10 brands analyzed</span>
+    <span>April 2026</span>
+    <span>ICP Refinement — Phase 2</span>
+    <span>Early-stage SSD target segment</span>
+  </div>
+</div>
+
+<!-- TLDR -->
+<div class="tldr-bar">
+  <div class="tldr-label">TLDR — Strategic Summary</div>
+  <div class="tldr-bullets">
+    <div class="tldr-bullet"><strong>The visual language has converged.</strong> 8 of 10 brands share soft-minimalist aesthetics — muted palettes, sans serifs, nature-adjacent photography. Standing out visually is table stakes whitespace right now.</div>
+    <div class="tldr-bullet"><strong>Hims &amp; Hers set the DTC health playbook</strong> and everyone is following it: lifestyle branding over clinical, destigmatization messaging, warm color palettes. The category is eating itself.</div>
+    <div class="tldr-bullet"><strong>AI is claimed everywhere, felt nowhere.</strong> Every brand announces AI personalization but the UX rarely delivers on the promise. Data-rich interfaces that feel genuinely intelligent is the open design problem.</div>
+    <div class="tldr-bullet"><strong>Trust UX is the most underdeveloped surface.</strong> HIPAA badges and doctor photos are the industry's entire trust vocabulary. No one has solved for emotional trust — the feeling of safety, not just the proof of compliance.</div>
+    <div class="tldr-bullet"><strong>Positioning whitespace:</strong> Science-forward + warm + data-legible. The gap between "feels clinical" (Teladoc, K Health) and "feels lifestyle" (Hims, Noom) is wide open. No brand credibly occupies both.</div>
+    <div class="tldr-bullet"><strong>SSD entry point:</strong> Seed–Series A founders who've raised on an AI story but whose product UI doesn't reflect it. The design brief writes itself: translate the VC pitch into a product experience users trust and understand.</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- PART 1: BRAND PROFILES -->
+<section>
+  <div class="section-eye">01 &nbsp; Brand Profiles</div>
+  <h2>Ten brands, individually mapped</h2>
+  <p class="section-lead">Profiles organized by brand identity, differentiation, expression, experience, revenue model, and design gaps. Confidence badges reflect source quality — High (verified/sourced), Medium (partial signals), Low (training knowledge + inference).</p>
+
+  <div class="brand-grid">
+
+    <!-- HIMS & HERS -->
+    <div class="brand-card">
+      <div class="card-header">
+        <div>
+          <div class="brand-name">Hims &amp; Hers</div>
+          <div class="brand-type">DTC Telehealth · Public (NYSE: HIMS)</div>
+        </div>
+        <span class="conf-badge conf-high">● High</span>
+      </div>
+      <div class="card-body">
+        <div class="prop-block">
+          <div class="prop-label">Brand Identity <span class="c conf-high">● High</span></div>
+          <div class="prop-val">Positioned at the intersection of <strong>healthcare and lifestyle</strong>. Visual identity: soft minimalism with earthy terracotta, muted pastels, desert tones. Deliberately avoids "pharmaceutical blue." Mascot energy: approachable, modern, stigma-free. Two sub-brands (Hims = modern masculinity; Hers = empowerment + self-love) under one platform master brand.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Differentiation <span class="c conf-high">● High</span></div>
+          <div class="prop-val"><strong>Pivotal reframe:</strong> "What if your medicine cabinet looked as good as your coffee table?" Convenience-first. Radically normalizes stigmatized conditions (ED, hair loss, mental health) through lifestyle framing. Tagline: "The future of healthcare is personal."</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Expression <span class="c conf-high">● High</span></div>
+          <div class="prop-val">Pioneered by Gin Lane (Harry's, Sweetgreen lineage). Dan Bowman joined as Chief Design Officer in 2020. Content-first, system-driven design. Social presence: heavy TikTok/YouTube use, influencer-led destigmatization campaigns, Super Bowl ad "Sick of the System" (2024).</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Monetization <span class="c conf-high">● High</span></div>
+          <div class="prop-val">Subscription model. 2.4M subscribers as of mid-2025. $2.35B annual revenue (28.4% YoY). GLP-1 weight loss drove recent growth surge.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-tag">lifestyle drift</span><span class="gap-tag">regulatory friction</span><span class="gap-tag">clinical credibility</span>
+            <div style="margin-top:8px; font-size:13px; color: var(--slate);">Growing so fast across categories (GLP-1, mental health, sexual health) that the brand is losing specialization. Regulatory scrutiny increasing. "Sick of the System" Super Bowl ad drew backlash. Clinical credibility is thin when scale is the message.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RO -->
+    <div class="brand-card">
+      <div class="card-header">
+        <div>
+          <div class="brand-name">Ro (Roman)</div>
+          <div class="brand-type">DTC Telehealth · Private ($1B raised)</div>
+        </div>
+        <span class="conf-badge conf-high">● High</span>
+      </div>
+      <div class="card-body">
+        <div class="prop-block">
+          <div class="prop-label">Brand Identity <span class="c conf-high">● High</span></div>
+          <div class="prop-val">Sleek, modern, clinically credible — slightly more serious than Hims. Started as <strong>Roman</strong> (men's health focus), evolved to Ro as a full-stack DTC telehealth company. Brand personality: "medicine rebuilt for how you actually live." Less lifestyle, more "efficient modern healthcare."</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Differentiation <span class="c conf-high">● High</span></div>
+          <div class="prop-val">Vertical integration is the real differentiator — telehealth + labs + pharmacy in one loop (ro.OS). Marketed as personalized, affordable, insurance-optional. Serena Williams and Charles Barkley partnerships in 2025 for GLP-1 destigmatization.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Expression <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Heavy OOH investment in NYC subway advertising. Performance marketing + content as acquisition. Brand voice is warmer and more clinical-credible than Hims — less "cool DTC," more "trustworthy modern healthcare."</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Monetization <span class="c conf-high">● High</span></div>
+          <div class="prop-val">Subscription + cash-pay model. No insurance dependency. $7B valuation (Feb 2022). GLP-1 and weight management currently dominant revenue driver. $1B+ in funding total.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-tag">category dilution</span><span class="gap-tag">B2C → B2B tension</span>
+            <div style="margin-top:8px; font-size:13px; color: var(--slate);">As Ro expands into payer/employer channels, brand clarity suffers. Consumer brand strength vs. clinical rigor is an unresolved tension. GLP-1 market commoditization threatens premium positioning.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOOM -->
+    <div class="brand-card">
+      <div class="card-header">
+        <div>
+          <div class="brand-name">Noom</div>
+          <div class="brand-type">AI Health Coaching App · Private ($3.7B val.)</div>
+        </div>
+        <span class="conf-badge conf-high">● High</span>
+      </div>
+      <div class="card-body">
+        <div class="prop-block">
+          <div class="prop-label">Brand Identity <span class="c conf-high">● High</span></div>
+          <div class="prop-val"><strong>Psychology-first wellness.</strong> Rebrand by Gretel (2022) built around a compass metaphor — "navigating healthier choices." Color palette: rich fruit/vegetable hues (greens, reds, yellows), lush landscapes. The brand signals science and nature simultaneously, avoiding both sterile clinical and fluffy wellness.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Differentiation <span class="c conf-high">● High</span></div>
+          <div class="prop-val">"Behavior change, not just calorie tracking." Counter-positioned against MyFitnessPal (tracking) and WeightWatchers (group-dependent). LLM-powered coaching chatbot + human coaches. Recent "Future Me" AI feature — visualizes how today's habits shape future appearance.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Expression <span class="c conf-high">● High</span></div>
+          <div class="prop-val">Rebrand was disciplined and ownable — dynamic compass logo works in motion, collage illustration system for psychology curriculum. Strong design investment. Brand voice: familial, conversational, humble yet aspirational.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Monetization <span class="c conf-high">● High</span></div>
+          <div class="prop-val">$1B+ ARR (2023). Subscription-first. Expanded into GLP-1s to compete with Hims/Ro, which threatens the brand's "behavior change" core promise.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-tag">GLP-1 pivot tension</span><span class="gap-tag">aging brand equity</span>
+            <div style="margin-top:8px; font-size:13px; color: var(--slate);">Adding GLP-1s to a "behavior change" brand is an identity conflict. 2022 rebrand was excellent but the product strategy is pulling the brand in two directions.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FUNCTION HEALTH -->
+    <div class="brand-card">
+      <div class="card-header">
+        <div>
+          <div class="brand-name">Function Health</div>
+          <div class="brand-type">Preventive Diagnostics · Private (Seed–A stage)</div>
+        </div>
+        <span class="conf-badge conf-med">● Med</span>
+      </div>
+      <div class="card-body">
+        <div class="prop-block">
+          <div class="prop-label">Brand Identity <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Co-founded by Dr. Mark Hyman. Positioned as <strong>premium preventive health intelligence</strong> — 100+ lab tests, direct-to-consumer insights from "top doctors." Visual identity: clean, minimal, white-space heavy. Cool, modern, science-coded without being clinical. High-trust aesthetic for a high-income demographic.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Differentiation <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Volume of data as differentiator (100+ biomarkers). Celebrity co-founder adds credibility. "Remove complexity, place advanced health technologies at your fingertips." Acquired Ezra (full-body MRI) in 2025, adding imaging to lab data.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Experience <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">App as the insight delivery vehicle. Brand promise is heavy: "avoid disease and feel your best for a lifetime." The UX needs to make 100+ biomarkers actionable — a significant data visualization and design challenge.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Monetization <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Annual membership model. High-income consumer target. Waitlist-based scarcity marketing was original strategy.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-tag">data overwhelm risk</span><span class="gap-tag">accessibility gap</span>
+            <div style="margin-top:8px; font-size:13px; color: var(--slate);">100+ test results is a UX liability without extraordinary information design. The gap between data volume and user comprehension is enormous. Brand promise vastly outpaces current product delivery for most users.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- K HEALTH -->
+    <div class="brand-card">
+      <div class="card-header">
+        <div>
+          <div class="brand-name">K Health</div>
+          <div class="brand-type">AI Primary Care App · Private (~$500M raised)</div>
+        </div>
+        <span class="conf-badge conf-med">● Med</span>
+      </div>
+      <div class="card-body">
+        <div class="prop-block">
+          <div class="prop-label">Brand Identity <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">AI-powered symptom checker and primary care access. Brand positions around <strong>democratizing doctor-quality healthcare via AI.</strong> Visual identity: clean blue/white palette — clinical-adjacent but not cold. Less lifestyle than Hims, more utility-forward.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Differentiation <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Core proposition: real clinical AI (trained on millions of patient records) vs. generic chatbot. "AI that learns from others' health experiences." Symptom-to-diagnosis pipeline is core product, not just a feature.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Expression <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Utility-first brand voice — less emotional than peers. More emphasis on the AI mechanism than the human outcome. This is both a differentiator and a gap — clinical credibility without emotional warmth.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-tag">emotional flatness</span><span class="gap-tag">trust at scale</span>
+            <div style="margin-top:8px; font-size:13px; color: var(--slate);">The AI-first positioning is credible but emotionally cold. In a space where trust is everything, "AI diagnoses you" is a harder sell without a warm, human-feeling brand wrapping it. UI/UX is functional but not memorable.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELADOC -->
+    <div class="brand-card">
+      <div class="card-header">
+        <div>
+          <div class="brand-name">Teladoc</div>
+          <div class="brand-type">Enterprise Telehealth · Public (NYSE: TDOC)</div>
+        </div>
+        <span class="conf-badge conf-high">● High</span>
+      </div>
+      <div class="card-body">
+        <div class="prop-block">
+          <div class="prop-label">Brand Identity <span class="c conf-high">● High</span></div>
+          <div class="prop-val">The incumbent. B2B2C model through employers and health plans. Brand is institutional — <strong>scale and reliability over warmth.</strong> Visual identity: corporate blues, professional photography, clinical language. Not designed for consumers; designed for procurement teams.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Differentiation <span class="c conf-high">● High</span></div>
+          <div class="prop-val">Coverage at scale — earliest mover, deepest enterprise relationships. 24/7 access, multi-specialty. Not a consumer brand — a healthcare infrastructure brand. Acquired Livongo (chronic care) in 2020 in a deal that wrote off billions.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-tag">consumer brand absence</span><span class="gap-tag">product experience</span><span class="gap-tag">innovation perception</span>
+            <div style="margin-top:8px; font-size:13px; color: var(--slate);">Essentially no consumer brand. The member-facing experience is generic and functional. No emotional design investment. As DTC players expand into employer markets, Teladoc's consumer weakness is increasingly a liability.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CEREBRAL -->
+    <div class="brand-card">
+      <div class="card-header">
+        <div>
+          <div class="brand-name">Cerebral</div>
+          <div class="brand-type">Mental Health Platform · Private (Series C)</div>
+        </div>
+        <span class="conf-badge conf-med">● Med</span>
+      </div>
+      <div class="card-body">
+        <div class="prop-block">
+          <div class="prop-label">Brand Identity <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Mental health care made accessible and affordable. Brand aesthetic: soft, calm, approachable — deep purples and soft greens, gentle typography. Signaling <strong>safety and accessibility</strong> over clinical authority. Target: people who wouldn't typically seek therapy.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Differentiation <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Medication + therapy together, under one subscription. Subscription model (originally) for mental health care felt novel — matching, therapy, medication management in one place.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-tag">trust collapse</span><span class="gap-tag">regulatory overhang</span>
+            <div style="margin-top:8px; font-size:13px; color: var(--slate);">Significant DEA investigation into controlled substance prescribing practices (2022–2024) severely damaged brand trust. Now rebuilding. The brand aesthetic was strong but the clinical execution was not — a cautionary ICP note for SSD on due diligence.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- THIRTY MADISON -->
+    <div class="brand-card">
+      <div class="card-header">
+        <div>
+          <div class="brand-name">Thirty Madison</div>
+          <div class="brand-type">Condition-Specific Telehealth · Private (~$300M raised)</div>
+        </div>
+        <span class="conf-badge conf-med">● Med</span>
+      </div>
+      <div class="card-body">
+        <div class="prop-block">
+          <div class="prop-label">Brand Identity <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Multi-brand portfolio strategy — separate consumer brands for each condition: <strong>Keeps</strong> (hair loss), <strong>Cove</strong> (migraines), <strong>Facet</strong> (dermatology), <strong>Evens</strong> (GI). Each sub-brand has its own identity tuned to the specific condition's emotional register. The parent "Thirty Madison" brand is nearly invisible to consumers.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Differentiation <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Condition specificity is the strategic bet — each product designed for one condition rather than being a generalist platform. Allows deeper emotional resonance per use case vs. Hims/Ro's horizontal expansion.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-tag">fragmented brand equity</span><span class="gap-tag">cross-sell friction</span>
+            <div style="margin-top:8px; font-size:13px; color: var(--slate);">The multi-brand strategy that builds per-condition depth destroys cross-sell efficiency. Building brand equity in parallel across 4+ brands is expensive and dilutive. Invisible parent brand limits investor/B2B storytelling.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WISP -->
+    <div class="brand-card">
+      <div class="card-header">
+        <div>
+          <div class="brand-name">Wisp</div>
+          <div class="brand-type">Women's Health Telehealth · Private (Seed–A)</div>
+        </div>
+        <span class="conf-badge conf-med">● Med</span>
+      </div>
+      <div class="card-body">
+        <div class="prop-block">
+          <div class="prop-label">Brand Identity <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Women's sexual and reproductive health — STI treatment, birth control, UTI care, BV. Brand aesthetic: <strong>warm, intimate, non-judgmental.</strong> Deep pinks, peaches, and terracottas. More body-positive than clinical. The brand says "it's normal" before it says "we can treat it."</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Differentiation <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Hyper-focus on the specific shame/stigma of women's sexual health conditions. Privacy-first positioning — emphasizes discreet delivery, no-judgment consultations. Fills the gap that Hims "Hers" doesn't fully serve (sexual health specificity).</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-tag">growth ceiling</span><span class="gap-tag">platform depth</span>
+            <div style="margin-top:8px; font-size:13px; color: var(--slate);">Strong in its niche but limited by category specificity. Primarily prescription-plus-product — hasn't built a meaningful digital health platform layer. Brand is more ecomm than healthtech. Design quality is warm but not premium.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIFE MD -->
+    <div class="brand-card">
+      <div class="card-header">
+        <div>
+          <div class="brand-name">LifeMD</div>
+          <div class="brand-type">DTC Telehealth Platform · Public (NASDAQ: LFMD)</div>
+        </div>
+        <span class="conf-badge conf-med">● Med</span>
+      </div>
+      <div class="card-body">
+        <div class="prop-block">
+          <div class="prop-label">Brand Identity <span class="c conf-med">● Med</span></div>
+          <div class="prop-val">Multi-condition DTC telehealth with a GLP-1 weight management focus. Brand is <strong>clinical-friendly but not premium</strong> — less design investment than Hims or Ro. Operates under multiple brand names (WorkSimpli, Shapiro MD). Corporate brand more visible than consumer brand.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Differentiation <span class="c conf-low">● Low</span></div>
+          <div class="prop-val">Partnered with Novo Nordisk for Wegovy distribution at $499/mo. Breadth over depth positioning. Competes on price and access more than brand or experience.</div>
+        </div>
+        <div class="prop-block">
+          <div class="prop-label">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-tag">design underinvestment</span><span class="gap-tag">brand clarity</span>
+            <div style="margin-top:8px; font-size:13px; color: var(--slate);">Multiple brand names create confusion. Design quality is below category leaders. Competes primarily on access/pricing, not brand experience — leaves significant UX/trust investment on the table.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end brand-grid -->
+</section>
+
+<!-- QUICK REFERENCE TABLE -->
+<section>
+  <div class="section-eye">Quick Reference</div>
+  <h2>Brand comparison at a glance</h2>
+  <p class="section-lead">Synthesized from individual profiles above.</p>
+  <div style="overflow-x:auto;">
+  <table class="quick-table">
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>Positioning</th>
+        <th>Target</th>
+        <th>Voice / Tone</th>
+        <th>Key Differentiator</th>
+        <th>Trust Strategy</th>
+        <th>Design Quality</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="brand-col">Hims &amp; Hers</td>
+        <td>Healthcare × lifestyle</td>
+        <td>Millennials, 25–45</td>
+        <td>Warm, conversational, normalizing</td>
+        <td>DTC destigmatization at scale</td>
+        <td>Lifestyle brand + influencers</td>
+        <td>⭑⭑⭑⭑⭑</td>
+      </tr>
+      <tr>
+        <td class="brand-col">Ro</td>
+        <td>Modern clinical care</td>
+        <td>Adults seeking convenience</td>
+        <td>Credible, modern, direct</td>
+        <td>Vertical integration (telehealth + Rx + labs)</td>
+        <td>Clinical authority + celebrity</td>
+        <td>⭑⭑⭑⭑</td>
+      </tr>
+      <tr>
+        <td class="brand-col">Noom</td>
+        <td>Psychology-backed weight mgmt</td>
+        <td>Behavior-change seekers</td>
+        <td>Familial, humble, scientific</td>
+        <td>Behavior change framing vs. diet culture</td>
+        <td>Science + coaching + community</td>
+        <td>⭑⭑⭑⭑⭑</td>
+      </tr>
+      <tr>
+        <td class="brand-col">Function Health</td>
+        <td>Premium preventive diagnostics</td>
+        <td>High-income health optimizers</td>
+        <td>Expert, empowering, data-forward</td>
+        <td>100+ biomarker testing DTC</td>
+        <td>Dr. Hyman credibility + data volume</td>
+        <td>⭑⭑⭑⭑</td>
+      </tr>
+      <tr>
+        <td class="brand-col">K Health</td>
+        <td>AI-first primary care</td>
+        <td>Cost-conscious digital natives</td>
+        <td>Utility-forward, clinical</td>
+        <td>Genuine AI diagnosis layer</td>
+        <td>AI mechanism + data claims</td>
+        <td>⭑⭑⭑</td>
+      </tr>
+      <tr>
+        <td class="brand-col">Teladoc</td>
+        <td>Enterprise telehealth infra</td>
+        <td>Employers, insurers</td>
+        <td>Institutional, formal</td>
+        <td>Scale + legacy enterprise relationships</td>
+        <td>Corporate trust + compliance</td>
+        <td>⭑⭑</td>
+      </tr>
+      <tr>
+        <td class="brand-col">Cerebral</td>
+        <td>Accessible mental health care</td>
+        <td>Therapy-hesitant adults</td>
+        <td>Gentle, safe, accessible</td>
+        <td>Subscription mental health (med + therapy)</td>
+        <td>Soft brand + clinician photos</td>
+        <td>⭑⭑⭑⭑</td>
+      </tr>
+      <tr>
+        <td class="brand-col">Thirty Madison</td>
+        <td>Condition-specific DTC</td>
+        <td>Condition sufferers (per brand)</td>
+        <td>Empathetic, condition-specific</td>
+        <td>Depth per condition (Keeps, Cove, Facet)</td>
+        <td>Per-condition clinical specificity</td>
+        <td>⭑⭑⭑⭑</td>
+      </tr>
+      <tr>
+        <td class="brand-col">Wisp</td>
+        <td>Women's sexual health DTC</td>
+        <td>Women, 20–40</td>
+        <td>Warm, intimate, shame-free</td>
+        <td>Niche focus on sexual/reproductive health</td>
+        <td>Non-judgment + discretion</td>
+        <td>⭑⭑⭑</td>
+      </tr>
+      <tr>
+        <td class="brand-col">LifeMD</td>
+        <td>Accessible DTC telehealth</td>
+        <td>Value-conscious adults</td>
+        <td>Clinical, accessible</td>
+        <td>Price + GLP-1 access</td>
+        <td>Clinical badges + pricing transparency</td>
+        <td>⭑⭑</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- PART 2: LANDSCAPE ANALYSIS -->
+<section>
+  <div class="section-eye">02 &nbsp; Competitive Landscape</div>
+  <h2>Positioning map</h2>
+  <p class="section-lead">Axes chosen to reveal the dominant tension in DTC digital health: how "clinical" vs. "lifestyle" the brand feels, and how much it serves individual precision vs. mass access.</p>
+
+  <div class="axes-rationale">
+    <strong>Chosen axes — rationale:</strong> X-axis: <strong>Clinical / Institutional ↔ Lifestyle / Consumer</strong> — reflects the core brand tension in this segment (trust through authority vs. trust through relatability). Y-axis: <strong>Mass Access ↔ Precision / Personalized</strong> — reflects the product model (broad access at low cost vs. deep personalization at premium price). These two axes reveal the most strategically meaningful whitespace for a new entrant or SSD client.
+  </div>
+
+  <div class="chart-wrap">
+    <canvas id="positionMap" height="420"></canvas>
+  </div>
+</section>
+
+<!-- MESSAGING PATTERNS -->
+<section>
+  <div class="section-eye">02b &nbsp; Messaging Patterns</div>
+  <h2>Five dominant messaging clusters</h2>
+  <p class="section-lead">What the market is saying — and what it reveals about buyers and gaps.</p>
+
+  <div class="pattern-grid">
+    <div class="pattern-card">
+      <div class="pattern-name"><span class="dot dot-rust"></span>Destigmatization</div>
+      <div class="pattern-meaning">Makes healthcare feel safe by first removing shame. The message is: "You're not alone, this is common, and you deserve care for it." Works because it lowers the barrier to seeking help for conditions people wouldn't admit to a doctor. Builds loyalty through emotional relief, not clinical outcomes.</div>
+      <div class="pattern-brands"><strong>Hims &amp; Hers, Ro, Wisp, Cerebral.</strong> The dominant playbook in DTC health. Hims pioneered it with cacti ED ads; now it's table stakes.</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-name"><span class="dot dot-gold"></span>Access &amp; Convenience</div>
+      <div class="pattern-meaning">"Healthcare without friction." Positions against the traditional system's wait times, co-pays, and awkward in-person conversations. Appeals to time-starved, privacy-conscious, digitally native consumers. Risk: commoditizes quickly when every competitor uses the same frame.</div>
+      <div class="pattern-brands"><strong>Ro, Teladoc, LifeMD, K Health.</strong> Ubiquitous — nearly every platform claims "get care in minutes" somewhere above the fold.</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-name"><span class="dot dot-sage"></span>Science + Behavior Change</div>
+      <div class="pattern-meaning">Anchors credibility in mechanism and psychology, not just outcomes. Signals rigor to skeptical consumers while maintaining warmth. Rare — requires genuine intellectual investment in the product story and a brand willing to be educational rather than promotional.</div>
+      <div class="pattern-brands"><strong>Noom</strong> (behavior change); <strong>Function Health</strong> (biomarker science). Few others attempt this credibly.</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-name"><span class="dot dot-slate"></span>Personalization Claims</div>
+      <div class="pattern-meaning">Almost every brand says "personalized care" or "treatment tailored to you." Typically backed by a quiz-style intake form. The claim is valid in theory but rarely delivered at the UX level — users get personalized *outputs* but rarely *experiences*. Trust gap between claim and reality is wide.</div>
+      <div class="pattern-brands"><strong>Hims &amp; Hers, Noom, Function Health, K Health, Ro, LifeMD</strong> — essentially the entire category. Severely diluted as a differentiator.</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-name"><span class="dot dot-ink"></span>System Disruption</div>
+      <div class="pattern-meaning">Positions against the broken traditional healthcare system as adversary. Resonates with frustrated patients who've had bad insurance/billing/access experiences. High-energy, politically coded messaging. Backfires with regulatory and clinical audiences. Hims's "Sick of the System" Super Bowl ad drew lawmakers' scrutiny.</div>
+      <div class="pattern-brands"><strong>Hims &amp; Hers</strong> (explicit), <strong>Ro</strong> (implicit). Others gesture at it without committing.</div>
+    </div>
+  </div>
+</section>
+
+<!-- VISUAL CLUSTERS -->
+<section>
+  <div class="section-eye">02c &nbsp; Visual Identity Clusters</div>
+  <h2>Three visual languages dominate the space</h2>
+
+  <div class="pattern-grid">
+    <div class="pattern-card">
+      <div class="pattern-name"><span class="dot dot-rust"></span>Warm Soft Minimalism</div>
+      <div class="pattern-meaning">Earthy palettes (terracottas, warm beiges, muted greens), generous white space, approachable sans-serif typography, lifestyle photography with diverse, non-clinical subjects. Communicates: "We're a wellness brand that happens to do healthcare." Builds consumer trust through familiarity and warmth.</div>
+      <div class="pattern-brands"><strong>Hims &amp; Hers, Wisp, Cerebral, Thirty Madison (Keeps, Cove).</strong> 4 of 10 brands — the dominant aesthetic in the segment.</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-name"><span class="dot dot-sage"></span>Clean Tech / Clinical Neutral</div>
+      <div class="pattern-meaning">Cool or neutral palettes (blues, white, light grays), data-forward UI elements, clinical photography or abstract health imagery, geometric precision. Communicates: "We are credible, evidence-based, and technical." Higher trust ceiling with clinically skeptical users but lower emotional resonance.</div>
+      <div class="pattern-brands"><strong>K Health, Teladoc, LifeMD, Function Health</strong> (partially). Teladoc is the fullest expression — essentially no consumer warmth.</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pattern-name"><span class="dot dot-gold"></span>Science-Forward Nature</div>
+      <div class="pattern-meaning">Rich organic colors (fruit/veg hues, landscapes), scientific precision in layout and typography, natural motifs combined with data visualization. Bridges clinical and consumer — communicates rigor through aesthetics, not just language. The rarest and most sophisticated direction in the space.</div>
+      <div class="pattern-brands"><strong>Noom</strong> (most developed example via Gretel rebrand). <strong>Function Health</strong> gestures at it. Largely unclaimed at the early-stage level — high whitespace opportunity.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PART 3: GAPS -->
+<section>
+  <div class="section-eye">03 &nbsp; Brand Gaps &amp; Opportunities</div>
+  <h2>Common failures across the landscape</h2>
+  <p class="section-lead">Failures aren't isolated — they cluster. Most brands share the same design and positioning blind spots.</p>
+
+  <div class="gap-list">
+    <div class="gap-row">
+      <div class="gap-name">The AI Promise Gap</div>
+      <div class="gap-desc"><strong>"AI-powered" is in every headline. The UX doesn't deliver it.</strong> Brands announce personalization engines, machine learning, and AI insights — but the product experience is a quiz with a recommendation, not an intelligent adaptive system. The gap between marketing claim and interface reality erodes trust over time. Users notice when the "AI" is just a decision tree.</div>
+      <div class="gap-prev">9/10<span>brands</span></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-name">Visual Convergence</div>
+      <div class="gap-desc"><strong>Everyone looks like Hims.</strong> Warm palette, lifestyle photography, clean sans-serif, muted tones — the DTC health visual language has become a category default. When every brand uses the same aesthetic vocabulary to signal "not your parents' healthcare," the signal disappears. Standing out is now the counterintuitive move.</div>
+      <div class="gap-prev">8/10<span>brands</span></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-name">Data Without Legibility</div>
+      <div class="gap-desc"><strong>Products generate enormous health data — dashboards don't make it actionable.</strong> Function Health sends 100+ biomarker results. Noom shows food logs and behavior trends. Wearable-integrated apps show sleep/HRV/stress. In nearly every case, the information design is an afterthought. The clinical data is there. The design to make it meaningful is not.</div>
+      <div class="gap-prev">7/10<span>brands</span></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-name">Compliance as Checklist</div>
+      <div class="gap-desc"><strong>Trust signals are legal artifacts, not design decisions.</strong> HIPAA badges, "SSL encrypted," and clinician headshots are used as trust substitutes. None address the emotional question users actually ask: <em>"Is it safe for me to share this information with you?"</em> Emotional trust is designed — it's present in interaction patterns, language, loading states, error messages. Almost no brand invests in this layer.</div>
+      <div class="gap-prev">9/10<span>brands</span></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-name">Onboarding Drop-Off</div>
+      <div class="gap-desc"><strong>The intake quiz is over-engineered; the first-value moment is underdelivered.</strong> Most DTC health platforms have lengthy onboarding flows (often 15–30 questions) followed by a waiting period for provider review. The critical moment — when the user first experiences "this platform understands me" — is almost universally weak. This is where brand promise meets product reality, and the gap is expensive.</div>
+      <div class="gap-prev">8/10<span>brands</span></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-name">Expansion Dilution</div>
+      <div class="gap-desc"><strong>Every platform has pivoted to GLP-1s in 2024–2025, blurring their positioning.</strong> Noom (behavior change) adding Ozempic. Hims (lifestyle) adding semaglutide. Ro (men's health) becoming weight management. The GLP-1 gold rush is financially rational but brand-destructive — niche differentiation is being abandoned for the same category at the same moment.</div>
+      <div class="gap-prev">6/10<span>brands</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- OPPORTUNITIES -->
+<section>
+  <div class="section-eye">03b &nbsp; Whitespace &amp; Opportunities</div>
+  <h2>Where the map is empty</h2>
+
+  <div class="opp-grid">
+    <div class="opp-card featured">
+      <div class="opp-label">Primary Whitespace</div>
+      <div class="opp-title">Science-forward + Warm + Data-legible</div>
+      <div class="opp-body">The positioning quadrant between clinical credibility and consumer warmth — combined with genuinely legible data design — is unoccupied at the early-stage level. Noom approaches it. Function Health approaches it from the other direction. Neither fully closes the gap. A new brand that feels both rigorously scientific and deeply human — and makes complex health data feel intuitive — would stand alone in this segment.</div>
+      <div class="opp-versus">
+        <em>Everyone says</em>
+        "AI-powered personalized care"
+        <em style="margin-top:8px;">No one says</em>
+        "Your health data, made human." Or: [brand that actually delivers on the intelligence it claims].
+      </div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-label">Visual Identity</div>
+      <div class="opp-title">Against the warm-beige monoculture</div>
+      <div class="opp-body">The entire category is aesthetically converged. A digital health brand that looks genuinely different — bold typography, unexpected color, editorial-quality data visualization, or premium minimal — would have immediate visual cut-through. The constraint is that it must still feel trustworthy. Noom's rebrand shows it's possible.</div>
+      <div class="opp-versus">
+        <em>Everyone looks like</em>
+        Terracotta + lifestyle photo + clean sans
+        <em style="margin-top:8px;">No one looks like</em>
+        Editorial precision. Scientific luxury. Data as beauty.
+      </div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-label">Emotional Trust</div>
+      <div class="opp-title">Trust designed into every interaction</div>
+      <div class="opp-body">No brand has solved emotional trust UX — the feeling of safety in sharing intimate health data, embedded in microcopy, interaction patterns, error states, and loading moments. This is SSD's strongest capability claim in this space: not "we design pretty apps" but "we design products users trust to handle their most sensitive information."</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-label">Audience Gap</div>
+      <div class="opp-title">The condition-specific × AI-native blind spot</div>
+      <div class="opp-body">Thirty Madison proved condition specificity builds deeper loyalty than horizontal expansion. But most condition-specific startups lack AI-native product design. The combination — single condition, genuine AI personalization, and premium UX — is a template no one has fully executed at early stage. High value for SSD as a design thesis.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PART 4: STRATEGIC REC -->
+<section>
+  <div class="section-eye">04 &nbsp; Strategic Recommendation</div>
+  <h2>SSD positioning in this segment</h2>
+
+  <div class="rec-wrap">
+    <div class="rec-header">
+      <div class="rec-title-wrap">
+        <h3>For an SSD client entering DTC digital health:</h3>
+        <div class="sub">Based on gaps and patterns surfaced above</div>
+      </div>
+    </div>
+    <div class="rec-body-grid">
+      <div class="rec-cell">
+        <div class="rec-cell-label">Positioning Opportunity</div>
+        <div class="rec-cell-val"><strong>Science-forward + emotionally warm + data-legible.</strong> The uncrowded territory between clinical and lifestyle that no early-stage brand has credibly occupied. Requires both rigorous UX thinking and genuine warmth in visual and verbal identity.</div>
+      </div>
+      <div class="rec-cell">
+        <div class="rec-cell-label">Target Audience</div>
+        <div class="rec-cell-val"><strong>Seed–Series A founders</strong> with a clinical or AI background building a consumer-facing health product. They have an AI story, a data product, and no in-house design. They need to make complex health intelligence feel safe and human — by their next raise.</div>
+      </div>
+      <div class="rec-cell">
+        <div class="rec-cell-label">Brand Personality</div>
+        <div class="rec-cell-val"><strong>Precision studio that thinks in systems.</strong> Not a generalist. Not "we do health too." A studio that has deeply studied this category's visual and UX failures and builds against them, on purpose.</div>
+      </div>
+      <div class="rec-cell">
+        <div class="rec-cell-label">Visual Direction</div>
+        <div class="rec-cell-val"><strong>Against the warm-beige monoculture.</strong> Help clients stand out from the Hims aesthetic while remaining trustworthy. Lean into editorial precision, data visualization as design expression, and brand systems that scale from product to marketing.</div>
+      </div>
+      <div class="rec-cell">
+        <div class="rec-cell-label">Messaging Focus</div>
+        <div class="rec-cell-val"><strong>"We make your AI story believable."</strong> Every health startup says AI-powered. SSD helps the product UI actually feel intelligent and trustworthy — closing the gap between the investor pitch and the user experience.</div>
+      </div>
+      <div class="rec-cell">
+        <div class="rec-cell-label">Trust-Building Strategy</div>
+        <div class="rec-cell-val"><strong>Design emotional trust, not just compliance.</strong> SSD's differentiator vs. generalist agencies: we understand that in health, trust is designed into microcopy, interaction patterns, data presentation, and onboarding — not just slapped on with a HIPAA badge.</div>
+      </div>
+    </div>
+    <div class="rec-rationale">
+      <strong>Why this works for SSD specifically:</strong> The SSD fintech background is directly transferable — fintech also requires designing trust into sensitive data interactions, making complex information legible, and building systems for regulated industries. The client archetype (technical founder, AI story, no design chops, pre-next-round timeline) maps exactly to SSD's Launch and Grow tiers. The category gap (science-forward + warm + data-legible) is also SSD's aesthetic territory, not a stretch. The competitive moat: most generalist design agencies don't have the domain fluency to speak credibly to a clinical AI founder about their specific UX problems. SSD, having done this research, does.
+    </div>
+  </div>
+</section>
+
+</div><!-- end wrap -->
+
+<div class="footer">
+  <span>Sari Sari Design · Digital Health Brand Landscape · April 2026</span>
+  <span>ICP Refinement Phase 2 · Internal Use</span>
+  <span>10 brands · High/Med/Low confidence · Sources: Rock Health, CB Insights, Sacra, Crunchbase, brand research</span>
+</div>
+
+<script>
+  // Positioning Map
+  const ctx = document.getElementById('positionMap').getContext('2d');
+
+  const brands = [
+    { label: 'Hims & Hers', x: 8.2, y: 4.5, color: '#b84a2a' },
+    { label: 'Ro',           x: 6.5, y: 5.5, color: '#c9a84c' },
+    { label: 'Noom',         x: 6.8, y: 6.8, color: '#5c7a5e' },
+    { label: 'Function',     x: 4.5, y: 9.2, color: '#495568' },
+    { label: 'K Health',     x: 3.2, y: 5.0, color: '#7a5c9e' },
+    { label: 'Teladoc',      x: 1.5, y: 3.5, color: '#2a5c8a' },
+    { label: 'Cerebral',     x: 6.0, y: 4.0, color: '#8a5c6a' },
+    { label: 'Thirty Mad.',  x: 6.2, y: 7.5, color: '#6a8a5c' },
+    { label: 'Wisp',         x: 7.5, y: 3.5, color: '#b87a5c' },
+    { label: 'LifeMD',       x: 5.0, y: 3.0, color: '#8a8680' },
+  ];
+
+  new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: brands.map(b => ({
+        label: b.label,
+        data: [{ x: b.x, y: b.y }],
+        backgroundColor: b.color + 'cc',
+        borderColor: b.color,
+        borderWidth: 2,
+        pointRadius: 10,
+        pointHoverRadius: 13,
+      }))
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` ${ctx.dataset.label} (${ctx.parsed.x.toFixed(1)}, ${ctx.parsed.y.toFixed(1)})`
+          }
+        }
+      },
+      scales: {
+        x: {
+          min: 0, max: 10,
+          title: {
+            display: true,
+            text: '← Clinical / Institutional                    Lifestyle / Consumer →',
+            font: { family: "'DM Mono', monospace", size: 11 },
+            color: '#8a8680'
+          },
+          grid: { color: '#ddd8cf' },
+          ticks: { font: { family: "'DM Mono', monospace", size: 10 }, color: '#8a8680' }
+        },
+        y: {
+          min: 0, max: 10,
+          title: {
+            display: true,
+            text: '← Mass Access                    Precision / Personalized →',
+            font: { family: "'DM Mono', monospace", size: 11 },
+            color: '#8a8680'
+          },
+          grid: { color: '#ddd8cf' },
+          ticks: { font: { family: "'DM Mono', monospace", size: 10 }, color: '#8a8680' }
+        }
+      }
+    },
+    plugins: [{
+      id: 'brandLabels',
+      afterDraw(chart) {
+        const ctx = chart.ctx;
+        chart.data.datasets.forEach((ds, i) => {
+          const meta = chart.getDatasetMeta(i);
+          if (!meta.hidden && meta.data.length) {
+            const pt = meta.data[0];
+            ctx.save();
+            ctx.font = "500 12px 'Syne', sans-serif";
+            ctx.fillStyle = ds.borderColor;
+            ctx.textAlign = 'center';
+            ctx.fillText(ds.label, pt.x, pt.y - 16);
+            ctx.restore();
+          }
+        });
+      }
+    }, {
+      id: 'quadrantLabels',
+      beforeDraw(chart) {
+        const ctx = chart.ctx;
+        const { left, right, top, bottom } = chart.chartArea;
+        const mx = (left + right) / 2;
+        const my = (top + bottom) / 2;
+        const labels = [
+          { text: 'Clinical + Access', x: left + 40, y: bottom - 16 },
+          { text: 'Lifestyle + Access', x: right - 40, y: bottom - 16 },
+          { text: 'Clinical + Precision', x: left + 40, y: top + 20 },
+          { text: 'Lifestyle + Precision ✦', x: right - 40, y: top + 20 },
+        ];
+        ctx.save();
+        ctx.font = "10px 'DM Mono', monospace";
+        ctx.fillStyle = 'rgba(138,134,128,0.45)';
+        labels.forEach(l => {
+          ctx.textAlign = l.x < mx ? 'left' : 'right';
+          ctx.fillText(l.text, l.x, l.y);
+        });
+        ctx.restore();
+      }
+    }]
+  });
+</script>
+</body>
+</html>

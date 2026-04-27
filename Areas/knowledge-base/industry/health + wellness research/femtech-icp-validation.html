@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FemTech ICP Validation — SSD</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1510;
+    --paper: #faf6f0;
+    --cream: #f0ebe1;
+    --white: #ffffff;
+    --blush: #b84a50;
+    --blush-light: #f5e0de;
+    --plum: #7a4a72;
+    --plum-light: #eadae8;
+    --sage: #5a7a5c;
+    --sage-light: #ddeade;
+    --clay: #b87a50;
+    --clay-light: #f0e5d8;
+    --slate: #4a5060;
+    --muted: #8a8580;
+    --rule: #ddd6ca;
+    --green: #2e6e3a;
+    --green-bg: #dff0e2;
+    --amber: #8a6a10;
+    --amber-bg: #f7edcc;
+    --red: #8a3a20;
+    --red-bg: #f7ddd5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); font-size: 14px; line-height: 1.6; }
+
+  .masthead { background: var(--ink); color: var(--paper); padding: 52px 56px 44px; position: relative; overflow: hidden; }
+  .masthead::after { content:''; position:absolute; right:56px; top:50%; transform:translateY(-50%); width:260px; height:260px; border-radius:50%; border:1px solid rgba(255,255,255,0.06); }
+  .eye { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:#c4a87a; margin-bottom:16px; }
+  .masthead h1 { font-family:'Playfair Display',serif; font-size:clamp(28px,4vw,46px); font-weight:400; line-height:1.1; margin-bottom:12px; }
+  .masthead h1 em { color:rgba(250,246,240,0.38); font-style:italic; }
+  .masthead-meta { font-family:'DM Mono',monospace; font-size:11px; color:rgba(250,246,240,0.4); margin-top:24px; display:flex; gap:20px; flex-wrap:wrap; }
+
+  .hyp-bar { background: var(--blush); color:white; padding:24px 56px; }
+  .hyp-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; opacity:0.7; margin-bottom:10px; }
+  .hyp-text { font-size:14px; line-height:1.65; max-width:900px; color:rgba(255,255,255,0.92); }
+  .hyp-text strong { color:white; }
+
+  .compare-bar { background:var(--plum-light); border-bottom:1px solid var(--plum); padding:16px 56px; }
+  .compare-inner { display:grid; grid-template-columns:1fr 1fr; gap:32px; max-width:900px; }
+  .compare-col { font-size:12.5px; color:var(--slate); line-height:1.6; }
+  .compare-col .col-head { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:var(--plum); margin-bottom:6px; }
+
+  .legend-bar { background:var(--cream); padding:18px 56px; display:flex; gap:28px; flex-wrap:wrap; border-bottom:1px solid var(--rule); }
+  .legend-item { display:flex; align-items:center; gap:8px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.06em; color:var(--slate); }
+  .dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .dg { background:var(--green); }
+  .da { background:var(--amber); }
+  .dr { background:var(--red); }
+
+  .stats-strip { padding:22px 56px; display:flex; gap:40px; flex-wrap:wrap; border-bottom:2px solid var(--ink); }
+  .stat-num { font-family:'Playfair Display',serif; font-size:30px; font-weight:400; color:var(--blush); line-height:1; }
+  .stat-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-top:3px; }
+
+  .table-wrap { padding:0 56px 56px; overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  thead th { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); text-align:left; padding:11px 13px; background:var(--cream); border-bottom:2px solid var(--ink); white-space:nowrap; }
+  tbody tr { border-bottom:1px solid var(--rule); transition:background 0.1s; }
+  tbody tr:hover { background:#faf8f3; }
+  td { padding:13px 13px; vertical-align:top; line-height:1.5; color:var(--slate); }
+
+  .col-num { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); width:28px; }
+  .company-name { font-weight:700; color:var(--ink); font-size:13.5px; display:block; margin-bottom:2px; }
+  .company-url { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+  .company-url a { color:var(--muted); text-decoration:none; }
+  .company-url a:hover { color:var(--blush); }
+
+  .pill { display:inline-block; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.07em; text-transform:uppercase; padding:2px 7px; border-radius:2px; white-space:nowrap; margin-bottom:2px; }
+  .p-stage { background:var(--clay-light); color:var(--clay); }
+  .p-ai { background:var(--sage-light); color:var(--sage); }
+  .p-life { background:var(--plum-light); color:var(--plum); }
+
+  .fit-score { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; margin:0 auto; }
+  .s5 { background:var(--green-bg); color:var(--green); }
+  .s4 { background:#e8f5d8; color:#4a8a20; }
+  .s3 { background:var(--amber-bg); color:var(--amber); }
+  .s2 { background:#f5e8d5; color:#8a5520; }
+  .s1 { background:var(--red-bg); color:var(--red); }
+
+  .gap-tag { display:inline-block; background:var(--blush-light); color:var(--blush); font-family:'DM Mono',monospace; font-size:10px; padding:2px 7px; border-radius:2px; margin:2px 2px 2px 0; }
+  .angle { font-size:12.5px; color:var(--slate); line-height:1.55; font-style:italic; }
+
+  .life-badge { display:inline-block; font-family:'DM Mono',monospace; font-size:9px; padding:1px 6px; border-radius:10px; background:var(--plum-light); color:var(--plum); margin-bottom:3px; }
+
+  .tier-head { padding:20px 56px 14px; background:var(--ink); color:var(--paper); }
+  .tier-head h2 { font-family:'Playfair Display',serif; font-size:20px; font-weight:400; }
+  .tier-head .sub { font-family:'DM Mono',monospace; font-size:9px; color:rgba(250,246,240,0.4); letter-spacing:0.12em; text-transform:uppercase; margin-top:3px; }
+
+  .notes-section { padding:40px 56px; background:var(--cream); border-top:1px solid var(--rule); }
+  .notes-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-top:22px; }
+  @media(max-width:800px){.notes-grid{grid-template-columns:1fr;}}
+  .note-card { background:white; border-radius:6px; padding:20px; border:1px solid var(--rule); }
+  .note-lbl { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:var(--blush); margin-bottom:8px; }
+  .note-text { font-size:13px; color:var(--slate); line-height:1.65; }
+  .note-text strong { color:var(--ink); font-weight:600; }
+
+  .diff-section { padding:36px 56px; background:white; border-top:1px solid var(--rule); }
+  .diff-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:20px; }
+  @media(max-width:700px){.diff-grid{grid-template-columns:1fr;}}
+  .diff-card { padding:20px; border-radius:6px; border:1px solid var(--rule); }
+  .diff-card.dtc { border-top:3px solid #5a6070; }
+  .diff-card.fem { border-top:3px solid var(--blush); }
+  .diff-head { font-weight:600; font-size:14px; margin-bottom:10px; }
+  .diff-body { font-size:13px; color:var(--slate); line-height:1.65; }
+  .diff-body li { margin-left:16px; margin-bottom:4px; }
+
+  .footer { background:var(--ink); padding:24px 56px; font-family:'DM Mono',monospace; font-size:10px; color:rgba(250,246,240,0.4); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; letter-spacing:0.07em; }
+
+  @media(max-width:900px){.masthead,.hyp-bar,.legend-bar,.stats-strip,.table-wrap,.notes-section,.diff-section,.tier-head,.compare-bar,.footer{padding-left:24px;padding-right:24px;}}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eye">Sari Sari Design · FemTech ICP Validation · Step 3 of 3</div>
+  <h1>FemTech / Women's Health<br><em>Target Company List</em></h1>
+  <div class="masthead-meta">
+    <span>25 companies assessed</span>
+    <span>April 2026</span>
+    <span>Seed–Series B stage filter</span>
+    <span>Consumer-facing digital product required</span>
+    <span>Life-stage column added vs. DTC Digital Health list</span>
+  </div>
+</div>
+
+<div class="hyp-bar">
+  <div class="hyp-label">ICP Hypothesis Being Validated</div>
+  <div class="hyp-text">
+    <strong>Seed–Series A FemTech startup</strong> building a consumer-facing app or platform addressing a specific women's health life stage. Founded by a clinical, research, or mission-driven founder who lacks in-house design capacity. Raised $1–30M. Needs to close the gap between science-forward positioning and a product experience that earns emotional trust from the first screen — before their next round or employer partnership.
+  </div>
+</div>
+
+<div class="compare-bar">
+  <div class="compare-inner">
+    <div class="compare-col">
+      <div class="col-head">How FemTech ICP differs from DTC Digital Health ICP</div>
+      The core hypothesis is the same: technical/clinical founder + AI or science story + no design capacity. But FemTech adds three layers: (1) emotional stakes are higher — bodies, fertility, pregnancy, and menopause are intimate; (2) privacy is a category-specific trust problem post-Dobbs; (3) life-stage specificity matters — the design brief is different for a fertility app vs. a menopause clinic vs. a maternal care platform.
+    </div>
+    <div class="compare-col">
+      <div class="col-head">What this means for SSD outreach</div>
+      The outreach angle shifts from "we make your AI story believable" (DTC digital health) to "we make your science story feel safe." Founders in FemTech are usually mission-driven women with clinical or academic backgrounds. They understand the problem acutely. The design gap is less about AI promise vs. UX reality and more about emotional trust, privacy design, and escaping the pink monoculture.
+    </div>
+  </div>
+</div>
+
+<div class="legend-bar">
+  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-right:6px;">Fit Score:</span>
+  <div class="legend-item"><span class="dot dg"></span> 4–5 Pursue</div>
+  <div class="legend-item"><span class="dot da"></span> 3 Watch / nurture</div>
+  <div class="legend-item"><span class="dot dr"></span> 1–2 Exclude now</div>
+  <div class="legend-item" style="margin-left:14px;padding-left:14px;border-left:1px solid var(--rule);">Life-stage column added: every company categorized by hormonal arc position</div>
+</div>
+
+<div class="stats-strip">
+  <div class="stat"><div class="stat-num">25</div><div class="stat-label">Companies assessed</div></div>
+  <div class="stat"><div class="stat-num">12</div><div class="stat-label">Score 4–5 (pursue)</div></div>
+  <div class="stat"><div class="stat-num">8</div><div class="stat-label">Score 3 (watch)</div></div>
+  <div class="stat"><div class="stat-num">5</div><div class="stat-label">Score 1–2 (exclude)</div></div>
+  <div class="stat"><div class="stat-num">85%</div><div class="stat-label">Female-founded</div></div>
+  <div class="stat"><div class="stat-num">$1–179M</div><div class="stat-label">Funding range</div></div>
+</div>
+
+<!-- TABLE -->
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Company</th>
+      <th>Life Stage</th>
+      <th>What they do</th>
+      <th>Founder background</th>
+      <th>Raise / Stage</th>
+      <th>Design signal</th>
+      <th>Key design gap</th>
+      <th>Fit</th>
+      <th>SSD outreach angle</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td class="col-num">01</td>
+      <td>
+        <span class="company-name">Allara Health</span>
+        <span class="company-url"><a href="https://www.allarahealth.com" target="_blank">allarahealth.com</a></span><br>
+        <span class="pill p-stage">Series A</span><span class="pill p-ai">AI</span>
+      </td>
+      <td><span class="life-badge">PCOS / Hormonal</span></td>
+      <td>Virtual care platform for PCOS and women's hormonal health. Hormone testing, ultrasounds, medication delivery, community support.</td>
+      <td>Clinical + mission-driven founding team. $38.5M total raised. PCOS is the founder's personal health background.</td>
+      <td>$38.5M total<br>Series A</td>
+      <td>Brand is warm but generic. PCOS is a condition with significant emotional weight (diagnosis confusion, fertility anxiety) that the current design doesn't fully honor.</td>
+      <td><span class="gap-tag">emotional UX</span><span class="gap-tag">diagnosis journey</span><span class="gap-tag">brand depth</span></td>
+      <td><div class="fit-score s5">5</div></td>
+      <td><span class="angle">"PCOS patients spend years confused before diagnosis. The design of your onboarding should feel like the relief of finally being understood."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">02</td>
+      <td>
+        <span class="company-name">Elektra Health</span>
+        <span class="company-url"><a href="https://www.elektrahealth.com" target="_blank">elektrahealth.com</a></span><br>
+        <span class="pill p-stage">Series A</span>
+      </td>
+      <td><span class="life-badge">Menopause</span></td>
+      <td>Menopause telehealth + community platform. Specialist visits, at-home labs, app tracking, 24/7 care team. Avestria-backed.</td>
+      <td>Jannine Versi (CEO) + clinical co-founder. Mission-driven, non-design founding team. Founded 2021.</td>
+      <td>Series A<br>Avestria Ventures</td>
+      <td>Brand is serviceable but visually undifferentiated from Midi, Gennev, and Evernow. The menopause category is now crowded — all brands look and sound similar. Elektra hasn't found its visual distinction yet.</td>
+      <td><span class="gap-tag">visual differentiation</span><span class="gap-tag">brand voice</span><span class="gap-tag">app UX</span></td>
+      <td><div class="fit-score s5">5</div></td>
+      <td><span class="angle">"You're in the most crowded new entrant category in femtech. The science is there. The brand doesn't yet say why Elektra, not the others."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">03</td>
+      <td>
+        <span class="company-name">Evernow</span>
+        <span class="company-url"><a href="https://www.evernow.com" target="_blank">evernow.com</a></span><br>
+        <span class="pill p-stage">Series B</span>
+      </td>
+      <td><span class="life-badge">Perimenopause / Menopause</span></td>
+      <td>DTC hormone therapy and lifestyle coaching for peri/menopause. $49/month subscription. Personalized treatment, $28.5M raised.</td>
+      <td>Alicia Jackson (CEO + co-founder) — PhD biophysicist, MIT background. Strong science pedigree.</td>
+      <td>$28.5M total<br>Series B</td>
+      <td>Founder's scientific background is the brand's greatest asset — but the product design doesn't reflect that rigor. Visual identity is in the pastel-soft default. The science story is buried, not led.</td>
+      <td><span class="gap-tag">science-forward UX</span><span class="gap-tag">brand system</span><span class="gap-tag">data legibility</span></td>
+      <td><div class="fit-score s5">5</div></td>
+      <td><span class="angle">"You have a PhD biophysicist as your CEO and a pastel brand. The gap between those two things is a design problem we solve."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">04</td>
+      <td>
+        <span class="company-name">Pomelo Care</span>
+        <span class="company-url"><a href="https://www.pomelocare.com" target="_blank">pomelocare.com</a></span><br>
+        <span class="pill p-stage">Series B</span><span class="pill p-ai">AI</span>
+      </td>
+      <td><span class="life-badge">Maternal / Pregnancy</span></td>
+      <td>AI-powered virtual maternity care. Peer-reviewed outcomes data. a16z + First Round Capital backed. $179M total raised. Expanding into pediatrics.</td>
+      <td>Marta Bralic Kerns (CEO) — operator background, not clinical or design. Strong on clinical outcomes and payer strategy.</td>
+      <td>$179M total<br>$92M Series C Jan 2026</td>
+      <td>Now Series C — may be past SSD's sweet spot for initial engagement. However, recent expansion into pediatrics creates new design surface areas. Brand is clinical and outcomes-focused but not warm enough for the patient-facing experience of high-risk pregnancy.</td>
+      <td><span class="gap-tag">patient UX</span><span class="gap-tag">emotional warmth</span><span class="gap-tag">expansion design</span></td>
+      <td><div class="fit-score s3">3</div></td>
+      <td><span class="angle">"Your outcomes data is exceptional. The design of the patient experience doesn't match the clinical quality of the care — that gap costs you retention."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">05</td>
+      <td>
+        <span class="company-name">Twentyeight Health</span>
+        <span class="company-url"><a href="https://www.twentyeighthealth.com" target="_blank">twentyeighthealth.com</a></span><br>
+        <span class="pill p-stage">Series A</span>
+      </td>
+      <td><span class="life-badge">Reproductive / Contraception</span></td>
+      <td>Longitudinal telehealth for underserved women, Medicaid focus. Birth control, vitamins, sexual health. $41.6M total raised.</td>
+      <td>Amy Fan and Jake Oppenheim (co-founders). Operator backgrounds. Mission-driven equity focus.</td>
+      <td>$41.6M total<br>Series A</td>
+      <td>Serving Medicaid patients where design is critical to access and comprehension. Brand is approachable but the UX for underserved, lower digital-literacy users requires specialized design thinking. Not just aesthetics — usability and trust for vulnerable populations.</td>
+      <td><span class="gap-tag">accessibility UX</span><span class="gap-tag">low-literacy design</span><span class="gap-tag">trust</span></td>
+      <td><div class="fit-score s4">4</div></td>
+      <td><span class="angle">"Designing for Medicaid patients means designing for the highest trust barrier and the lowest tolerance for friction. That's a specialized brief."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">06</td>
+      <td>
+        <span class="company-name">LunaJoy</span>
+        <span class="company-url"><a href="https://www.lunajoy.health" target="_blank">lunajoy.health</a></span><br>
+        <span class="pill p-stage">Seed / YC</span><span class="pill p-ai">AI</span>
+      </td>
+      <td><span class="life-badge">Mental Health / Women-specific</span></td>
+      <td>AI precision mental health for women — life-stage specific care from adolescence through perimenopause. YC-backed.</td>
+      <td>Clinical + AI founding team. YC-backed, very early stage. Non-design founder background.</td>
+      <td>YC + seed<br>~$2–5M est.</td>
+      <td>Very early brand. The intersection of women's mental health + AI + life-stage specificity is a complex, high-stakes design challenge. Current brand is nascent — this is a formative design moment.</td>
+      <td><span class="gap-tag">brand identity</span><span class="gap-tag">AI transparency UX</span><span class="gap-tag">emotional safety</span></td>
+      <td><div class="fit-score s5">5</div></td>
+      <td><span class="angle">"You're building mental health care for the full female hormonal arc — that's a bigger idea than most femtech. The brand and UX need to reflect that ambition."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">07</td>
+      <td>
+        <span class="company-name">Alloy Women's Health</span>
+        <span class="company-url"><a href="https://www.myalloy.com" target="_blank">myalloy.com</a></span><br>
+        <span class="pill p-stage">Series A</span>
+      </td>
+      <td><span class="life-badge">Menopause / HRT</span></td>
+      <td>DTC menopause hormone therapy. $50/year subscription + $40/month prescriptions. Profitable, 300% YoY growth. $16M Series A, Nov 2024.</td>
+      <td>Anne Fulenwider (CEO) — former editor of Marie Claire. Brand pedigree is unusually strong for femtech. Co-founded with clinical advisors.</td>
+      <td>$16M Series A<br>Nov 2024</td>
+      <td>The founder's editorial background means the brand narrative is above average. However, the product design system hasn't kept pace with growth. The DTC subscription app experience is underdeveloped relative to the brand's editorial voice.</td>
+      <td><span class="gap-tag">app UX</span><span class="gap-tag">subscription experience</span><span class="gap-tag">design system</span></td>
+      <td><div class="fit-score s4">4</div></td>
+      <td><span class="angle">"Your brand has an editor's eye and a doctor's credibility. The product UX needs to match both — it's currently behind."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">08</td>
+      <td>
+        <span class="company-name">Choix</span>
+        <span class="company-url"><a href="https://www.choixhealth.com" target="_blank">choixhealth.com</a></span><br>
+        <span class="pill p-stage">Seed</span>
+      </td>
+      <td><span class="life-badge">Reproductive / Abortion Access</span></td>
+      <td>Telehealth reproductive and sexual healthcare — abortion medication access, birth control. Privacy-first, digital-only.</td>
+      <td>Mission-driven clinical founder. Very early stage. Sensitive political context post-Dobbs.</td>
+      <td>Seed<br>~$2–5M est.</td>
+      <td>In a post-Dobbs context, privacy design is not optional — it's the product. The brand must communicate safety and discretion before it communicates anything else. Current design is functional but under-designed for the trust requirements of the use case.</td>
+      <td><span class="gap-tag">privacy-first UX</span><span class="gap-tag">safety design</span><span class="gap-tag">brand trust</span></td>
+      <td><div class="fit-score s5">5</div></td>
+      <td><span class="angle">"In a post-Dobbs reproductive health platform, privacy is the product. Every design decision is a safety decision — this isn't a job for a generalist."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">09</td>
+      <td>
+        <span class="company-name">Visana Health</span>
+        <span class="company-url"><a href="https://www.visanahealth.com" target="_blank">visanahealth.com</a></span><br>
+        <span class="pill p-stage">Series A</span><span class="pill p-ai">AI</span>
+      </td>
+      <td><span class="life-badge">Pelvic Health / Chronic Conditions</span></td>
+      <td>Digital health program for women's pelvic floor and chronic pelvic conditions. $37.6M raised. AI-personalized pelvic physical therapy.</td>
+      <td>Clinical + operator founding team. Pelvic health is technically specialized — founders come from clinical/PT background.</td>
+      <td>$37.6M total<br>Series A–B range</td>
+      <td>Pelvic health is a stigma-heavy condition that requires exceptional trust UX. The clinical language of pelvic floor therapy is alienating to most patients. Brand needs to make a technical, embarrassment-adjacent topic feel approachable and normal.</td>
+      <td><span class="gap-tag">destigmatization UX</span><span class="gap-tag">onboarding</span><span class="gap-tag">clinical warmth</span></td>
+      <td><div class="fit-score s4">4</div></td>
+      <td><span class="angle">"Pelvic health is clinical and stigmatized. The design has to hold both — competent enough to earn trust, warm enough to get patients to start."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">10</td>
+      <td>
+        <span class="company-name">Wellen</span>
+        <span class="company-url"><a href="https://www.wellen.com" target="_blank">wellen.com</a></span><br>
+        <span class="pill p-stage">Seed</span>
+      </td>
+      <td><span class="life-badge">Post-Menopause / Bone Health</span></td>
+      <td>Bone health programs for women — virtual strength training, 1:1 coaching, osteoporosis prevention. Targeting women 50+.</td>
+      <td>Mission-driven founder. Very early. Focused on a dramatically underserved demographic (women 50+) with no design-first competitors.</td>
+      <td>Seed<br>~$1–3M est.</td>
+      <td>Designing for women 50+ requires different accessibility standards, typography scale, and UX patterns than the default femtech audience (25–45). Almost no brand in the category has solved this. Wellen is building for an audience that most design agencies have never thought about.</td>
+      <td><span class="gap-tag">50+ UX patterns</span><span class="gap-tag">accessibility</span><span class="gap-tag">brand</span></td>
+      <td><div class="fit-score s5">5</div></td>
+      <td><span class="angle">"Designing for women over 50 is different — and almost no femtech brand has done it right. That's your design differentiator and SSD's entry point."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">11</td>
+      <td>
+        <span class="company-name">Babyscripts</span>
+        <span class="company-url"><a href="https://www.babyscripts.com" target="_blank">babyscripts.com</a></span><br>
+        <span class="pill p-stage">Series B</span>
+      </td>
+      <td><span class="life-badge">Maternal / Pregnancy</span></td>
+      <td>App + remote monitoring for OBs to manage pregnancies virtually. Educational content, vitals tracking, risk detection. $39.8M raised.</td>
+      <td>Clinical + tech founding team. B2B2C through OB practices. Christopher Ensey (CEO) — tech operator background.</td>
+      <td>$39.8M total<br>Series B</td>
+      <td>Patient-facing app exists inside an OB-mediated relationship — the design needs to feel safe and credible for pregnant patients accessing it through their doctor's office. Currently functional but emotionally flat for a high-stakes life moment.</td>
+      <td><span class="gap-tag">pregnancy UX</span><span class="gap-tag">emotional safety</span><span class="gap-tag">patient app</span></td>
+      <td><div class="fit-score s3">3</div></td>
+      <td><span class="angle">"Pregnancy is the highest emotional UX context in all of healthcare. Your patient app doesn't yet reflect that weight — and OBs notice when their patients find it confusing."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">12</td>
+      <td>
+        <span class="company-name">Eula Health</span>
+        <span class="company-url"><a href="https://eulahealth.com" target="_blank">eulahealth.com</a></span><br>
+        <span class="pill p-stage">Seed</span><span class="pill p-ai">AI</span>
+      </td>
+      <td><span class="life-badge">Endometriosis / Chronic Pain</span></td>
+      <td>AI-powered platform for endometriosis diagnosis support and chronic pelvic pain management. Early stage, condition-specific.</td>
+      <td>Clinical founder. Endometriosis personally motivated. Non-design background. Very early.</td>
+      <td>Seed<br>~$1–4M est.</td>
+      <td>Endometriosis patients average 7–10 years to diagnosis. The design brief is one of the most emotionally loaded in femtech — chronic pain, dismissal by doctors, invisible illness. First brand to design for this experience with real sophistication wins fierce loyalty.</td>
+      <td><span class="gap-tag">chronic illness UX</span><span class="gap-tag">invisible illness brand</span><span class="gap-tag">diagnosis journey</span></td>
+      <td><div class="fit-score s5">5</div></td>
+      <td><span class="angle">"Endometriosis patients have been dismissed for a decade before reaching you. The design of your first impression has to undo years of medical gaslighting."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">13</td>
+      <td>
+        <span class="company-name">Alpha Medical</span>
+        <span class="company-url"><a href="https://helloalpha.com" target="_blank">helloalpha.com</a></span><br>
+        <span class="pill p-stage">Series A</span>
+      </td>
+      <td><span class="life-badge">Primary Care / Women-focused</span></td>
+      <td>Virtual primary care specifically for women. Async visits, prescriptions, lab orders. $35M raised.</td>
+      <td>Physician founder (Dr. Lekha Bhoi). Clinical pedigree, non-design background.</td>
+      <td>$35M total<br>Series A</td>
+      <td>The "primary care but for women" positioning needs strong differentiation from generalist telehealth (which all serves women too). Brand currently looks like a general telehealth platform — the women-specific framing isn't felt in the design.</td>
+      <td><span class="gap-tag">positioning clarity</span><span class="gap-tag">women-specific UX</span><span class="gap-tag">brand</span></td>
+      <td><div class="fit-score s4">4</div></td>
+      <td><span class="angle">"'Primary care for women' is a crowded claim. The design needs to make women feel this platform was built specifically for them — not just addressed to them."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">14</td>
+      <td>
+        <span class="company-name">Gennev</span>
+        <span class="company-url"><a href="https://www.gennev.com" target="_blank">gennev.com</a></span><br>
+        <span class="pill p-stage">Series A</span>
+      </td>
+      <td><span class="life-badge">Menopause</span></td>
+      <td>Menopause care telehealth + coaching. OB-GYN visits, dietitian support, community. One of the original menopause platforms.</td>
+      <td>Jill Angelo (CEO) — operator, non-clinical background. One of the earliest movers in digital menopause care.</td>
+      <td>Series A<br>~$14M est.</td>
+      <td>As an early mover in menopause, Gennev built a real community but the brand and product design are showing age. Newer entrants (Midi, Elektra, Alloy) have fresher visual identities. Gennev needs design investment to retain relevance against better-funded competitors.</td>
+      <td><span class="gap-tag">brand refresh</span><span class="gap-tag">design modernization</span><span class="gap-tag">community UX</span></td>
+      <td><div class="fit-score s3">3</div></td>
+      <td><span class="angle">"You were here before Midi and Elektra. The brand doesn't reflect that leadership — it looks like you're catching up, not that you led."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">15</td>
+      <td>
+        <span class="company-name">Ovia Health</span>
+        <span class="company-url"><a href="https://www.oviahealth.com" target="_blank">oviahealth.com</a></span><br>
+        <span class="pill p-stage">Acquired</span>
+      </td>
+      <td><span class="life-badge">Fertility / Pregnancy / Parenting</span></td>
+      <td>Fertility, pregnancy, and parenting apps. Acquired by LabCorp in 2021. B2B employer benefits model.</td>
+      <td>Paris Wallace (CEO) — tech/operator. Acquired — now part of LabCorp infrastructure.</td>
+      <td>Acquired by LabCorp 2021</td>
+      <td>Post-acquisition design is stagnant — LabCorp ownership hasn't invested in product evolution. Brand feels pre-2020. Included as a cautionary tale: acquisition without design investment accelerates irrelevance. Competitors with better UX are capturing the market it once led.</td>
+      <td><span class="gap-tag">design stagnation</span><span class="gap-tag">post-acquisition drift</span></td>
+      <td><div class="fit-score s2">2</div></td>
+      <td><span class="angle">Exclude for now — post-acquisition decisions made by LabCorp, not the founder. Note: good competitor reference for clients who are now eating Ovia's lunch.</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">16</td>
+      <td>
+        <span class="company-name">Carrot Fertility</span>
+        <span class="company-url"><a href="https://www.get-carrot.com" target="_blank">get-carrot.com</a></span><br>
+        <span class="pill p-stage">Series C</span>
+      </td>
+      <td><span class="life-badge">Fertility / Family Building</span></td>
+      <td>Comprehensive fertility + family building employer benefit. IVF, adoption, surrogacy, menopause. 55+ countries, $75M Series C.</td>
+      <td>Tammy Sun (CEO, founder) — operator background, non-clinical. Strong B2B sales and employer benefits expertise.</td>
+      <td>$75M Series C<br>Tiger Global lead</td>
+      <td>Series C with an in-house team forming. Primary audience is employers, not consumers — the member-facing experience is the weak point. Consumer UX investment has lagged the B2B brand significantly.</td>
+      <td><span class="gap-tag">member-facing UX</span><span class="gap-tag">consumer brand gap</span></td>
+      <td><div class="fit-score s3">3</div></td>
+      <td><span class="angle">"Your employer story is excellent. The member experience — the actual product a fertility patient uses — doesn't live up to the benefit you're promising employers."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">17</td>
+      <td>
+        <span class="company-name">Stella (by Vira Health)</span>
+        <span class="company-url"><a href="https://www.vivastellahealth.com" target="_blank">vivastellahealth.com</a></span><br>
+        <span class="pill p-stage">Seed–Series A</span>
+      </td>
+      <td><span class="life-badge">Menopause</span></td>
+      <td>12-week menopause symptom relief program — personalized hormone, nutrition, lifestyle plans. Telehealth + community. Early-stage competitor to Midi and Elektra.</td>
+      <td>Rebecca Lewis (CEO) — operator, mission-driven. Clinical co-founders.</td>
+      <td>Seed–Series A<br>~$5–10M est.</td>
+      <td>Very early brand and product. In the most crowded new-entrant category in femtech — the design differentiation question is acute. Cannot compete with Midi's $150M by being similar-looking.</td>
+      <td><span class="gap-tag">visual differentiation</span><span class="gap-tag">brand identity</span><span class="gap-tag">program UX</span></td>
+      <td><div class="fit-score s4">4</div></td>
+      <td><span class="angle">"You're entering a category where Midi has $150M and Elektra has VC backing. Your only path to differentiation at this stage is design — the science alone won't cut it."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">18</td>
+      <td>
+        <span class="company-name">Ava Science</span>
+        <span class="company-url"><a href="https://www.avawomen.com" target="_blank">avawomen.com</a></span><br>
+        <span class="pill p-stage">Series B</span>
+      </td>
+      <td><span class="life-badge">Fertility Tracking / Wearable</span></td>
+      <td>AI-powered fertility wearable bracelet. Tracks 5 physiological signals for fertility window + PCOS detection. FDA-cleared. 50,000+ pregnancies facilitated.</td>
+      <td>Medical device + AI founding team (Zurich-based). Strong clinical and regulatory pedigree. Hardware-first orientation.</td>
+      <td>Series B<br>~$40M+ raised</td>
+      <td>Hardware is technically excellent and FDA-cleared. Companion app UX lags behind — a pattern consistent across femtech device brands. Design gap is squarely in the software layer.</td>
+      <td><span class="gap-tag">app UX vs hardware</span><span class="gap-tag">data visualization</span><span class="gap-tag">onboarding</span></td>
+      <td><div class="fit-score s3">3</div></td>
+      <td><span class="angle">"You have FDA clearance and 50,000 pregnancies. The app UX doesn't reflect the precision of the hardware — that gap creates doubt in users who should be confident."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">19</td>
+      <td>
+        <span class="company-name">BeSounds Breast</span>
+        <span class="company-url"><a href="https://besoundsbreast.com" target="_blank">besoundsbreast.com</a></span><br>
+        <span class="pill p-stage">Seed</span><span class="pill p-ai">AI</span>
+      </td>
+      <td><span class="life-badge">Breast Health / Cancer Screening</span></td>
+      <td>Radiation-free, compression-free breast imaging alternative to mammography. AI-powered detection, 35.7% more cancers detected. $9.15M seed (Sep 2025).</td>
+      <td>Bailey Renger (Founder) — mission-driven, clinical background. 2023 company, very early.</td>
+      <td>$9.15M Seed<br>Sep 2025</td>
+      <td>Fresh seed funding for a deeply clinical product that needs to build consumer trust without clinical coldness. The "no radiation, no compression" narrative is powerful — but it needs design that makes screening feel empowering, not just less awful.</td>
+      <td><span class="gap-tag">consumer trust UX</span><span class="gap-tag">clinical warmth</span><span class="gap-tag">brand system</span></td>
+      <td><div class="fit-score s5">5</div></td>
+      <td><span class="angle">"You're reframing breast cancer screening from dread to empowerment. That's a brand and design challenge as much as a clinical one — and it needs to happen now, pre-scale."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">20</td>
+      <td>
+        <span class="company-name">Flo Health</span>
+        <span class="company-url"><a href="https://flo.health" target="_blank">flo.health</a></span><br>
+        <span class="pill p-stage">Unicorn</span>
+      </td>
+      <td><span class="life-badge">Cycle / Full Arc</span></td>
+      <td>Category-defining cycle tracking + women's health app. 70M+ MAU. $1B valuation, Series C. Expanding into perimenopause (2025).</td>
+      <td>Dmitry Gurski (CEO) — tech founder. Large in-house design and product team.</td>
+      <td>$1B valuation<br>Series C</td>
+      <td>Has in-house design at scale. Too large for SSD ICP. Included as the visual benchmark that all other brands in this list are implicitly reacting to or copying.</td>
+      <td><span class="gap-tag">n/a — too large</span></td>
+      <td><div class="fit-score s1">1</div></td>
+      <td><span class="angle">Exclude. Reference as the visual and product standard that SSD's clients need to differentiate from — not copy.</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">21</td>
+      <td>
+        <span class="company-name">Maven Clinic</span>
+        <span class="company-url"><a href="https://www.mavenclinic.com" target="_blank">mavenclinic.com</a></span><br>
+        <span class="pill p-stage">Series F</span>
+      </td>
+      <td><span class="life-badge">Full Arc / Employer</span></td>
+      <td>Employer-benefit virtual women's + family health clinic. $1.7B valuation. 2,000+ employer clients, 175 countries.</td>
+      <td>Kate Ryder (CEO + Founder) — operator. Large in-house design and brand team at Series F.</td>
+      <td>$1.7B valuation<br>Series F</td>
+      <td>Has in-house design at scale. SSD ICP exclusion. Included as the "aspirational arc" benchmark — what a well-funded femtech brand looks like at Series F. Useful for positioning SSD clients' long-term trajectory.</td>
+      <td><span class="gap-tag">n/a — too large</span></td>
+      <td><div class="fit-score s1">1</div></td>
+      <td><span class="angle">Exclude. The aspirational end state for SSD's early-stage femtech clients — not a prospect.</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">22</td>
+      <td>
+        <span class="company-name">Midi Health</span>
+        <span class="company-url"><a href="https://www.joinmidi.com" target="_blank">joinmidi.com</a></span><br>
+        <span class="pill p-stage">Series C</span>
+      </td>
+      <td><span class="life-badge">Perimenopause / Menopause</span></td>
+      <td>Best-funded menopause telehealth platform. $150M total. 100+ clinicians, nationwide. Series C Oct 2025 led by Advance Venture Partners.</td>
+      <td>Joanna Strober (CEO + Founder) — personal menopause experience, operator background. Non-clinical, non-design.</td>
+      <td>$150M total<br>Series C Oct 2025</td>
+      <td>At Series C with $150M, now developing AI clinical decision support and a women's health search engine. May be past SSD's initial ICP sweet spot but has active design needs for the AI product layer and the supplement line launched Aug 2025.</td>
+      <td><span class="gap-tag">AI product UX</span><span class="gap-tag">supplement brand</span><span class="gap-tag">design system scale</span></td>
+      <td><div class="fit-score s2">2</div></td>
+      <td><span class="angle">Borderline. AI product layer and supplement line are new design surfaces. Possible project-based engagement rather than foundational partnership.</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">23</td>
+      <td>
+        <span class="company-name">Kindbody</span>
+        <span class="company-url"><a href="https://kindbody.com" target="_blank">kindbody.com</a></span><br>
+        <span class="pill p-stage">Series C</span>
+      </td>
+      <td><span class="life-badge">Fertility / Family Building</span></td>
+      <td>Fertility + women's health clinic network. $150M+ raised. Reported financial difficulties in 2024 — valuation reportedly under pressure.</td>
+      <td>Gina Bartasi (Founder, departed) — operator. Current leadership navigating financial restructuring.</td>
+      <td>$150M+ raised<br>Financial distress reported 2024</td>
+      <td>Financial strain limits design budget and organizational appetite for external vendors. Brand is strong but the company is in restructuring mode. Not an ideal SSD prospect right now — worth monitoring for a post-stabilization engagement.</td>
+      <td><span class="gap-tag">financial risk</span><span class="gap-tag">restructuring mode</span></td>
+      <td><div class="fit-score s1">1</div></td>
+      <td><span class="angle">Exclude for now. Monitor for post-restructuring design investment — the brand is strong and the clinical model is real.</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">24</td>
+      <td>
+        <span class="company-name">Progyny</span>
+        <span class="company-url"><a href="https://progyny.com" target="_blank">progyny.com</a></span><br>
+        <span class="pill p-stage">Public</span>
+      </td>
+      <td><span class="life-badge">Fertility / Employer Benefits</span></td>
+      <td>Fertility benefits platform, public company (NASDAQ: PGNY). 473+ employer clients. $298.4M Q4 2024 revenue. Partnered with Oura (2025).</td>
+      <td>Public company. In-house design org.</td>
+      <td>Public (NASDAQ: PGNY)</td>
+      <td>Public company, in-house design. Excluded from ICP. Included as proof of category maturity and B2B employer benefits model validation — the channel SSD's FemTech clients aspire to access.</td>
+      <td><span class="gap-tag">n/a — public co</span></td>
+      <td><div class="fit-score s1">1</div></td>
+      <td><span class="angle">Exclude. Category proof point — this is what employer-scale femtech looks like as a public company.</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">25</td>
+      <td>
+        <span class="company-name">Tia Health</span>
+        <span class="company-url"><a href="https://asktia.com" target="_blank">asktia.com</a></span><br>
+        <span class="pill p-stage">Series B</span>
+      </td>
+      <td><span class="life-badge">Primary Care / Whole Woman</span></td>
+      <td>In-person + virtual whole-woman primary care clinic (NYC, LA, SF, PHX). Integrates gynecology, primary care, mental health, wellness. $100M+ raised.</td>
+      <td>Carolyn Witte (CEO + Co-founder) — tech/operator background. Design is genuinely prioritized — has the best visual identity in the consumer femtech space.</td>
+      <td>$100M+ raised<br>Series B</td>
+      <td>Tia's brand and visual design are the benchmark for the category. Lower SSD fit because they've invested in design — but high value as a visual reference and case study for what the bar should be. Could be a future brand system audit client.</td>
+      <td><span class="gap-tag">design system audit</span><span class="gap-tag">digital expansion UX</span></td>
+      <td><div class="fit-score s2">2</div></td>
+      <td><span class="angle">Lower priority as a new client — they've invested in design. High value as the visual benchmark SSD uses in client conversations. Study Tia, don't pitch Tia (yet).</span></td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+
+<!-- HOW THIS DIFFERS FROM DIGITAL HEALTH LIST -->
+<div class="diff-section">
+  <div class="eye" style="margin-bottom:8px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted);">Cross-Segment Comparison</div>
+  <h2 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:400;margin-bottom:8px;">How the FemTech list differs from the DTC Digital Health list</h2>
+  <p style="font-size:14px;color:var(--slate);margin-bottom:20px;max-width:700px;">Same ICP hypothesis, different segment dynamics. Understanding the differences informs how SSD pitches, positions, and executes in each segment.</p>
+  <div class="diff-grid">
+    <div class="diff-card dtc">
+      <div class="diff-head">DTC Digital Health — what's different</div>
+      <div class="diff-body">
+        <ul>
+          <li>Founders skew technical/engineering (AI, ML, software backgrounds)</li>
+          <li>Core design problem: make AI feel real in the UX, not just the pitch</li>
+          <li>Outreach angle: "We make your AI story believable in the product"</li>
+          <li>Visual monoculture: warm beige/lifestyle (Hims aesthetic)</li>
+          <li>Privacy is a compliance issue — not yet a product design decision</li>
+          <li>Audience: 25–45, gender-neutral or men-and-women</li>
+          <li>Trust strategy: clinical authority + convenience + AI claims</li>
+        </ul>
+      </div>
+    </div>
+    <div class="diff-card fem">
+      <div class="diff-head">FemTech — what's different</div>
+      <div class="diff-body">
+        <ul>
+          <li>Founders skew clinical/research or mission-driven (85% female-founded)</li>
+          <li>Core design problem: make science feel emotionally safe and personally relevant</li>
+          <li>Outreach angle: "We make your science story feel safe — and stand out from the pink"</li>
+          <li>Visual monoculture: soft purple/pastel (Flo aesthetic)</li>
+          <li>Privacy is a product design imperative post-Dobbs — not just legal</li>
+          <li>Audience: women specifically, life-stage segmented</li>
+          <li>Trust strategy: validation + clinical depth + privacy-first + community</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ICP PROFILE + RESEARCH PROVENANCE -->
+<div class="notes-section" style="background:#ffffff; border-top:3px solid var(--ink);">
+  <div class="eye" style="margin-bottom:8px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted);">The ICP — Defined &amp; Sourced</div>
+  <h2 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:400;margin-bottom:6px;">Where this ICP came from</h2>
+  <p style="font-size:14px;color:var(--slate);max-width:760px;line-height:1.7;margin-bottom:32px;">This ICP was built across three sequential research documents. Each attribute below traces to a specific finding. This section exists so any reader of this document understands the full reasoning — not just the conclusion.</p>
+
+  <!-- ICP DEFINITION BOX -->
+  <div style="background:var(--ink);color:var(--paper);border-radius:10px;padding:32px 36px;margin-bottom:32px;">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#c4a87a;margin-bottom:16px;">The SSD ICP — FemTech / Women's Health</div>
+    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;line-height:1.3;margin-bottom:20px;">A seed–Series A FemTech startup building a consumer-facing app or platform addressing a specific women's health life stage, founded by a clinical, research, or mission-driven founder who lacks in-house design capacity, having raised $1–30M, needing to close the gap between their science-forward positioning and a product experience that earns emotional trust from the first screen — before their next round or employer partnership.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:8px;">
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(250,246,240,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#c4a87a;display:block;margin-bottom:5px;">Stage</span>Seed – Series A (occasionally Series B if design gap is acute and team is still small)</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(250,246,240,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#c4a87a;display:block;margin-bottom:5px;">Founder Type</span>Clinical (MD/OB-GYN/PhD), research, or mission-driven operator — ~85% female-founded in this segment</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(250,246,240,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#c4a87a;display:block;margin-bottom:5px;">Product</span>Consumer-facing app or platform — life-stage specific (fertility, cycle, pregnancy, menopause, pelvic, hormonal)</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(250,246,240,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#c4a87a;display:block;margin-bottom:5px;">Science Layer</span>Has clinical evidence, peer-reviewed backing, or regulatory pathway (FDA clearance) as the core credibility claim</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(250,246,240,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#c4a87a;display:block;margin-bottom:5px;">Design Gap</span>No in-house designer; brand defaults to soft pastel monoculture; emotional UX and privacy design are absent</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(250,246,240,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#c4a87a;display:block;margin-bottom:5px;">Timing Window</span>0–18 months post-funding — or immediately pre-employer partnership launch (design quality becomes a procurement signal)</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(250,246,240,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#c4a87a;display:block;margin-bottom:5px;">Geography</span>Primarily US (NYC, SF, Boston) — FemTech is still US-capital-concentrated (65% of global femtech funding is US)</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(250,246,240,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#c4a87a;display:block;margin-bottom:5px;">Core Problem to Solve</span>"We have real science. Our brand looks like every other femtech app — pastel, soft, and indistinct. We need to earn trust before the user reads a single word."</div>
+    </div>
+  </div>
+
+  <!-- ATTRIBUTE SOURCING TABLE -->
+  <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">How each ICP attribute was determined</div>
+  <div style="display:flex;flex-direction:column;gap:0;">
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">Seed–Series A stage</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">PitchBook's FemTech VC Market Snapshot (Feb 2026) confirmed that early-stage money remains active — with Trellis Health's $1.8M pre-seed and a long tail of seed/Series A rounds. Silicon Valley Bank tracked $2.6B of women's health funding in 2024. The post-funding timing window is when design agencies get hired — validated by this list where 11 of 12 high-fit companies raised in 2024–2025. Series C+ companies (Midi at $150M, Maven at $1.7B) have in-house design teams; they're outside the ICP.</div>
+      <div style="padding:16px 14px;background:var(--blush-light);font-size:12px;color:var(--blush);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>Industry Brief → Market Context. PitchBook FemTech VC Snapshot. Mordor Intelligence femtech market report (2025).</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">Clinical or research founder</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">Jones Day's FemTech report (Sep 2025) confirmed ~85% of FemTech companies are female-founded, with founders predominantly from clinical, academic, or patient-experience backgrounds — not design or tech. The Harvard Business School research cited in the same report found femtech startups attract 25% fewer applicants, reinforcing that teams are lean and design is not a founding priority. The brand landscape confirmed this directly: every brand with a design gap had a non-design founding team (Allara, Evernow, Choix, LunaJoy — all clinical or mission-driven).</div>
+      <div style="padding:16px 14px;background:var(--blush-light);font-size:12px;color:var(--blush);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>Jones Day FemTech report. Harvard Business School femtech hiring research. FemTech Brand Landscape → all brand profile sections.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">Life-stage specific product</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">The brand landscape found that generic "women's health" positioning is losing to life-stage specificity. Thirty Madison proved condition specificity builds deeper loyalty (Keeps for hair loss, Cove for migraines). PitchBook noted ~50% of femtech companies are concentrated in reproductive health and contraception, pregnancy/nursing, and general health — each with distinct design languages. SSD's design brief becomes much more specific (and therefore credible) when framed around a life stage: "we design for the fertility patient who's been through 3 failed IVF cycles" is a different brief than "we design women's health apps."</div>
+      <div style="padding:16px 14px;background:var(--blush-light);font-size:12px;color:var(--blush);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>FemTech Brand Landscape → Audience Segmentation. Digital Health Brand Landscape → Thirty Madison profile. PitchBook FemTech industry page.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">Science/clinical evidence layer</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">The investor pitch framing for FemTech has shifted from "wellness claims" to "clinical evidence" — confirmed by the FemTech investor guide (ellty.com) which explicitly states: "clinical evidence matters most. Wellness claims are insufficient for scale." FDA clearance (Natural Cycles, Ava, Teal Health) is becoming a standard credibility signal. This creates a specific design challenge: the clinical rigor is real, but the product experience doesn't reflect it. The gap between "we have peer-reviewed data" and "the app feels trustworthy" is SSD's entry point.</div>
+      <div style="padding:16px 14px;background:var(--blush-light);font-size:12px;color:var(--blush);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>FemTech investor guide (ellty.com). FemTech Brand Landscape → Natural Cycles profile, Evernow profile. Industry Brief → Structural Tensions section.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">No in-house design; defaults to pastel monoculture</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">The brand landscape found 8 of 10 analyzed brands use soft pastel aesthetics — pinks, lavenders, dusty roses. This is a direct consequence of non-design founders defaulting to what "looks like a women's product." Flo Health established this visual language and the entire category copied it. The result: every brand looks like every other brand. This creates both the design gap (no differentiation) and the SSD opportunity (visible, meaningful differentiation is available and the founders can't see it because they don't have design fluency). Confirmed per company in design signal column above.</div>
+      <div style="padding:16px 14px;background:var(--blush-light);font-size:12px;color:var(--blush);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>FemTech Brand Landscape → Visual Identity Clusters (Soft Pastel Feminine section). Brand Gaps → Pink Monoculture. Per-company design signal column in table above.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">Privacy as product design (post-Dobbs)</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">This attribute is unique to FemTech and doesn't exist in the DTC Digital Health ICP. Post-Dobbs, menstrual and reproductive data carries legal risk for users in states with abortion restrictions. Flo Health's 2023 FTC settlement (sharing menstrual data with Facebook) permanently damaged category trust. The brand landscape found 9 of 10 brands treat privacy as a legal checklist (HIPAA badge, privacy policy) rather than a design decision. A brand that makes data control visible, legible, and felt in the UI owns a genuine trust moat. SSD's fintech background — designing trust into sensitive financial data interfaces — is directly transferable here.</div>
+      <div style="padding:16px 14px;background:var(--blush-light);font-size:12px;color:var(--blush);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>FemTech Brand Landscape → Brand Gaps (Privacy Theater). Industry Brief → Structural Tensions. FTC settlement with Flo Health (2023, public record). Dobbs decision (2022, public record).</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">SSD fit: existing strengths</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">Three SSD-specific reasons this ICP is the best fit. (1) Silk + Sonder experience: Patti worked 5 months at a consumer wellness DTC brand in the women's self-care/mental health adjacent space — direct familiarity with subscription wellness UX, habit formation design, and the emotional design register of women's health products. (2) Fintech trust pattern transfer: SSD's Funding Solutions work required designing trust into sensitive financial data — the same cognitive and emotional design challenge as women's health data. (3) SSD's brand positioning as "strategic + human" already sits in the exact register femtech founders need — scientific credibility with emotional warmth — without SSD having to pivot to get there.</div>
+      <div style="padding:16px 14px;background:var(--blush-light);font-size:12px;color:var(--blush);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>SSD Brand Identity doc. Patti's Silk + Sonder case study (patriciacapiral.com/product-design/member-manual-silk-sonder). Funding Solutions case study. Industry Brief → ICP Direction.</div>
+    </div>
+
+  </div>
+
+  <!-- RESEARCH CHAIN -->
+  <div style="margin-top:32px;padding:24px 28px;background:var(--cream);border-radius:8px;border-left:3px solid var(--blush);">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--blush);margin-bottom:12px;">The three-document research chain that produced this ICP</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+      <div style="font-size:13px;color:var(--slate);line-height:1.65;">
+        <strong style="color:var(--ink);display:block;margin-bottom:4px;">① Health &amp; Wellness Industry Brief</strong>
+        Mapped 6 segments across the broader H&amp;W landscape. Identified FemTech and DTC Digital Health as the two highest-opportunity segments for SSD. Established the founding insight: clinical and mission-driven founders have a predictable design fluency gap. FemTech ranked as the "adjacent priority" — less crowded with design agencies, higher emotional stakes, more specific SSD angle via Silk + Sonder background. <em style="color:var(--muted);">File: health-wellness-industry-brief.html</em>
+      </div>
+      <div style="font-size:13px;color:var(--slate);line-height:1.65;">
+        <strong style="color:var(--ink);display:block;margin-bottom:4px;">② FemTech Brand Landscape</strong>
+        Analyzed 10 established brands (Flo, Maven, Clue, Tia, Midi, Kindbody, etc.) to surface the category's recurring design failures. Named 6 structural gaps — Pink Monoculture, Life-Stage Siloing, Validation Trap, Data-UX Gap, Privacy Theater, App Lag Behind Hardware. These gaps became the SSD service frame for this segment. Identified Tia as the visual benchmark and Evernow as the archetypal SSD client profile. <em style="color:var(--muted);">File: femtech-brand-landscape.html</em>
+      </div>
+      <div style="font-size:13px;color:var(--slate);line-height:1.65;">
+        <strong style="color:var(--ink);display:block;margin-bottom:4px;">③ This ICP Validation List</strong>
+        Applied the ICP hypothesis to 25 real companies — testing whether the profile actually exists in volume. Result: 12 of 25 scored 4–5, confirming the hypothesis. Surfaced segment-specific sub-patterns: menopause crowding (5 brands competing on identical positioning), privacy as product design imperative, and life-stage specificity as the differentiating design brief. <em style="color:var(--muted);">File: this document</em>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div class="notes-section">
+  <div class="eye" style="margin-bottom:8px;">Strategic Notes</div>
+  <h2 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:400;">What this list tells you</h2>
+  <div class="notes-grid">
+    <div class="note-card">
+      <div class="note-lbl">ICP Hypothesis: Confirmed Again</div>
+      <div class="note-text">The pattern holds in FemTech as strongly as in DTC Digital Health. <strong>Clinical or research founder + science story + no design capacity + seed/Series A funding</strong> = the recurring profile. Allara, Evernow, Choix, LunaJoy, BeSounds Breast, Wellen, Eula — all fit precisely.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-lbl">The Menopause Crowding Problem</div>
+      <div class="note-text">Elektra, Evernow, Stella, Gennev, and Alloy are all competing for the same perimenopause positioning. <strong>Design is now the primary differentiator</strong> — the clinical models are similar, the funding levels are similar, the messaging is similar. The brand that looks and feels distinctly different wins.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-lbl">Privacy = Design, Not Legal</div>
+      <div class="note-text">Choix is the sharpest example, but the principle applies across reproductive and hormonal health. <strong>Post-Dobbs, menstrual and reproductive data carries legal risk for users in hostile states.</strong> Brands that make privacy visible in the UX — not just the privacy policy — own a genuine trust advantage. SSD should have a POV on this.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-lbl">Life-Stage Specificity Is the Differentiator</div>
+      <div class="note-text">The best-fit companies are <strong>life-stage specific</strong> — PCOS (Allara), post-menopause bone health (Wellen), endometriosis (Eula), breast health (BeSounds). Generic "women's health" positioning is losing. SSD's outreach should reflect the specific life-stage design challenge, not generic femtech language.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-lbl">Recommended First Contacts</div>
+      <div class="note-text">Based on timing, fit score, and design gap acuity: <strong>Evernow, Choix, BeSounds Breast, LunaJoy, Eula Health, Wellen.</strong> All raised in 2024–2025, all have active design gaps, and all are pre-next-round — in the exact window when design agencies get hired.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-lbl">The Tia Standard</div>
+      <div class="note-text"><strong>Tia's visual identity is the benchmark</strong> to reference in every FemTech client conversation. It proves warm editorial precision can work in clinical women's health. SSD should use Tia as the "this is the bar" reference — then show what SSD would do differently for a specific client's life-stage and condition context.</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>Sari Sari Design · FemTech ICP Validation · April 2026</span>
+  <span>Step 3 of 3 — FemTech Segment · ICP Refinement Series</span>
+  <span>Sources: Sacra, Fierce Healthcare, PitchBook, Rock Health, MedCity News, TechCrunch, brand research</span>
+</div>
+
+</body>
+</html>

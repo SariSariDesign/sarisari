@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FemTech / Women's Health Brand Landscape — SSD</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    --ink: #1a1510;
+    --paper: #faf6f0;
+    --cream: #f0ebe1;
+    --warm-white: #fdf9f5;
+    --blush: #c4605a;
+    --blush-light: #f5e0de;
+    --plum: #7a4a72;
+    --plum-light: #eadae8;
+    --sage: #5a7a5c;
+    --sage-light: #ddeade;
+    --clay: #b87a50;
+    --clay-light: #f0e5d8;
+    --slate: #4a5060;
+    --muted: #8a8580;
+    --rule: #ddd6ca;
+    --conf-high: #2e6e3a;
+    --conf-high-bg: #dff0e2;
+    --conf-med: #8a6a10;
+    --conf-med-bg: #f7edcc;
+    --conf-low: #8a3a20;
+    --conf-low-bg: #f7ddd5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.65; font-size: 15px; }
+
+  /* MASTHEAD */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 64px 56px 52px;
+    position: relative;
+    overflow: hidden;
+  }
+  .masthead-ring {
+    position: absolute; right: 80px; top: 50%; transform: translateY(-50%);
+    width: 280px; height: 280px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .masthead-ring::after {
+    content:''; position:absolute; inset:32px;
+    border-radius:50%; border:1px solid rgba(255,255,255,0.04);
+  }
+  .studio-tag { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:#c4a87a; margin-bottom:20px; }
+  .masthead h1 { font-family:'Playfair Display',serif; font-size:clamp(36px,5.5vw,58px); font-weight:400; line-height:1.08; margin-bottom:14px; max-width:680px; }
+  .masthead h1 em { color:rgba(255,255,255,0.38); font-style:italic; }
+  .masthead-sub { font-family:'DM Mono',monospace; font-size:11px; color:rgba(250,246,240,0.45); margin-top:26px; display:flex; gap:20px; flex-wrap:wrap; }
+
+  /* TLDR */
+  .tldr { background:var(--blush); color:white; padding:40px 56px; }
+  .tldr-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; opacity:0.7; margin-bottom:20px; }
+  .tldr-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; }
+  .tldr-item { font-size:13.5px; line-height:1.6; padding-left:16px; position:relative; color:rgba(255,255,255,0.9); }
+  .tldr-item::before { content:'→'; position:absolute; left:0; opacity:0.65; }
+  .tldr-item strong { color:white; font-weight:600; }
+
+  /* LAYOUT */
+  .wrap { max-width:1080px; margin:0 auto; padding:0 48px; }
+  section { padding:72px 0; border-bottom:1px solid var(--rule); }
+  section:last-of-type { border-bottom:none; }
+  .sec-eye { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:14px; margin-bottom:32px; }
+  .sec-eye::after { content:''; flex:1; height:1px; background:var(--rule); }
+  h2 { font-family:'Playfair Display',serif; font-size:clamp(24px,3.2vw,36px); font-weight:400; line-height:1.15; margin-bottom:10px; }
+  .sec-lead { font-size:15px; color:var(--slate); margin-bottom:40px; max-width:620px; line-height:1.7; }
+
+  /* CONF BADGES */
+  .cb { display:inline-flex; align-items:center; gap:4px; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.08em; padding:2px 8px; border-radius:2px; vertical-align:middle; margin-left:4px; }
+  .cb-h { background:var(--conf-high-bg); color:var(--conf-high); }
+  .cb-m { background:var(--conf-med-bg); color:var(--conf-med); }
+  .cb-l { background:var(--conf-low-bg); color:var(--conf-low); }
+  .cb::before { content:'●'; }
+
+  /* BRAND CARDS */
+  .brand-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  @media(max-width:720px){.brand-grid{grid-template-columns:1fr;}}
+  .brand-card { background:white; border-radius:10px; overflow:hidden; border:1px solid var(--rule); transition:box-shadow 0.2s; }
+  .brand-card:hover { box-shadow:0 12px 48px rgba(0,0,0,0.09); }
+  .card-hdr { padding:22px 26px 18px; border-bottom:1px solid var(--cream); display:flex; justify-content:space-between; align-items:flex-start; }
+  .brand-name { font-family:'Playfair Display',serif; font-size:21px; font-weight:400; line-height:1.1; margin-bottom:4px; }
+  .brand-type { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.08em; color:var(--muted); text-transform:uppercase; }
+  .card-body { padding:18px 26px 22px; }
+  .prop { margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--cream); }
+  .prop:last-child { margin-bottom:0; padding-bottom:0; border-bottom:none; }
+  .prop-lbl { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:5px; }
+  .prop-val { font-size:13.5px; color:var(--slate); line-height:1.6; }
+  .prop-val strong { color:var(--ink); font-weight:600; }
+  .gap-pill { display:inline-block; background:var(--blush-light); color:var(--blush); font-family:'DM Mono',monospace; font-size:10px; padding:2px 8px; border-radius:2px; margin:2px 2px 2px 0; }
+
+  /* QUICK TABLE */
+  .qtable { width:100%; border-collapse:collapse; font-size:13px; }
+  .qtable th { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); text-align:left; padding:10px 14px; background:var(--cream); border-bottom:2px solid var(--ink); }
+  .qtable td { padding:13px 14px; border-bottom:1px solid var(--rule); vertical-align:top; color:var(--slate); line-height:1.5; }
+  .qtable tr:hover td { background:var(--warm-white); }
+  .qtable .bn { font-weight:600; color:var(--ink); font-size:13.5px; }
+  .star { color:var(--blush); }
+
+  /* MAP */
+  .axes-box { background:var(--cream); border-left:3px solid var(--clay); padding:18px 22px; border-radius:0 6px 6px 0; margin-bottom:28px; font-size:13.5px; color:var(--slate); line-height:1.65; }
+  .axes-box strong { color:var(--ink); }
+  .chart-box { background:white; border:1px solid var(--rule); border-radius:10px; padding:32px; }
+
+  /* PATTERN CARDS */
+  .pat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:20px; }
+  .pat-card { background:white; border:1px solid var(--rule); border-radius:8px; padding:22px; }
+  .pat-name { font-size:15px; font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
+  .pdot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .d-blush { background:var(--blush); }
+  .d-plum  { background:var(--plum); }
+  .d-sage  { background:var(--sage); }
+  .d-clay  { background:var(--clay); }
+  .d-ink   { background:var(--ink); }
+  .pat-meaning { font-size:13px; color:var(--slate); line-height:1.65; margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--cream); }
+  .pat-brands { font-size:12.5px; color:var(--muted); line-height:1.6; }
+  .pat-brands strong { color:var(--ink); font-weight:600; }
+
+  /* GAP LIST */
+  .gap-list { display:flex; flex-direction:column; }
+  .gap-row { display:grid; grid-template-columns:200px 1fr 80px; gap:24px; align-items:start; padding:20px 0; border-bottom:1px solid var(--rule); }
+  .gap-row:first-child { border-top:1px solid var(--rule); }
+  .gap-name { font-family:'Playfair Display',serif; font-size:17px; color:var(--blush); line-height:1.3; }
+  .gap-desc { font-size:13.5px; color:var(--slate); line-height:1.65; }
+  .gap-desc strong { color:var(--ink); }
+  .gap-pct { font-family:'DM Mono',monospace; font-size:22px; font-weight:500; text-align:right; line-height:1; }
+  .gap-pct span { display:block; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-top:4px; }
+
+  /* OPP GRID */
+  .opp-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media(max-width:680px){.opp-grid{grid-template-columns:1fr;}}
+  .opp-card { background:white; border:1px solid var(--rule); border-radius:8px; padding:24px; }
+  .opp-card.feat { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+  .opp-lbl { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+  .opp-card.feat .opp-lbl { color:#c4a87a; }
+  .opp-title { font-family:'Playfair Display',serif; font-size:19px; font-weight:400; margin-bottom:10px; line-height:1.2; }
+  .opp-body { font-size:13.5px; color:var(--slate); line-height:1.65; }
+  .opp-card.feat .opp-body { color:rgba(250,246,240,0.8); }
+  .versus { margin-top:12px; padding:12px; background:var(--cream); border-radius:4px; font-size:12.5px; line-height:1.6; color:var(--slate); }
+  .versus em { display:block; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; font-style:normal; }
+  .opp-card.feat .versus { background:rgba(255,255,255,0.07); color:rgba(250,246,240,0.75); }
+
+  /* STRATEGIC REC */
+  .rec-wrap { background:var(--ink); color:var(--paper); border-radius:10px; overflow:hidden; }
+  .rec-hdr { padding:32px 40px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .rec-hdr h3 { font-family:'Playfair Display',serif; font-size:26px; font-weight:400; line-height:1.15; }
+  .rec-hdr .sub { font-family:'DM Mono',monospace; font-size:10px; color:rgba(250,246,240,0.4); margin-top:4px; }
+  .rec-cells { display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid rgba(255,255,255,0.06); }
+  @media(max-width:700px){.rec-cells{grid-template-columns:1fr;}}
+  .rec-cell { padding:26px 30px; border-right:1px solid rgba(255,255,255,0.06); }
+  .rec-cell:last-child { border-right:none; }
+  .rec-cell-lbl { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:#c4a87a; margin-bottom:8px; }
+  .rec-cell-val { font-size:13.5px; color:rgba(250,246,240,0.8); line-height:1.65; }
+  .rec-cell-val strong { color:var(--paper); font-weight:600; }
+  .rec-rationale { padding:22px 30px; background:rgba(255,255,255,0.04); font-size:13px; color:rgba(250,246,240,0.6); line-height:1.7; border-top:1px solid rgba(255,255,255,0.06); }
+  .rec-rationale strong { color:rgba(250,246,240,0.85); }
+
+  .footer { background:var(--cream); padding:26px 56px; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; letter-spacing:0.06em; }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-ring"></div>
+  <div class="studio-tag">Sari Sari Design · Brand Landscape Analysis · Series 2 of 3</div>
+  <h1>FemTech &amp;<br><em>Women's Health</em></h1>
+  <div class="masthead-sub">
+    <span>10 brands analyzed</span>
+    <span>April 2026</span>
+    <span>Consumer-facing DTC + digital health focus</span>
+    <span>SSD ICP refinement</span>
+  </div>
+</div>
+
+<!-- TLDR -->
+<div class="tldr">
+  <div class="tldr-label">TLDR — Strategic Summary</div>
+  <div class="tldr-grid">
+    <div class="tldr-item"><strong>The category is fracturing by life stage</strong> — cycle tracking, fertility, pregnancy, menopause, and sexual health are becoming distinct brand territories. Generic "women's health" positioning is losing ground to life-stage specificity.</div>
+    <div class="tldr-item"><strong>Flo Health owns the data layer</strong> — 70M+ MAUs, $1B valuation, now expanding into perimenopause. Its success has created an aesthetic template that smaller brands copy: soft purples, rounded UI, supportive tone. The category looks like Flo.</div>
+    <div class="tldr-item"><strong>The clinical–consumer gap is wider here than in digital health broadly.</strong> Maven and Midi Health operate with clinical authority; Clue and Flo operate as lifestyle apps. Brands in the middle — trying to be both — are the weakest.</div>
+    <div class="tldr-item"><strong>Menopause is the most crowded new entrant.</strong> Midi, Gennev, Menopause MHT, Elektra — all racing into the same perimenopause positioning. First mover advantage is gone; design and clinical depth are the differentiators now.</div>
+    <div class="tldr-item"><strong>The biggest whitespace</strong> is a brand that addresses the full hormonal arc — not just one life stage — with scientific credibility, visual distinction from the purple-soft default, and data-forward UX that doesn't feel clinical. No brand currently owns this.</div>
+    <div class="tldr-item"><strong>SSD entry point</strong> is the same as digital health but emotionally higher stakes: founders with clinical or research pedigree who've raised on a science story but whose product UI doesn't reflect that intelligence or earn the trust the category demands.</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- PART 1: BRAND PROFILES -->
+<section>
+  <div class="sec-eye">01 · Brand Profiles</div>
+  <h2>Ten brands, mapped in full</h2>
+  <p class="sec-lead">Profiles across brand identity, differentiation, expression, experience, monetization, and gaps. Confidence badges applied per claim.</p>
+
+  <div class="brand-grid">
+
+    <!-- FLO HEALTH -->
+    <div class="brand-card">
+      <div class="card-hdr">
+        <div><div class="brand-name">Flo Health</div><div class="brand-type">Cycle Tracking + Women's Health App · $1B Unicorn</div></div>
+        <span class="cb cb-h">High</span>
+      </div>
+      <div class="card-body">
+        <div class="prop">
+          <div class="prop-lbl">Brand Identity</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> Category-defining brand. <strong>Soft purples, rounded UI, supportive and science-informed tone.</strong> Originally a cycle tracker, now positioning as "your health assistant for life." Emotional appeal: empowerment through body knowledge. 70M+ MAU, $1B valuation. <span class="cb cb-h">High</span> Launched "Flo for Perimenopause" July 2025.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Differentiation</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> <strong>Data advantage is the moat</strong> — 70M users generates training data no competitor can match. AI personalization improves with scale. First femtech unicorn in Europe. FDA-cleared ovulation prediction.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Expression</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> Partnered with Headspace (Dec 2025) for mental health integration. Content strategy is heavy on education and normalization. Consistent pastel-purple visual language across all touchpoints.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Monetization</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> Freemium app + Flo Premium subscription. ~5M paid subscribers. Series C at $1B valuation (Nov 2024). Revenue from subscriptions + data licensing partnerships.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-pill">privacy perception risk</span><span class="gap-pill">aesthetic commoditization</span><span class="gap-pill">clinical vs consumer tension</span>
+            <div style="margin-top:8px;font-size:13px;color:var(--slate);">Flo's visual language is now so widely copied it no longer differentiates. Privacy concerns over menstrual data sharing linger (2023 FTC settlement). Expanding into perimenopause risks diluting the core brand promise.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAVEN CLINIC -->
+    <div class="brand-card">
+      <div class="card-hdr">
+        <div><div class="brand-name">Maven Clinic</div><div class="brand-type">Virtual Women's + Family Health · $1.7B Valuation</div></div>
+        <span class="cb cb-h">High</span>
+      </div>
+      <div class="card-body">
+        <div class="prop">
+          <div class="prop-lbl">Brand Identity</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> <strong>The employer-benefit standard for women's health.</strong> B2B2C model. Visual identity: warm and professional — cream, forest green, photography of real women across ages. Tone is warm-clinical: authoritative but not cold.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Differentiation</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> <strong>2,000+ employer clients, 175 countries, $125M Series F.</strong> Maternity &amp; Newborn Care program grew 400%. The only platform covering preconception through menopause as a unified employer benefit. Hybrid virtual + in-person network.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Experience</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> B2B-facing brand is polished and credible. Consumer-facing member experience is functional but lacks the emotional warmth the brand promises. The gap between employer-facing marketing and member-facing app UX is notable.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Monetization</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> Employer benefits SaaS + PEPM (per-employee-per-month). Series F at $1.7B valuation. Not direct-to-consumer — accessed through employer.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-pill">member UX vs. brand promise</span><span class="gap-pill">consumer inaccessibility</span>
+            <div style="margin-top:8px;font-size:13px;color:var(--slate);">Maven's brand is exceptional for employer procurement. The member experience doesn't live up to the brand story told in sales materials. Entirely inaccessible without employer coverage — a major access gap.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLUE -->
+    <div class="brand-card">
+      <div class="card-hdr">
+        <div><div class="brand-name">Clue</div><div class="brand-type">Period + Cycle Tracking App · Private, ~100 employees</div></div>
+        <span class="cb cb-h">High</span>
+      </div>
+      <div class="card-body">
+        <div class="prop">
+          <div class="prop-lbl">Brand Identity</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> <strong>The science-first, inclusive alternative to Flo.</strong> Founded by Ida Tin (who coined "femtech"). Positions on rigor and research — partners with academic institutions. Color palette: deep teal/navy — more serious and gender-neutral than pink/purple competitors. Tone: educational, direct, evidence-forward.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Differentiation</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> <strong>Inclusivity is the explicit brand pillar</strong> — designed for people with cycles, not just "women." Partnered with Headspace June 2025 for mental health support at 50% discount for Clue Plus. Research-publishing brand — actively contributes to peer-reviewed science.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Visual Identity</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> Bold teal/coral palette with geometric precision. Deliberately avoids pink/purple softness of competitors. More editorial, less lifestyle. The visual language says "technology" and "science" rather than "wellness."</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-pill">scale disadvantage vs. Flo</span><span class="gap-pill">monetization friction</span>
+            <div style="margin-top:8px;font-size:13px;color:var(--slate);">Massively outsized by Flo on MAUs and funding. Clue Plus conversion is lower than Flo Premium. The science positioning is intellectually differentiated but doesn't produce the same emotional connection or retention.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NATURAL CYCLES -->
+    <div class="brand-card">
+      <div class="card-hdr">
+        <div><div class="brand-name">Natural Cycles</div><div class="brand-type">FDA-Cleared Birth Control App · Public (Nasdaq Stockholm)</div></div>
+        <span class="cb cb-h">High</span>
+      </div>
+      <div class="card-body">
+        <div class="prop">
+          <div class="prop-lbl">Brand Identity</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> <strong>"The world's first FDA-cleared birth control app."</strong> This is the entire positioning — clinical legitimacy as the differentiator. Visual identity: clean white, muted dusty rose, photography of confident women. Tone is matter-of-fact and scientific, not warm or aspirational.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Differentiation</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> <strong>Regulatory clearance is unrivaled in this category</strong> — no competitor can claim FDA-cleared contraception at scale. Partnered with Oura Ring (cycle data integration), deepening the wearable + AI story.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Expression</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> Heavy on clinical proof points and safety data — feels more like a regulated medical product than a consumer wellness app. The UX prioritizes accuracy over delight. Trust is built through mechanism, not emotion.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-pill">emotional flatness</span><span class="gap-pill">accessibility perception</span>
+            <div style="margin-top:8px;font-size:13px;color:var(--slate);">Clinical credibility is the entire brand story. There's almost no warmth or emotional resonance — it's a brand that a doctor would trust before a woman would feel connected to. The barrier to correct use (BBT thermometer twice daily) creates UX friction that the brand doesn't help resolve.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MIDI HEALTH -->
+    <div class="brand-card">
+      <div class="card-hdr">
+        <div><div class="brand-name">Midi Health</div><div class="brand-type">Perimenopause + Menopause Telehealth · Series B, ~$60M+</div></div>
+        <span class="cb cb-m">Med</span>
+      </div>
+      <div class="card-body">
+        <div class="prop">
+          <div class="prop-lbl">Brand Identity</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> <strong>"Care for the midlife woman, finally."</strong> Positioning squarely in the perimenopause + menopause gap. Visual identity: warm sage greens, soft photography of women 40–60, grounded and calm tone. Brand personality: wise, validating, non-judgmental.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Differentiation</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> <strong>Condition specificity</strong> — not a general women's health platform, specifically for menopause transition. Clinicians trained specifically in menopause care. Matches the moment when most women feel abandoned by traditional healthcare.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Experience</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> Brand warmth is strong. However, at Series B scale the product design system hasn't evolved at pace with growth. The emotional promise of "you're finally seen" is made on the homepage but underdelivered in the product.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-pill">crowded category</span><span class="gap-pill">design system maturity</span>
+            <div style="margin-top:8px;font-size:13px;color:var(--slate);">Multiple competitors (Gennev, Elektra, Evernow) occupy similar positioning. The brand promise is strong but visual execution is generic relative to the emotional specificity of the positioning. Design hasn't kept pace with clinical depth.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIA -->
+    <div class="brand-card">
+      <div class="card-hdr">
+        <div><div class="brand-name">Tia</div><div class="brand-type">Whole-Woman Primary Care · Series B, ~$100M raised</div></div>
+        <span class="cb cb-m">Med</span>
+      </div>
+      <div class="card-body">
+        <div class="prop">
+          <div class="prop-lbl">Brand Identity</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> <strong>"Whole Woman, Whole Life" care.</strong> Blends primary care, gynecology, mental health, and wellness under one brand. Operating in NYC, LA, SF, PHX. Visual identity: warm and editorial — rust/blush palette, photography that feels like a lifestyle brand but signals clinical trust. The most sophisticated visual identity in the segment.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Differentiation</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> In-person + virtual hybrid. The integrative model — treating the whole woman, not a single condition — is the rarest positioning in femtech. Most brands are condition-specific; Tia refuses that framing.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Visual Identity</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> <strong>Best-in-class visual design in the US femtech space.</strong> Warm terracotta and blush palette, editorial typography, photography that depicts real clinical moments with warmth. The brand feels like a premium lifestyle brand that happens to be a healthcare company — which is precisely the right tone.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-pill">geographic limitation</span><span class="gap-pill">scale tension</span>
+            <div style="margin-top:8px;font-size:13px;color:var(--slate);">In-person model limits scalability outside major metros. The brand is exceptional but the product experience only a handful of cities can access. Digital members in non-Tia cities have a diluted experience relative to the brand promise.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KINDBODY -->
+    <div class="brand-card">
+      <div class="card-hdr">
+        <div><div class="brand-name">Kindbody</div><div class="brand-type">Fertility + Women's Health Clinics · Series C, ~$150M raised</div></div>
+        <span class="cb cb-m">Med</span>
+      </div>
+      <div class="card-body">
+        <div class="prop">
+          <div class="prop-lbl">Brand Identity</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> <strong>Accessible, modern fertility care.</strong> Positions against the cold, expensive IVF clinic experience. Visual identity: bold, modern — jewel tones (deep teal, gold), contemporary photography. Brand personality: confident, direct, destigmatizing.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Differentiation</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> Employer benefits + DTC model. Network of clinics across US. Combined fertility + gynecology + wellness under one brand. Carrot Fertility competitor in the employer benefits channel.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-pill">financial distress signals</span><span class="gap-pill">brand vs. reality</span>
+            <div style="margin-top:8px;font-size:13px;color:var(--slate);">The modern brand narrative has been complicated by reported financial difficulties and operational challenges in 2024. The gap between "accessible" brand promise and the reality of fertility care costs remains unresolved.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NURX -->
+    <div class="brand-card">
+      <div class="card-hdr">
+        <div><div class="brand-name">Nurx</div><div class="brand-type">Reproductive + Sexual Health Telehealth · Series C</div></div>
+        <span class="cb cb-m">Med</span>
+      </div>
+      <div class="card-body">
+        <div class="prop">
+          <div class="prop-lbl">Brand Identity</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> <strong>Birth control, STI testing, and reproductive care delivered to your door.</strong> Convenience-first positioning. Visual identity: clean, modern, approachable — soft colors, direct messaging. Tone: matter-of-fact and non-judgmental about reproductive choices.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Differentiation</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> Prescription delivery is core — DTC pharmacy model. Expanded into headache, dermatology, and PrEP. Original birth control-by-mail positioning created a category; now competing with Wisp, Hims/Hers Hers, and others on similar convenience ground.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-pill">category dilution</span><span class="gap-pill">design stagnation</span>
+            <div style="margin-top:8px;font-size:13px;color:var(--slate);">Expanding beyond reproductive health into headache and dermatology weakens brand specificity. The core visual identity hasn't evolved with the expanded product line. UI feels dated relative to newer entrants.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ELVIE / WILLOW -->
+    <div class="brand-card">
+      <div class="card-hdr">
+        <div><div class="brand-name">Elvie / Willow</div><div class="brand-type">Smart Breast Pump + Pelvic Health Devices · Merged 2025</div></div>
+        <span class="cb cb-h">High</span>
+      </div>
+      <div class="card-body">
+        <div class="prop">
+          <div class="prop-lbl">Brand Identity</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> <strong>Hardware-enabled women's health — the most design-forward physical product brand in femtech.</strong> Elvie's identity: modern, empowering, discreet luxury for postpartum and pelvic health. Willow: freedom-focused breast pumping. Merged March 2025 creating a maternal health hardware giant.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Differentiation</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> <strong>Physical product design excellence</strong> — Elvie Pump and Elvie Trainer are genuinely beautiful, functional objects. Design is the primary differentiator, not just a wrapper. The merged entity combines Willow's in-bra pump with Elvie's pelvic and bassinet ecosystem.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Visual Identity</div>
+          <div class="prop-val"><span class="cb cb-h">High</span> Elvie's brand is the clearest example in femtech of design-as-product — the visual identity and the physical object reinforce each other. Minimal, premium, purposeful. Colors: clean white with accent colors per product line.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-pill">post-merger integration</span><span class="gap-pill">app UX vs. hardware quality</span>
+            <div style="margin-top:8px;font-size:13px;color:var(--slate);">Hardware is exceptional; companion app UX has historically lagged behind. Post-merger brand integration of Elvie + Willow is unresolved — two distinct brand identities now need to cohere under a single parent company narrative.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WISP -->
+    <div class="brand-card">
+      <div class="card-hdr">
+        <div><div class="brand-name">Wisp</div><div class="brand-type">Women's Sexual + Reproductive Health DTC · Series A</div></div>
+        <span class="cb cb-m">Med</span>
+      </div>
+      <div class="card-body">
+        <div class="prop">
+          <div class="prop-lbl">Brand Identity</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> <strong>Non-judgmental, discreet, shame-free women's sexual health.</strong> STI treatment, UTI care, BV, birth control. Visual identity: warm peachy-pink tones, intimate photography, body-positive messaging. Tone: warm, direct, normalizing about conditions that carry stigma.</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Differentiation</div>
+          <div class="prop-val"><span class="cb cb-m">Med</span> Hyper-focused on the shame/stigma of sexual health conditions in women. Privacy as a core brand value — discreet shipping, no-judgment framing. Fills the gap that the "Hers" sub-brand doesn't fully serve (condition specificity).</div>
+        </div>
+        <div class="prop">
+          <div class="prop-lbl">Brand Gaps</div>
+          <div class="prop-val">
+            <span class="gap-pill">design ceiling</span><span class="gap-pill">platform shallowness</span>
+            <div style="margin-top:8px;font-size:13px;color:var(--slate);">Warm but not premium. The brand is emotionally resonant but the design quality doesn't signal the clinical trust level needed to fully convert skeptical new patients. More ecomm brand than digital health platform.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end brand-grid -->
+</section>
+
+<!-- QUICK REFERENCE TABLE -->
+<section>
+  <div class="sec-eye">Quick Reference</div>
+  <h2>Brand comparison at a glance</h2>
+  <div style="overflow-x:auto;">
+  <table class="qtable">
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>Positioning</th>
+        <th>Target Audience</th>
+        <th>Voice / Tone</th>
+        <th>Key Differentiator</th>
+        <th>Trust Strategy</th>
+        <th>Design Quality</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="bn">Flo Health</td><td>Health assistant for life</td><td>Women 18–45, cycle-curious</td><td>Supportive, educational</td><td>Data moat — 70M MAUs</td><td>Scale + AI personalization</td><td><span class="star">★★★★</span>☆</td></tr>
+      <tr><td class="bn">Maven Clinic</td><td>Employer benefit standard</td><td>Employers + working women</td><td>Warm-clinical, authoritative</td><td>Full arc from preconception → menopause</td><td>Employer credibility + clinical network</td><td><span class="star">★★★★</span>☆</td></tr>
+      <tr><td class="bn">Clue</td><td>Science-first, inclusive</td><td>Cycle-tracking users who reject pink</td><td>Direct, evidence-based</td><td>Research credibility + gender-inclusivity</td><td>Peer-reviewed science</td><td><span class="star">★★★★★</span></td></tr>
+      <tr><td class="bn">Natural Cycles</td><td>FDA-cleared birth control</td><td>Women seeking hormone-free contraception</td><td>Clinical, matter-of-fact</td><td>Only FDA-cleared contraceptive app</td><td>Regulatory clearance</td><td><span class="star">★★★</span>☆☆</td></tr>
+      <tr><td class="bn">Midi Health</td><td>Menopause care, finally</td><td>Women 40–55 in perimenopause</td><td>Validating, wise, warm</td><td>Menopause-specialist clinicians</td><td>Specialist clinical depth</td><td><span class="star">★★★</span>☆☆</td></tr>
+      <tr><td class="bn">Tia</td><td>Whole Woman, Whole Life</td><td>Urban women 25–45</td><td>Editorial, warm-premium</td><td>Integrated in-person + virtual primary care</td><td>In-person clinic + brand sophistication</td><td><span class="star">★★★★★</span></td></tr>
+      <tr><td class="bn">Kindbody</td><td>Accessible modern fertility</td><td>Fertility-seeking women, employers</td><td>Confident, destigmatizing</td><td>IVF + employer benefits combination</td><td>Modern clinic aesthetic</td><td><span class="star">★★★★</span>☆</td></tr>
+      <tr><td class="bn">Nurx</td><td>Reproductive health by mail</td><td>Women seeking discreet Rx access</td><td>Practical, non-judgmental</td><td>Prescription delivery</td><td>Convenience + doctor review</td><td><span class="star">★★★</span>☆☆</td></tr>
+      <tr><td class="bn">Elvie / Willow</td><td>Design-forward maternal hardware</td><td>Pumping + pelvic health women</td><td>Empowering, minimal</td><td>Physical product design excellence</td><td>Premium design = premium quality signal</td><td><span class="star">★★★★★</span></td></tr>
+      <tr><td class="bn">Wisp</td><td>Shame-free sexual health DTC</td><td>Women with stigmatized conditions</td><td>Warm, intimate, direct</td><td>Condition-specific shame reduction</td><td>Non-judgment framing</td><td><span class="star">★★★</span>☆☆</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- PART 2: POSITIONING MAP -->
+<section>
+  <div class="sec-eye">02 · Competitive Landscape</div>
+  <h2>Positioning map</h2>
+  <p class="sec-lead">Axes chosen to reveal the dominant tensions in femtech — between clinical authority and consumer approachability, and between addressing a single life-stage vs. the whole hormonal arc.</p>
+
+  <div class="axes-box">
+    <strong>Chosen axes — rationale:</strong> X-axis: <strong>Condition / Life-stage Specific ↔ Whole-Woman / Platform</strong> — reveals the core product strategy tension: depth on one problem vs. breadth across a woman's health arc. Y-axis: <strong>Consumer / Lifestyle ↔ Clinical / Evidence-based</strong> — captures the trust-building strategy: warmth and relatability vs. scientific authority. These axes surface the most strategically meaningful whitespace for a new entrant and reveal why most brands cluster at the extremes rather than bridging the gap.
+  </div>
+
+  <div class="chart-box">
+    <canvas id="femtechMap" height="420"></canvas>
+  </div>
+</section>
+
+<!-- MESSAGING PATTERNS -->
+<section>
+  <div class="sec-eye">02b · Messaging Patterns</div>
+  <h2>Five dominant messaging clusters</h2>
+
+  <div class="pat-grid">
+    <div class="pat-card">
+      <div class="pat-name"><span class="pdot d-blush"></span>Destigmatization + Normalization</div>
+      <div class="pat-meaning">Leads with "this is normal and you deserve care for it." Lowers barrier to seeking help for conditions carrying shame — reproductive health, sexual health, menopause. Effective at acquisition; creates emotional brand loyalty early.</div>
+      <div class="pat-brands"><strong>Midi Health, Wisp, Flo, Natural Cycles, Nurx.</strong> The dominant entry-point message in the category — essentially every brand normalizes something.</div>
+    </div>
+    <div class="pat-card">
+      <div class="pat-name"><span class="pdot d-plum"></span>Science as Identity</div>
+      <div class="pat-meaning">Positions the brand's scientific rigor as a personality trait, not just a proof point. "We are scientists" rather than "our product is clinically proven." Rare and powerful — differentiates intellectually in a category prone to vague wellness claims.</div>
+      <div class="pat-brands"><strong>Clue</strong> (strongest execution), <strong>Natural Cycles</strong> (FDA clearance as identity). Both use teal/cool palettes to reinforce the science signal visually.</div>
+    </div>
+    <div class="pat-card">
+      <div class="pat-name"><span class="pdot d-sage"></span>Empowerment Through Data</div>
+      <div class="pat-meaning">Frames health data as a tool for autonomy and self-knowledge. "Understanding your body = power." Works because it turns passive health tracking into active agency, which resonates strongly with educated, health-curious women.</div>
+      <div class="pat-brands"><strong>Flo Health, Clue, Natural Cycles, Ava.</strong> The prevalent message in cycle/fertility apps. Increasingly diluted as all players claim data-driven personalization.</div>
+    </div>
+    <div class="pat-card">
+      <div class="pat-name"><span class="pdot d-clay"></span>"Finally" / Validation</div>
+      <div class="pat-meaning">Taps into the lived experience of being dismissed by healthcare — "your symptoms are real, you were right to seek help." Particularly resonant for menopause, fertility struggles, and endometriosis. Creates immediate emotional recognition and brand loyalty.</div>
+      <div class="pat-brands"><strong>Midi Health</strong> (most explicit — "care for the midlife woman, finally"), <strong>Tia</strong> ("the care you've always deserved"). Growing messaging territory as more conditions enter mainstream conversation.</div>
+    </div>
+    <div class="pat-card">
+      <div class="pat-name"><span class="pdot d-ink"></span>Lifestyle + Identity Integration</div>
+      <div class="pat-meaning">Positions health tracking and women's healthcare as part of a modern, aspirational identity — not a medical errand. The product is part of how you live, not just what you do when something is wrong. Borrowed from wellness/beauty brands.</div>
+      <div class="pat-brands"><strong>Tia</strong> (most fully realized), <strong>Flo Health</strong> (partially), <strong>Kindbody</strong> (for fertility). The highest-sophistication messaging direction — rarely executed well because it requires genuine design investment to be credible.</div>
+    </div>
+  </div>
+</section>
+
+<!-- VISUAL IDENTITY CLUSTERS -->
+<section>
+  <div class="sec-eye">02c · Visual Identity Clusters</div>
+  <h2>Three visual languages define the category</h2>
+
+  <div class="pat-grid">
+    <div class="pat-card">
+      <div class="pat-name"><span class="pdot d-blush"></span>Soft Pastel Feminine</div>
+      <div class="pat-meaning">Pinks, mauves, lavenders, dusty roses — the inherited visual language of women's consumer products applied to healthcare. Communicates warmth, accessibility, and approachability. The default choice for brands wanting to feel welcoming. The category default — almost a visual genre unto itself.</div>
+      <div class="pat-brands"><strong>Flo Health, Wisp, Midi Health (partially), Nurx.</strong> 5–6 of 10 brands skew this direction. The monoculture of the category.</div>
+    </div>
+    <div class="pat-card">
+      <div class="pat-name"><span class="pdot d-plum"></span>Science + Precision</div>
+      <div class="pat-meaning">Cool teals, deep navy, white space, geometric precision, sans-serif typography. Signals rigor, authority, and credibility. Borrowed from medtech/biotech visual language. Higher trust ceiling for skeptical users; lower emotional warmth. Sits against the pastel default as a deliberate counterstatement.</div>
+      <div class="pat-brands"><strong>Clue</strong> (most fully realized), <strong>Natural Cycles.</strong> Rare in the consumer femtech space — even rarer done well at brand level.</div>
+    </div>
+    <div class="pat-card">
+      <div class="pat-name"><span class="pdot d-sage"></span>Warm Editorial Premium</div>
+      <div class="pat-meaning">Terracottas, warm neutrals, editorial photography of real women, considered typography, understated luxury. Borrows from modern lifestyle/wellness brands (Goop-adjacent, not Goop-loud). Communicates: "we're a premium consumer brand that happens to be healthcare." Highest emotional resonance when done well. Scarcest in the category.</div>
+      <div class="pat-brands"><strong>Tia</strong> (definitive example), <strong>Maven Clinic</strong> (partial), <strong>Kindbody</strong> (partial). The visual direction most likely to build long-term brand equity and loyalty.</div>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIENCE SEGMENTATION -->
+<section>
+  <div class="sec-eye">02d · Audience Segmentation</div>
+  <h2>Who's served — and who isn't</h2>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div style="background:white;border:1px solid var(--rule);border-radius:8px;padding:24px;">
+      <div class="prop-lbl" style="margin-bottom:12px;">Well-served audiences</div>
+      <div style="font-size:13.5px;color:var(--slate);line-height:1.8;">
+        ✓ Urban, educated women 25–40 (cycle tracking, fertility)<br>
+        ✓ Employer-covered professional women (Maven, Progyny, Carrot)<br>
+        ✓ Women seeking discreet Rx delivery (Nurx, Wisp)<br>
+        ✓ Perimenopause early adopters — women 40–50 who seek information proactively<br>
+        ✓ English-speaking, smartphone-first, high digital health literacy
+      </div>
+    </div>
+    <div style="background:var(--blush-light);border:1px solid var(--blush);border-radius:8px;padding:24px;">
+      <div class="prop-lbl" style="margin-bottom:12px;color:var(--blush);">Underserved audiences — opportunity</div>
+      <div style="font-size:13.5px;color:var(--slate);line-height:1.8;">
+        → Women 50+ post-menopause (sexual health, bone health, HRT management)<br>
+        → Women with PCOS or endometriosis seeking ongoing chronic management UX<br>
+        → Women without employer coverage who need full-arc digital care<br>
+        → Non-English speakers, lower digital health literacy<br>
+        → Women navigating complex fertility + pregnancy + postpartum simultaneously<br>
+        → Perimenopausal women who don't self-identify as "menopausal" yet
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PART 3: BRAND GAPS -->
+<section>
+  <div class="sec-eye">03 · Brand Gaps</div>
+  <h2>Common failures across the landscape</h2>
+
+  <div class="gap-list">
+    <div class="gap-row">
+      <div class="gap-name">The Pink Monoculture</div>
+      <div class="gap-desc"><strong>The visual language of care has collapsed into soft pastels, rounded type, and lifestyle photography of happy women.</strong> Every brand looks like every other brand. The signal of "this is for you" has become so ubiquitous it no longer differentiates. A new entrant with a genuinely distinctive visual identity — warm without being pink, scientific without being cold — would have immediate cut-through in a crowded visual field.</div>
+      <div class="gap-pct">8/10<span>brands</span></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-name">Life-Stage Siloing</div>
+      <div class="gap-desc"><strong>Brands are built around single moments — fertility, menopause, birth control — but women's bodies don't work in silos.</strong> Hormonal health connects cycle → fertility → pregnancy → postpartum → perimenopause → menopause. No consumer brand credibly addresses this arc. Maven does it for employers. No one does it for the individual woman. This is the single biggest strategic whitespace in the category.</div>
+      <div class="gap-pct">9/10<span>brands</span></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-name">The Validation Trap</div>
+      <div class="gap-desc"><strong>"You've been dismissed and we see you" is powerful once. It's not a brand strategy.</strong> Multiple brands — especially in menopause — lead with validation messaging ("finally," "you deserve care," "your symptoms are real"). When everyone says this simultaneously, the emotional weight evaporates. Brands that started here need to evolve their messaging to what comes after validation: expertise, outcome, transformation.</div>
+      <div class="gap-pct">6/10<span>brands</span></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-name">Data-UX Gap</div>
+      <div class="gap-desc"><strong>Femtech generates intimate health data — cycle patterns, hormonal signals, fertility windows, symptom logs — but rarely makes that data feel meaningful at the UX level.</strong> Most interfaces are log-and-review, not insight-and-act. Flo has the data advantage; the UX to leverage it is underdeveloped. Function Health showed what data visualization can do for general health — no femtech brand has done the equivalent.</div>
+      <div class="gap-pct">8/10<span>brands</span></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-name">Privacy Theater</div>
+      <div class="gap-desc"><strong>Post-Dobbs, menstrual data privacy is not a marketing nicety — it's a trust requirement.</strong> Most femtech brands have HIPAA language and privacy policies. Very few have designed privacy into the product experience in a way users can feel. Privacy as a design decision — not just a legal disclosure — is almost entirely absent. Flo's 2023 FTC settlement over data sharing with Facebook damaged the category's credibility broadly.</div>
+      <div class="gap-pct">9/10<span>brands</span></div>
+    </div>
+    <div class="gap-row">
+      <div class="gap-name">App Lag Behind Hardware</div>
+      <div class="gap-desc"><strong>For device-first femtech brands (Elvie, Willow, Ava, Natural Cycles + Oura), the physical product is elegant; the companion app is an afterthought.</strong> Elvie Pump is a genuinely beautiful object. The Elvie app is functional, not delightful. The brand promise made by the hardware is broken by the software. This is a recurring pattern in the category — hardware teams and app teams with different quality standards.</div>
+      <div class="gap-pct">5/10<span>device brands</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- OPPORTUNITIES -->
+<section>
+  <div class="sec-eye">03b · Whitespace &amp; Opportunities</div>
+  <h2>What's available to own</h2>
+
+  <div class="opp-grid">
+    <div class="opp-card feat">
+      <div class="opp-lbl">Primary Whitespace</div>
+      <div class="opp-title">The Hormonal Arc Brand</div>
+      <div class="opp-body">No consumer brand coherently addresses the full female hormonal arc — from cycle health through fertility, pregnancy, postpartum, perimenopause, and menopause — as a connected, evolving relationship with one product system. Maven does it for employers. No one does it DTC. The brand that earns trust at one life stage and grows with a woman into the next is the long-term category winner.</div>
+      <div class="versus">
+        <em>Everyone builds for</em>One moment in a woman's life
+        <em>No one builds for</em>The arc — a brand that grows with her, stage to stage
+      </div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-lbl">Visual Identity</div>
+      <div class="opp-title">Against the pink monoculture</div>
+      <div class="opp-body">Warm editorial precision — the Tia direction, applied at DTC scale — is the visual opportunity. Terracotta, warm neutrals, serious typography, real photography without over-styling. Not clinical, not pastel. Sophisticated enough to signal premium; warm enough to signal safety.</div>
+      <div class="versus">
+        <em>Everyone looks like</em>Pastel lavender, soft round type, smiling stock photo
+        <em>No one looks like</em>Warm editorial rigor. Premium without coldness.
+      </div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-lbl">Messaging</div>
+      <div class="opp-title">Beyond validation</div>
+      <div class="opp-body">The market has overused "you've been dismissed — we see you." The unclaimed territory is what comes after: the transformation, the expertise, the outcome. A brand that says "here's what we actually know, and here's what it means for you specifically" — moving from empathy into intelligence — stands alone.</div>
+      <div class="versus">
+        <em>Everyone says</em>"You deserve care. Your symptoms are real. We see you."
+        <em>No one says</em>"Here is what is actually happening in your body. Here is what to do about it."
+      </div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-lbl">Privacy as Design</div>
+      <div class="opp-title">Privacy built in, not bolted on</div>
+      <div class="opp-body">Post-Dobbs, a femtech brand that makes privacy a genuine product design decision — visible, legible, controllable by the user — has a trust moat that a HIPAA badge cannot create. Data minimization, local processing, transparent data practices shown in the UI, not buried in the privacy policy. This is rare and highly valued by exactly the users femtech most wants.</div>
+      <div class="versus">
+        <em>Everyone has</em>A privacy policy and a HIPAA badge
+        <em>No one has</em>Privacy designed into the interaction — felt, not read
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PART 4: STRATEGIC RECOMMENDATION -->
+<section>
+  <div class="sec-eye">04 · Strategic Recommendation</div>
+  <h2>For an SSD client entering FemTech</h2>
+
+  <div class="rec-wrap">
+    <div class="rec-hdr">
+      <h3>The brand that science-forward femtech founders need to build</h3>
+      <div class="sub">Based on gaps and patterns surfaced above — not generic advice</div>
+    </div>
+    <div class="rec-cells">
+      <div class="rec-cell">
+        <div class="rec-cell-lbl">Positioning Opportunity</div>
+        <div class="rec-cell-val"><strong>Intelligence before empathy.</strong> Not "we see you" — "we know something about your body that you don't, and we'll tell you clearly." Sits between Clue's science-forward rigor and Tia's warmth. Claims the territory no brand currently occupies: evidence-based + emotionally resonant.</div>
+      </div>
+      <div class="rec-cell">
+        <div class="rec-cell-lbl">Target Audience</div>
+        <div class="rec-cell-val"><strong>Women 28–45 with high health curiosity</strong> — already tracking something, frustrated that their data doesn't mean anything actionable. College-educated, skeptical of vague wellness claims, willing to pay for clinical-grade products. Currently underserved between Flo (consumer) and Maven (employer-only).</div>
+      </div>
+      <div class="rec-cell">
+        <div class="rec-cell-lbl">Brand Personality</div>
+        <div class="rec-cell-val"><strong>The brilliant clinician friend</strong> — someone who tells you what's actually happening, speaks plainly, and respects your intelligence. Not warm-and-fuzzy. Not cold-and-clinical. The person you want at the end of a confusing diagnosis.</div>
+      </div>
+      <div class="rec-cell">
+        <div class="rec-cell-lbl">Visual Direction</div>
+        <div class="rec-cell-val"><strong>Against the pink monoculture.</strong> Warm terracotta/clay palette with editorial precision. Real photography, not stock. Data visualization as a brand expression. Typography that signals intelligence — something with weight and intention, not rounded sans-serif softness.</div>
+      </div>
+      <div class="rec-cell">
+        <div class="rec-cell-lbl">Messaging Focus</div>
+        <div class="rec-cell-val"><strong>"Your body is generating data. We make it mean something."</strong> Leads with intelligence and insight, not empathy and validation. Backs it with genuine clinical depth — not quizzes and recommendations, but real data legibility. Every interaction should feel like something was learned.</div>
+      </div>
+      <div class="rec-cell">
+        <div class="rec-cell-lbl">Trust-Building Strategy</div>
+        <div class="rec-cell-val"><strong>Privacy visible in the product, not just the policy.</strong> Science cited not summarized. Data shown as a narrative, not a dashboard. Clinical advisors named and real. The trust is built through the design of every interaction — not through a list of credentials on the About page.</div>
+      </div>
+    </div>
+    <div class="rec-rationale">
+      <strong>Why this is the SSD opportunity specifically:</strong> The femtech founders most likely to be SSD clients — clinical researchers, OBGYNs-turned-founders, biomarker scientists — have a genuine science story to tell. Their problem is that the product UI doesn't reflect the intelligence of the underlying science. That's the SSD design brief in this segment: translate clinical rigor into a product experience that a woman trusts immediately, finds beautiful, and returns to every day. The Clue model shows the direction; Tia shows the visual register; no early-stage DTC brand has combined both with genuinely intelligent data UX. That's the open lane.
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="footer">
+  <span>Sari Sari Design · FemTech / Women's Health Brand Landscape · April 2026</span>
+  <span>Brand Landscape Series · Phase 2 of 3</span>
+  <span>Sources: Rock Health, PitchBook, Mordor Intelligence, Astute Analytica, brand research</span>
+</div>
+
+<script>
+const ctx = document.getElementById('femtechMap').getContext('2d');
+const brands = [
+  { label: 'Flo Health',        x: 3.5, y: 3.8, color: '#c4605a' },
+  { label: 'Maven Clinic',      x: 7.2, y: 7.5, color: '#7a4a72' },
+  { label: 'Clue',              x: 2.5, y: 7.8, color: '#5a6070' },
+  { label: 'Natural Cycles',    x: 2.2, y: 8.5, color: '#5a7a5c' },
+  { label: 'Midi Health',       x: 2.8, y: 5.5, color: '#b87a50' },
+  { label: 'Tia',               x: 7.5, y: 6.8, color: '#c4605a' },
+  { label: 'Kindbody',          x: 3.0, y: 5.8, color: '#7a4a72' },
+  { label: 'Nurx',              x: 2.5, y: 4.0, color: '#8a8580' },
+  { label: 'Elvie/Willow',      x: 3.2, y: 5.0, color: '#5a7a5c' },
+  { label: 'Wisp',              x: 2.0, y: 3.0, color: '#b87a50' },
+];
+
+new Chart(ctx, {
+  type: 'scatter',
+  data: {
+    datasets: brands.map(b => ({
+      label: b.label,
+      data: [{ x: b.x, y: b.y }],
+      backgroundColor: b.color + 'cc',
+      borderColor: b.color,
+      borderWidth: 2,
+      pointRadius: 10,
+      pointHoverRadius: 13,
+    }))
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: { label: ctx => ` ${ctx.dataset.label} (${ctx.parsed.x.toFixed(1)}, ${ctx.parsed.y.toFixed(1)})` }
+      }
+    },
+    scales: {
+      x: {
+        min: 0, max: 10,
+        title: { display: true, text: '← Condition / Life-stage Specific                    Whole-Woman / Platform →', font: { family: "'DM Mono', monospace", size: 11 }, color: '#8a8580' },
+        grid: { color: '#ddd6ca' },
+        ticks: { font: { family: "'DM Mono', monospace", size: 10 }, color: '#8a8580' }
+      },
+      y: {
+        min: 0, max: 10,
+        title: { display: true, text: '← Consumer / Lifestyle                    Clinical / Evidence-based →', font: { family: "'DM Mono', monospace", size: 11 }, color: '#8a8580' },
+        grid: { color: '#ddd6ca' },
+        ticks: { font: { family: "'DM Mono', monospace", size: 10 }, color: '#8a8580' }
+      }
+    }
+  },
+  plugins: [{
+    id: 'brandLabels',
+    afterDraw(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets.forEach((ds, i) => {
+        const meta = chart.getDatasetMeta(i);
+        if (!meta.hidden && meta.data.length) {
+          const pt = meta.data[0];
+          ctx.save();
+          ctx.font = "500 12px 'DM Sans', sans-serif";
+          ctx.fillStyle = ds.borderColor;
+          ctx.textAlign = 'center';
+          ctx.fillText(ds.label, pt.x, pt.y - 16);
+          ctx.restore();
+        }
+      });
+    }
+  }, {
+    id: 'quadrantLabels',
+    beforeDraw(chart) {
+      const ctx = chart.ctx;
+      const { left, right, top, bottom } = chart.chartArea;
+      const labels = [
+        { text: 'Specific + Consumer', x: left + 40, y: bottom - 16 },
+        { text: 'Platform + Consumer', x: right - 40, y: bottom - 16 },
+        { text: 'Specific + Clinical', x: left + 40, y: top + 20 },
+        { text: 'Platform + Clinical ✦', x: right - 40, y: top + 20 },
+      ];
+      ctx.save();
+      ctx.font = "10px 'DM Mono', monospace";
+      ctx.fillStyle = 'rgba(138,133,128,0.4)';
+      labels.forEach(l => {
+        ctx.textAlign = l.x < (left + right)/2 ? 'left' : 'right';
+        ctx.fillText(l.text, l.x, l.y);
+      });
+      ctx.restore();
+    }
+  }]
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Audit Report — Parallax Protocol</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #0d0d14;
+      --bg-card: #16161f;
+      --bg-card-alt: #1c1c28;
+      --accent-pink: #e01ee6;
+      --accent-purple: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #e01ee6 0%, #8b5cf6 100%);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6b6b80;
+      --border-subtle: rgba(255,255,255,0.06);
+      --severity-critical: #ef4444;
+      --severity-major: #f59e0b;
+      --severity-minor: #3b82f6;
+      --effort-low: #10b981;
+      --effort-med: #f59e0b;
+      --effort-high: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── Header ── */
+    .report-header { padding: 80px 0 60px; border-bottom: 1px solid var(--border-subtle); }
+
+    .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 16px;
+    }
+
+    .report-title {
+      font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 12px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .report-caption { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; }
+    .report-caption a { color: var(--text-secondary); text-decoration: none; }
+
+    /* ── Profile Grid ── */
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 32px; }
+    .profile-item { display: flex; gap: 8px; font-size: 13px; }
+    .profile-label { color: var(--text-muted); min-width: 120px; flex-shrink: 0; }
+    .profile-value { color: var(--text-secondary); font-weight: 500; }
+
+    /* ── Methodology Block ── */
+    .methodology-block {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 28px 32px; margin: 40px 0;
+    }
+    .methodology-block h3 {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 12px;
+    }
+    .methodology-block p {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px;
+    }
+    .methodology-block p:last-child { margin-bottom: 0; }
+
+    /* ── Findings Section ── */
+    .findings-section { padding: 60px 0; }
+    .findings-header { margin-bottom: 48px; }
+    .findings-header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .findings-header p { font-size: 14px; color: var(--text-secondary); }
+
+    /* ── Finding Card ── */
+    .finding-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; margin-bottom: 24px; transition: border-color 0.2s;
+    }
+    .finding-card:hover { border-color: rgba(224, 30, 230, 0.2); }
+
+    .finding-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .finding-number {
+      font-size: 12px; font-weight: 700; color: var(--bg-dark);
+      background: var(--accent-gradient); width: 28px; height: 28px;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .finding-dimension {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    .badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
+    }
+    .badge-critical { background: rgba(239,68,68,0.15); color: var(--severity-critical); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-major { background: rgba(245,158,11,0.15); color: var(--severity-major); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-minor { background: rgba(59,130,246,0.15); color: var(--severity-minor); border: 1px solid rgba(59,130,246,0.3); }
+
+    .finding-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; line-height: 1.3; }
+
+    .finding-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+    .finding-body p:last-child { margin-bottom: 0; }
+    .finding-body strong { color: var(--text-primary); font-weight: 600; }
+
+    .finding-subsection { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle); }
+    .finding-subsection h4 {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--accent-purple); margin-bottom: 8px;
+    }
+    .finding-subsection p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+    .criterion-id {
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px;
+      color: var(--accent-purple); background: rgba(139,92,246,0.1);
+      padding: 2px 8px; border-radius: 4px; margin-right: 4px;
+    }
+
+    .criteria-row { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .criteria-row .criterion-label { font-size: 12px; color: var(--text-muted); }
+
+    .tags-row { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+    .tag {
+      font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 100px;
+      background: var(--bg-card-alt); border: 1px solid var(--border-subtle); color: var(--text-muted);
+    }
+    .tag-effort-low { color: var(--effort-low); border-color: rgba(16,185,129,0.3); }
+    .tag-effort-med { color: var(--effort-med); border-color: rgba(245,158,11,0.3); }
+    .tag-effort-high { color: var(--effort-high); border-color: rgba(239,68,68,0.3); }
+    .tag-impact-high { color: var(--severity-critical); border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.05); }
+    .tag-impact-med { color: var(--effort-med); border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.05); }
+    .tag-impact-low { color: var(--text-muted); }
+
+    /* ── Footer ── */
+    .report-footer { border-top: 1px solid var(--border-subtle); padding: 48px 0 80px; }
+    .footer-cta {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; text-align: center; margin-bottom: 40px;
+    }
+    .footer-cta h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .footer-cta p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 600px; margin: 0 auto; }
+
+    .disclaimer {
+      font-size: 12px; color: var(--text-muted); line-height: 1.7;
+      text-align: center; padding-top: 24px; border-top: 1px solid var(--border-subtle);
+    }
+    .brand-footer { text-align: center; margin-top: 32px; font-size: 12px; color: var(--text-muted); }
+    .brand-footer span { color: var(--accent-pink); font-weight: 600; }
+
+    /* ── Note block ── */
+    .note-block {
+      background: rgba(139,92,246,0.07); border: 1px solid rgba(139,92,246,0.2);
+      border-radius: 10px; padding: 16px 20px; margin-bottom: 32px;
+    }
+    .note-block p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+    .note-block strong { color: var(--accent-purple); }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      .report-title { font-size: 32px; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .finding-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- ── HEADER ── -->
+    <header class="report-header">
+      <div class="eyebrow">UX Audit Report</div>
+      <h1 class="report-title">Parallax Protocol</h1>
+      <p class="report-caption">
+        <a href="https://parallaxprotocol.org/introduction/getting-started">parallaxprotocol.org/introduction/getting-started</a>
+        &nbsp;|&nbsp; April 3, 2026
+      </p>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span class="profile-label">Industry</span>
+          <span class="profile-value">Web3 / PoW Blockchain</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Stage</span>
+          <span class="profile-value">Early / Grassroots</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">GTM Model</span>
+          <span class="profile-value">Community-Led Growth</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Conversion Goal</span>
+          <span class="profile-value">Node downloads, miner &amp; dev adoption</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Customer Type</span>
+          <span class="profile-value">Community / Open Source</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Competitors</span>
+          <span class="profile-value">ETC, Ravencoin, Litecoin, Monero</span>
+        </div>
+      </div>
+
+      <div class="methodology-block">
+        <h3>Methodology</h3>
+        <p>This site was evaluated across 11 UX dimensions — Nielsen's Heuristics, CRO, Information Architecture, QA/Bug Reporting, Visual &amp; Brand Design, Accessibility (WCAG 2.1 AA), Mobile Responsiveness, Performance &amp; Core Web Vitals, SEO &amp; Discoverability, Competitor Benchmarking, and Content Hierarchy &amp; Copywriting — using the Sari Sari Design reference checklist (v1.0) as the evaluation standard.</p>
+
+        <h3>Evaluation Lens</h3>
+        <p>This audit evaluates parallaxprotocol.org/introduction/getting-started as a grassroots PoW blockchain's primary developer and miner onboarding page — the moment when a crypto-curious visitor decides whether this protocol is worth their compute, capital, or code. Given the absence of traditional marketing infrastructure and reliance on community-led growth, the audit weighs content clarity and information architecture most heavily, because trust and network participation are built word-by-word in documentation, not through brand campaigns.</p>
+
+        <h3>Why This Matters</h3>
+        <p>For a protocol competing in the crowded fair-launch PoW space, the getting-started page is the single highest-leverage conversion moment. A confused miner or developer who can't get to a running node in under 20 minutes will simply move to another chain — taking with them their hashrate, their commits, and the word-of-mouth referrals that community-driven protocols depend on for growth.</p>
+      </div>
+    </header>
+
+    <!-- ── FINDINGS ── -->
+    <section class="findings-section">
+      <div class="findings-header">
+        <h2>Top 5 Findings</h2>
+        <p>Selected for business impact, evidence quality, and relevance to Parallax Protocol's community-led growth stage and PoW ecosystem positioning.</p>
+      </div>
+
+      <!-- FINDING 1 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">1</div>
+          <span class="finding-dimension">Information Architecture · Conversion</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">All Visitors Are Funneled Into a Single CLI Tutorial Regardless of Who They Are</h3>
+        <div class="finding-body">
+          <p>The getting-started page presents one path for all visitors: a 5-step command-line setup flow targeting testnet node operation. A GPU miner evaluating LAX profitability, an Ethereum developer wanting to port a Solidity contract, and a crypto enthusiast who just wants a wallet all land on the same CLI tutorial with no routing, no alternatives, and no acknowledgment that their needs differ.</p>
+          <p><strong>Why this matters for Parallax Protocol:</strong> Community-led growth protocols live or die by their activation rate — how many curious visitors become actual participants. When miners are forced through a developer-oriented CLI setup, and developers are given no shortcut past beginner-level testnet steps, both groups experience unnecessary friction and a significant share will abandon the process before reaching any meaningful outcome. Competing fair-launch chains (ETC, Ravencoin) already offer distinct miner, developer, and user tracks.</p>
+          <div class="criteria-row">
+            <span class="criterion-id">IA-04</span><span class="criterion-label">Persona Routing</span>
+            <span class="criterion-id" style="margin-left:8px;">CRO-04</span><span class="criterion-label">Engagement Path Variety</span>
+            <span class="criterion-id" style="margin-left:8px;">CRO-08</span><span class="criterion-label">Conversion Friction</span>
+          </div>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Add a "What brings you to Parallax?" decision block at the very top of the getting-started page with three labeled paths: <em>Mine LAX</em> (mining pool setup, hashrate config, recommended hardware), <em>Build on Parallax</em> (RPC setup, Hardhat/Foundry config, Solidity deployment), and <em>Run a Full Node</em> (the current CLI tutorial). Each path should be self-contained and conclude with a clear success state. Even a simple three-card layout with descriptive icons is enough to transform the page from generic to intentional.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: Critical</span>
+        </div>
+      </div>
+      <!-- END FINDING 1 -->
+
+      <!-- FINDING 2 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">2</div>
+          <span class="finding-dimension">Content &amp; Copywriting</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">The Tutorial Leads With Process Steps — The "Why" Is Entirely Absent</h3>
+        <div class="finding-body">
+          <p>The getting-started page opens directly with testnet setup instructions (Step 1: Generating accounts). There is no opening statement explaining what Parallax Protocol is, why a visitor should care, what they'll be able to do when they finish, or how long it will take. The value proposition is implied, never stated. A miner or developer landing here via search has no hook to motivate completing a 5-step CLI tutorial.</p>
+          <p><strong>Why this matters for Parallax Protocol:</strong> In a space where new PoW chains are launched and abandoned regularly, trust must be established in the first paragraph — before any instruction is given. A grassroots protocol without the brand recognition of Ethereum or Bitcoin cannot rely on reputation to carry a visitor through a technical tutorial. Parallax has a genuinely compelling story: fair launch, no premine, PoW + EVM. That story needs to appear at the top of the most-visited entry point, not in a whitepaper that fewer people will read.</p>
+          <div class="criteria-row">
+            <span class="criterion-id">COPY-01</span><span class="criterion-label">5-Second Test</span>
+            <span class="criterion-id" style="margin-left:8px;">COPY-02</span><span class="criterion-label">Benefit-Led Framing</span>
+            <span class="criterion-id" style="margin-left:8px;">COPY-05</span><span class="criterion-label">Narrative Flow</span>
+            <span class="criterion-id" style="margin-left:8px;">CRO-05</span><span class="criterion-label">Value Proposition Clarity</span>
+          </div>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Add a 3-sentence context block before Step 1: <em>"Parallax is a fair-launch, EVM-compatible proof-of-work chain — every coin in circulation was mined, with no premine and no insider allocation. This guide walks you through running your first testnet node in about 20 minutes. By the end, you'll have a funded testnet wallet, a synced client, and the ability to mine LAX or deploy smart contracts on Parallax."</em> This costs under one minute to write and converts the page from an instruction manual into a value narrative. Add a similar 1-sentence completion message at the end of Step 5 that tells users what to do next.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+      <!-- END FINDING 2 -->
+
+      <!-- FINDING 3 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">3</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">No Trust Signals or Community Proof on the Primary Onboarding Page</h3>
+        <div class="finding-body">
+          <p>Based on all available evidence, the getting-started page and surrounding main site carry no visible network legitimacy signals: no live hashrate display, no node count, no mining pool stats, no exchange listings, no GitHub star count, no Discord or Telegram member count, and no named testimonials from miners or developers who have built on Parallax. The protocol's most compelling proof point — "no premine, every coin verifiably mined" — does not appear to be prominently featured at the point of first contact.</p>
+          <p><strong>Why this matters for Parallax Protocol:</strong> Crypto users making a decision about where to point their GPUs or deploy their code are performing due diligence in seconds. A page with no social proof creates a legitimacy vacuum. When a miner compares Parallax to ETC or Ravencoin and sees nothing — no community size, no mining activity, no developer testimonials — the default conclusion is that the network isn't worth the risk. The fair-launch, no-premine narrative is genuinely differentiated; it needs to be on the page where it can do its job.</p>
+          <div class="criteria-row">
+            <span class="criterion-id">CRO-06</span><span class="criterion-label">Trust Signal Placement</span>
+            <span class="criterion-id" style="margin-left:8px;">CRO-07</span><span class="criterion-label">Social Proof Depth</span>
+            <span class="criterion-id" style="margin-left:8px;">COPY-08</span><span class="criterion-label">Proof &amp; Credibility in Copy</span>
+            <span class="criterion-id" style="margin-left:8px;">VD-08</span><span class="criterion-label">Industry Trust Signaling</span>
+          </div>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Add a live network stats bar above the tutorial steps — even a static one updated weekly — showing current hashrate, number of active mining pools, GitHub stars, and community size. If numbers are early-stage and small, lead with what's verifiable and unique: <em>"No premine. No VC allocation. Every LAX in circulation was mined from block 0."</em> Add 2–3 short attributed quotes from miners or developers who've already set up nodes — one line each with their handle and context ("GPU miner, joined month 1"). This takes an afternoon to implement and changes the first impression from blank slate to credible grassroots project.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low–Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+      <!-- END FINDING 3 -->
+
+      <!-- FINDING 4 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">4</div>
+          <span class="finding-dimension">Information Architecture · UX Heuristics</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Split Site Identity Between parallaxprotocol.org and docs.parallaxprotocol.org Creates Navigational Confusion</h3>
+        <div class="finding-body">
+          <p>Getting-started content exists on both parallaxprotocol.org/introduction/getting-started (the main marketing site) and within docs.parallaxprotocol.org (the full technical docs subdomain). Search results surface both for similar queries. The two sites appear to have different navigation structures, and there's no clear indication on the main site that a more complete reference exists at the subdomain. There is also a separate domain, parallaxchain.org, with overlapping branding, compounding the confusion.</p>
+          <p><strong>Why this matters for Parallax Protocol:</strong> A developer or miner who finds the main site's getting-started page and doesn't discover the docs subdomain will have an incomplete onboarding experience. Conversely, a user who arrives at the docs subdomain first may not understand the relationship to the main site. For a community-driven protocol, every point of navigational confusion is a potential drop-off — and split documentation authority also creates a content maintenance burden where the two sites inevitably diverge over time.</p>
+          <div class="criteria-row">
+            <span class="criterion-id">IA-01</span><span class="criterion-label">Navigation Clarity</span>
+            <span class="criterion-id" style="margin-left:8px;">IA-02</span><span class="criterion-label">Navigation Consistency</span>
+            <span class="criterion-id" style="margin-left:8px;">N-04</span><span class="criterion-label">Consistency &amp; Standards</span>
+            <span class="criterion-id" style="margin-left:8px;">VD-07</span><span class="criterion-label">Brand Consistency</span>
+          </div>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Establish and communicate a clear hierarchy: parallaxprotocol.org is the community and marketing hub; docs.parallaxprotocol.org is the authoritative technical reference. Add a persistent "Full Documentation →" link in the main site navigation bar that points to the docs subdomain. On the getting-started page, add a callout box after the tutorial intro: <em>"For the complete technical reference — including advanced node configuration, developer tooling, and API docs — visit docs.parallaxprotocol.org."</em> Audit parallaxchain.org to clarify its relationship to the main protocol and either consolidate or clearly differentiate it.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-med">Impact: Medium</span>
+        </div>
+      </div>
+      <!-- END FINDING 4 -->
+
+      <!-- FINDING 5 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">5</div>
+          <span class="finding-dimension">SEO &amp; Discoverability</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Generic Page Titles and Weak SEO Foundations Undermine Organic Discovery — the Primary Growth Channel</h3>
+        <div class="finding-body">
+          <p>Search results show the site title as "Parallax Protocol" and the getting-started page likely carries a generic H1 ("Getting Started") with no keyword signal for what the protocol is, who it's for, or what it does. Open Graph tags appear absent or underconfigured, meaning that when the getting-started URL is shared in Discord, Telegram, or Twitter/X — the primary distribution channels for crypto projects — it likely renders as a blank or default link preview. Additionally, the content split between parallaxprotocol.org and docs.parallaxprotocol.org without explicit canonical tags creates duplicate content risk that dilutes whatever organic ranking potential exists.</p>
+          <p><strong>Why this matters for Parallax Protocol:</strong> A grassroots protocol with no marketing budget is entirely dependent on organic search and community sharing for discovery. A miner searching "GPU mineable EVM blockchain how to start" or a developer searching "Bitcoin-style EVM chain Solidity tutorial" will not find this page as currently configured. And when someone does share the URL in a community channel, a blank link preview is an immediate credibility signal — it communicates that the project hasn't invested in its own presentation.</p>
+          <div class="criteria-row">
+            <span class="criterion-id">SEO-01</span><span class="criterion-label">Page Title</span>
+            <span class="criterion-id" style="margin-left:8px;">SEO-03</span><span class="criterion-label">H1 Tag</span>
+            <span class="criterion-id" style="margin-left:8px;">SEO-06</span><span class="criterion-label">Canonical Tag</span>
+            <span class="criterion-id" style="margin-left:8px;">SEO-07</span><span class="criterion-label">Open Graph Tags</span>
+          </div>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Update the page title to something specific: <em>"Get Started with Parallax Protocol — Run a Node, Mine LAX, Build on EVM."</em> Update the H1 to include the protocol name and audience: <em>"Start Mining or Building on Parallax."</em> Add og:title, og:description, and og:image to every page — for the getting-started page, the OG image should be a clean branded card rather than a blank placeholder. Add self-referencing canonical tags to both the main site and docs subdomain versions of any overlapping content, designating one as the canonical URL. These are low-effort, high-return changes that compound over time as the project gains organic traction.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+      <!-- END FINDING 5 -->
+
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer class="report-footer">
+      <div class="footer-cta">
+        <h3>Want the complete picture?</h3>
+        <p>This report covers the top 5 findings from a 20+ finding evaluation across 11 UX dimensions. The full audit includes detailed recommendations for accessibility, mobile responsiveness, performance, content hierarchy, CLI error prevention, and site search — plus a complete list of manual review items requiring direct site access.</p>
+      </div>
+
+      <div class="disclaimer">
+        This audit is based solely on publicly available information from Parallax Protocol's marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete onboarding-to-participation journey.
+      </div>
+
+      <div class="brand-footer">
+        <span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; April 2026
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

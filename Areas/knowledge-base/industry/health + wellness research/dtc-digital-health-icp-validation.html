@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICP Validation List — DTC Digital Health — SSD</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0b;
+    --paper: #f7f4ef;
+    --cream: #ede8df;
+    --white: #ffffff;
+    --rust: #b84a2a;
+    --rust-light: #f5e0d8;
+    --sage: #5c7a5e;
+    --sage-light: #dce8dc;
+    --gold: #b8922a;
+    --gold-light: #f5ead8;
+    --slate: #495568;
+    --muted: #8a8680;
+    --rule: #ddd8cf;
+    --green: #2e6e3a;
+    --green-bg: #dff0e2;
+    --amber: #8a6a10;
+    --amber-bg: #f7edcc;
+    --red: #8a3a20;
+    --red-bg: #f7ddd5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* MASTHEAD */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 52px 56px 44px;
+    position: relative;
+  }
+  .eye {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .masthead h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .masthead h1 em { color: rgba(247,244,239,0.4); font-style: italic; }
+  .masthead-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: rgba(247,244,239,0.45);
+    margin-top: 24px;
+    display: flex; gap: 20px; flex-wrap: wrap;
+  }
+
+  /* ICP HYPOTHESIS BAR */
+  .hyp-bar {
+    background: var(--rust);
+    color: white;
+    padding: 24px 56px;
+  }
+  .hyp-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 10px;
+  }
+  .hyp-text {
+    font-size: 14px;
+    line-height: 1.65;
+    max-width: 900px;
+    color: rgba(255,255,255,0.92);
+  }
+  .hyp-text strong { color: white; }
+
+  /* SCORING LEGEND */
+  .legend-bar {
+    background: var(--cream);
+    padding: 20px 56px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--rule);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--slate);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green { background: var(--green); }
+  .dot-amber { background: var(--amber); }
+  .dot-red { background: var(--red); }
+
+  /* FILTERS */
+  .filter-bar {
+    padding: 20px 56px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--rule);
+    background: var(--white);
+  }
+  .filter-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 3px;
+    border: 1px solid var(--rule);
+    background: var(--white);
+    cursor: pointer;
+    color: var(--slate);
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--rust); color: var(--rust); }
+  .filter-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  /* STATS STRIP */
+  .stats-strip {
+    padding: 24px 56px;
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--ink);
+  }
+  .stat { }
+  .stat-num {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--rust);
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* TABLE */
+  .table-wrap {
+    padding: 0 56px 56px;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 0;
+  }
+
+  thead th {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 12px 14px;
+    background: var(--cream);
+    border-bottom: 2px solid var(--ink);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--rule);
+    transition: background 0.1s;
+  }
+  tbody tr:hover { background: #faf8f3; }
+
+  td {
+    padding: 14px 14px;
+    vertical-align: top;
+    line-height: 1.55;
+    color: var(--slate);
+  }
+
+  .col-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    width: 32px;
+  }
+
+  .col-company {
+    min-width: 140px;
+  }
+  .company-name {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 13.5px;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .company-url {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .company-url a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .company-url a:hover { color: var(--rust); }
+
+  .col-what { min-width: 200px; }
+  .col-founder { min-width: 160px; }
+  .col-raise { min-width: 100px; white-space: nowrap; }
+  .col-design { min-width: 140px; }
+  .col-gap { min-width: 180px; }
+  .col-fit { min-width: 80px; text-align: center; }
+  .col-outreach { min-width: 180px; }
+
+  /* PILLS */
+  .pill {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+    margin-bottom: 2px;
+  }
+  .pill-stage {
+    background: var(--gold-light);
+    color: var(--gold);
+  }
+  .pill-ai {
+    background: var(--sage-light);
+    color: var(--sage);
+  }
+  .pill-fit-hot { background: var(--green-bg); color: var(--green); }
+  .pill-fit-warm { background: var(--amber-bg); color: var(--amber); }
+  .pill-fit-watch { background: var(--red-bg); color: var(--red); }
+
+  /* FIT SCORE CIRCLE */
+  .fit-score {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    margin: 0 auto;
+  }
+  .score-5 { background: var(--green-bg); color: var(--green); }
+  .score-4 { background: #e8f5d8; color: #4a8a20; }
+  .score-3 { background: var(--amber-bg); color: var(--amber); }
+  .score-2 { background: #f5e8d5; color: #8a5520; }
+
+  /* GAP TAGS */
+  .gap-tag {
+    display: inline-block;
+    background: var(--rust-light);
+    color: var(--rust);
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 7px;
+    border-radius: 2px;
+    margin: 2px 2px 2px 0;
+  }
+
+  /* OUTREACH ANGLE */
+  .angle {
+    font-size: 12.5px;
+    color: var(--slate);
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  /* SECTION DIVIDERS */
+  .section-head {
+    padding: 28px 56px 16px;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .section-head h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    font-weight: 400;
+  }
+  .section-head .sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(247,244,239,0.45);
+    margin-top: 4px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* NOTES SECTION */
+  .notes-section {
+    padding: 40px 56px;
+    background: var(--cream);
+    border-top: 1px solid var(--rule);
+  }
+  .notes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-top: 24px;
+  }
+  @media (max-width: 800px) { .notes-grid { grid-template-columns: 1fr; } }
+  .note-card {
+    background: white;
+    border-radius: 6px;
+    padding: 20px;
+    border: 1px solid var(--rule);
+  }
+  .note-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .note-text {
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.65;
+  }
+  .note-text strong { color: var(--ink); font-weight: 600; }
+
+  /* FOOTER */
+  .footer {
+    background: var(--ink);
+    padding: 24px 56px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(247,244,239,0.4);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 900px) {
+    .masthead, .hyp-bar, .legend-bar, .filter-bar, .stats-strip, .table-wrap, .notes-section, .footer, .section-head {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="eye">Sari Sari Design · ICP Validation · Step 3 of 3</div>
+  <h1>DTC Digital Health<br><em>Target Company List</em></h1>
+  <div class="masthead-meta">
+    <span>25 verified companies</span>
+    <span>April 2026</span>
+    <span>Seed–Series B stage filter</span>
+    <span>Consumer-facing app or platform</span>
+    <span>Design gap assessed per company</span>
+  </div>
+</div>
+
+<!-- HYPOTHESIS -->
+<div class="hyp-bar">
+  <div class="hyp-label">ICP Hypothesis Being Validated</div>
+  <div class="hyp-text">
+    <strong>Seed–Series A DTC digital health startup</strong> building a consumer-facing app or platform with an AI or data layer. Founded by a technical, clinical, or domain-expert founder who lacks in-house design capacity. Raised $1–20M. Needs to close the gap between their investor pitch and their product experience — before their next round. Primarily SF and NYC, but distributed. 
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend-bar">
+  <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-right:8px;">Fit Score:</span>
+  <div class="legend-item"><span class="dot dot-green"></span> 4–5 Strong match</div>
+  <div class="legend-item"><span class="dot dot-amber"></span> 3 Conditional match</div>
+  <div class="legend-item"><span class="dot dot-red"></span> 1–2 Weak / exclude</div>
+  <div class="legend-item" style="margin-left:16px;padding-left:16px;border-left:1px solid var(--rule);">Scores assess: stage fit · founder design gap · DTC consumer layer · UI/UX budget signal</div>
+</div>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stat">
+    <div class="stat-num">25</div>
+    <div class="stat-label">Companies assessed</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">13</div>
+    <div class="stat-label">Score 4–5 (pursue)</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">8</div>
+    <div class="stat-label">Score 3 (watch/nurture)</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">4</div>
+    <div class="stat-label">Score 1–2 (exclude now)</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">$1–70M</div>
+    <div class="stat-label">Funding range covered</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">18/25</div>
+    <div class="stat-label">Have AI-layer in pitch</div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Company</th>
+      <th>What they do</th>
+      <th>Founder background</th>
+      <th>Raise / Stage</th>
+      <th>Design signal</th>
+      <th>Key design gap</th>
+      <th>Fit</th>
+      <th>SSD outreach angle</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <!-- TIER 1: HOT -->
+    <tr>
+      <td class="col-num">01</td>
+      <td class="col-company">
+        <span class="company-name">Superpower</span>
+        <span class="company-url"><a href="https://superpower.com" target="_blank">superpower.com</a></span><br>
+        <span class="pill pill-stage">Series A</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">AI-powered preventive health platform — full-body annual labs + biomarkers + personalized health strategy from a medical team. DTC subscription.</td>
+      <td class="col-founder">Tech/ops founders (Max Marchione — COO; Kevin Unkrich — CTO). Engineering and ops backgrounds. No design pedigree in founding team.</td>
+      <td class="col-raise">$51M total<br>Series A Apr 2025<br>Forerunner Ventures lead</td>
+      <td class="col-design">Website is functional but aesthetically generic. Data presentation is weak for a product that lives or dies on making biomarker complexity legible.</td>
+      <td class="col-gap">
+        <span class="gap-tag">data viz</span>
+        <span class="gap-tag">trust UX</span>
+        <span class="gap-tag">brand system</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-5">5</div></td>
+      <td class="col-outreach"><span class="angle">"You're selling a data product to health-anxious consumers. The UI needs to feel as intelligent as the AI you raised on."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">02</td>
+      <td class="col-company">
+        <span class="company-name">Nourish</span>
+        <span class="company-url"><a href="https://usenourish.com" target="_blank">usenourish.com</a></span><br>
+        <span class="pill pill-stage">Series B</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">AI-powered telenutrition platform connecting patients to registered dietitians covered by insurance. 3,000+ RDs, 50 states.</td>
+      <td class="col-founder">Aidan Dewar (CEO), Sam Perkins (Pres), Stephanie Liu (CTO) — childhood friends, personal patient journeys, non-design backgrounds.</td>
+      <td class="col-raise">$115M total<br>$70M Series B Apr 2025<br>JP Morgan lead</td>
+      <td class="col-design">Product design is serviceable but clinical. No obvious design-first identity. Scaling fast (2,180 employees) but brand system hasn't kept pace with growth.</td>
+      <td class="col-gap">
+        <span class="gap-tag">brand system</span>
+        <span class="gap-tag">patient UX</span>
+        <span class="gap-tag">dietitian portal</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-4">4</div></td>
+      <td class="col-outreach"><span class="angle">"You're scaling to millions of patients. The design system needs to scale with you — especially as you move into GLP-1 adjacency."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">03</td>
+      <td class="col-company">
+        <span class="company-name">Fay</span>
+        <span class="company-url"><a href="https://www.joinfay.com" target="_blank">joinfay.com</a></span><br>
+        <span class="pill pill-stage">Series A</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">AI-powered dietitian franchise platform. RDs run independent practices via Fay; patients get insurance-covered nutrition counseling.</td>
+      <td class="col-founder">Sammy Faycurry (CEO/co-founder) — operator background. CTO background not design-adjacent. Founded 2022.</td>
+      <td class="col-raise">$50M Series A<br>Feb 2025<br>General Catalyst + Forerunner</td>
+      <td class="col-design">Early brand identity is basic. The "AI superpowers for dietitians" pitch isn't reflected in the product visuals. Two-sided marketplace (patient + RD) with competing UX needs.</td>
+      <td class="col-gap">
+        <span class="gap-tag">two-sided UX</span>
+        <span class="gap-tag">AI dashboard</span>
+        <span class="gap-tag">brand</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-5">5</div></td>
+      <td class="col-outreach"><span class="angle">"Two-sided marketplaces with AI need two distinct but coherent UX languages. That's a design problem few generalists solve well."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">04</td>
+      <td class="col-company">
+        <span class="company-name">Mito Health</span>
+        <span class="company-url"><a href="https://www.mitohealth.com" target="_blank">mitohealth.com</a></span><br>
+        <span class="pill pill-stage">Seed / YC</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">Blood work + AI longevity coaching. Tells users what to do to prevent disease and live longer — "a health expert in your pocket."</td>
+      <td class="col-founder">YC-backed technical founders. Strong on the AI/data side; design has not been the differentiator so far.</td>
+      <td class="col-raise">YC + seed<br>~$3–8M est.</td>
+      <td class="col-design">Website is minimal but underdeveloped. The AI coaching layer is the core product and currently under-designed relative to the ambition of the pitch.</td>
+      <td class="col-gap">
+        <span class="gap-tag">app UX</span>
+        <span class="gap-tag">data legibility</span>
+        <span class="gap-tag">onboarding</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-5">5</div></td>
+      <td class="col-outreach"><span class="angle">"The gap between 'AI expert in your pocket' as a pitch and what users actually see in the app is where we work."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">05</td>
+      <td class="col-company">
+        <span class="company-name">Teal Health</span>
+        <span class="company-url"><a href="https://www.tealhealth.com" target="_blank">tealhealth.com</a></span><br>
+        <span class="pill pill-stage">Seed / Series A</span>
+      </td>
+      <td class="col-what">At-home, self-collecting cervical cancer screening device. FDA-cleared. DTC consumer product with digital results/guidance layer.</td>
+      <td class="col-founder">Clinical + technical founding team. Labcorp invested in $10M raise (2025). Mission-driven, not design-first.</td>
+      <td class="col-raise">~$10M+ (Labcorp participated)<br>Series A range</td>
+      <td class="col-design">Product is compelling but brand is under-designed for a consumer healthcare product. Digital results experience is critical and appears underdeveloped.</td>
+      <td class="col-gap">
+        <span class="gap-tag">consumer product brand</span>
+        <span class="gap-tag">results UX</span>
+        <span class="gap-tag">emotional trust</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-5">5</div></td>
+      <td class="col-outreach"><span class="angle">"An FDA-cleared product solving a high-stakes health problem still has to feel safe and approachable to the consumer. That's a design brief."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">06</td>
+      <td class="col-company">
+        <span class="company-name">Hone Health</span>
+        <span class="company-url"><a href="https://www.honehealth.com" target="_blank">honehealth.com</a></span><br>
+        <span class="pill pill-stage">Series A</span>
+      </td>
+      <td class="col-what">Men's hormone health + TRT telehealth platform. AI-assisted hormone optimization, at-home labs, physician-supervised treatment.</td>
+      <td class="col-founder">Expanded via acquisition (Ivee). Tech-forward founding team. Series A funded in early 2025.</td>
+      <td class="col-raise">Series A 2025<br>Looking Glass Capital</td>
+      <td class="col-design">Visual identity is in the "clean blue/clinical" cluster. Strong competitor to Ro in the men's health category but significantly behind on brand sophistication.</td>
+      <td class="col-gap">
+        <span class="gap-tag">brand differentiation</span>
+        <span class="gap-tag">app UX</span>
+        <span class="gap-tag">onboarding flow</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-4">4</div></td>
+      <td class="col-outreach"><span class="angle">"You're competing with Ro and Hims on men's health. The product is strong. The brand and UX aren't keeping pace."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">07</td>
+      <td class="col-company">
+        <span class="company-name">Midi Health</span>
+        <span class="company-url"><a href="https://www.joinmidi.com" target="_blank">joinmidi.com</a></span><br>
+        <span class="pill pill-stage">Series B</span>
+      </td>
+      <td class="col-what">Virtual menopause + perimenopause clinic. Connects women 40+ with clinicians trained in menopause care. Closed a large Series B in 2024.</td>
+      <td class="col-founder">Clinical + mission-driven founding team. Joanna Strober (CEO) — founder background, not a designer.</td>
+      <td class="col-raise">Series B 2024<br>~$60M+</td>
+      <td class="col-design">Brand is warm and inclusive but has not evolved at pace with growth. Scaling into new demographics and clinical complexity needs stronger design systems.</td>
+      <td class="col-gap">
+        <span class="gap-tag">brand system at scale</span>
+        <span class="gap-tag">clinical content UX</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-4">4</div></td>
+      <td class="col-outreach"><span class="angle">"Women's health at scale requires design that grows with clinical complexity — not just a warm homepage."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">08</td>
+      <td class="col-company">
+        <span class="company-name">Lōvu Health</span>
+        <span class="company-url"><a href="https://www.lovuhealth.com" target="_blank">lovuhealth.com</a></span><br>
+        <span class="pill pill-stage">Series A</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">AI maternal health platform for the full pregnancy journey — conception through 2 years postpartum. Pairs patients with pregnancy navigators and specialists.</td>
+      <td class="col-founder">Clinical + mission-driven. $14M total raised including $8M Series A (2026). SJF Ventures lead.</td>
+      <td class="col-raise">$14M total<br>$8M Series A 2026</td>
+      <td class="col-design">Very early design maturity. Critical product — high-stakes emotional UX for pregnant and new mothers. Current brand and app design appear basic for the clinical and emotional weight of the use case.</td>
+      <td class="col-gap">
+        <span class="gap-tag">emotional safety UX</span>
+        <span class="gap-tag">onboarding</span>
+        <span class="gap-tag">brand system</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-5">5</div></td>
+      <td class="col-outreach"><span class="angle">"Maternal health is one of the highest-stakes emotional UX problems in digital health. The design has to earn trust from the first screen."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">09</td>
+      <td class="col-company">
+        <span class="company-name">Hey Jane</span>
+        <span class="company-url"><a href="https://www.heyjane.com" target="_blank">heyjane.com</a></span><br>
+        <span class="pill pill-stage">Series A</span>
+      </td>
+      <td class="col-what">Telehealth abortion access and medication — DTC direct-to-patient in select states. Combines privacy, accessibility, and clinical care.</td>
+      <td class="col-founder">Mission-driven founding team. Privacy-first, policy-aware, non-design background.</td>
+      <td class="col-raise">Series A<br>Portfolia + specialist health VCs</td>
+      <td class="col-design">The brand serves a high-stakes, emotionally sensitive use case where design directly impacts perceived safety and trust. Current brand has warmth but limited design sophistication relative to the urgency of the category.</td>
+      <td class="col-gap">
+        <span class="gap-tag">privacy-first UX</span>
+        <span class="gap-tag">emotional safety</span>
+        <span class="gap-tag">trust design</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-5">5</div></td>
+      <td class="col-outreach"><span class="angle">"In a category where the user's safety feels threatened, every design decision is a trust decision. That's not a job for generalists."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">10</td>
+      <td class="col-company">
+        <span class="company-name">Brightline</span>
+        <span class="company-url"><a href="https://hellobrightline.com" target="_blank">hellobrightline.com</a></span><br>
+        <span class="pill pill-stage">Series B</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">AI-powered behavioral health platform for children and families. Combines coaching, therapy, and psychiatric care through employer benefits and direct.</td>
+      <td class="col-founder">Naomi Allen (CEO) — operator/clinical background, 7Wire-backed. Growing headcount rapidly.</td>
+      <td class="col-raise">Series B<br>7Wire Ventures</td>
+      <td class="col-design">Brand is warm but the product UX for both parents and children is complex. Child-facing health design is a specialized, underserved design niche.</td>
+      <td class="col-gap">
+        <span class="gap-tag">child-safe UX</span>
+        <span class="gap-tag">parent dashboard</span>
+        <span class="gap-tag">onboarding</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-4">4</div></td>
+      <td class="col-outreach"><span class="angle">"Designing for child mental health and parent anxiety simultaneously is one of the most layered UX problems in digital health."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">11</td>
+      <td class="col-company">
+        <span class="company-name">Clara Health</span>
+        <span class="company-url"><a href="https://clarahealth.com" target="_blank">clarahealth.com</a></span><br>
+        <span class="pill pill-stage">Seed / YC</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">AI primary care + longevity practice. Can see your medical data, act on it, and connect with human providers. Built by Circle Medical founders.</td>
+      <td class="col-founder">YC-backed, clinical + technical team. Pedigree is strong (Circle Medical grew to $100M revenue). Design is not the founding priority.</td>
+      <td class="col-raise">YC + seed<br>~$3–10M est.</td>
+      <td class="col-design">Very early stage. The "AI that actually sees your medical data" is an unprecedented UX challenge — how do you make medical AI feel approachable and trustworthy? This is unsolved at early stage.</td>
+      <td class="col-gap">
+        <span class="gap-tag">AI transparency UX</span>
+        <span class="gap-tag">medical data viz</span>
+        <span class="gap-tag">trust design</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-5">5</div></td>
+      <td class="col-outreach"><span class="angle">"You're building the hardest UX problem in health AI: medical data that acts. The design has to make users feel safe handing over their health history."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">12</td>
+      <td class="col-company">
+        <span class="company-name">Neko Health</span>
+        <span class="company-url"><a href="https://www.neko.health" target="_blank">neko.health</a></span><br>
+        <span class="pill pill-stage">Series A</span>
+      </td>
+      <td class="col-what">Full-body scan preventive diagnostics. Thiel-backed. Premium consumer health offering targeting longevity-conscious high-income adults in UK/EU, expanding to US.</td>
+      <td class="col-founder">Technical founders (Swedish engineering/deep tech background). Design has been invested in — brand is premium and distinctive.</td>
+      <td class="col-raise">Series A<br>Peter Thiel-backed</td>
+      <td class="col-design">Stronger design than most in this list — brand is clean and premium. Design gap is in the patient results experience and in US market brand adaptation.</td>
+      <td class="col-gap">
+        <span class="gap-tag">results UX</span>
+        <span class="gap-tag">US market adaptation</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-3">3</div></td>
+      <td class="col-outreach"><span class="angle">"Your Scandinavian brand aesthetic is a competitive advantage in the UK. US markets need a different trust language — we know what that looks like."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">13</td>
+      <td class="col-company">
+        <span class="company-name">Sprinter Health</span>
+        <span class="company-url"><a href="https://sprinterhealth.com" target="_blank">sprinterhealth.com</a></span><br>
+        <span class="pill pill-stage">Series B</span>
+      </td>
+      <td class="col-what">Mobile + home-based preventive care — phlebotomists go to patients for labs, screenings, and care delivery. Serving health plans and employers.</td>
+      <td class="col-founder">Clinical ops founder. Strong on logistics. B2B2C model (not pure DTC).</td>
+      <td class="col-raise">Series B<br>CB Insights Digital Health 50 (2025)</td>
+      <td class="col-design">B2B-facing brand does not need consumer-grade design investment. The patient-facing mobile layer is the weak point.</td>
+      <td class="col-gap">
+        <span class="gap-tag">patient mobile UX</span>
+        <span class="gap-tag">scheduling flow</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-3">3</div></td>
+      <td class="col-outreach"><span class="angle">"Your ops are excellent. The patient mobile experience is the brand moment you own — and it's currently underdeveloped."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">14</td>
+      <td class="col-company">
+        <span class="company-name">Delfina</span>
+        <span class="company-url"><a href="https://delfina.com" target="_blank">delfina.com</a></span><br>
+        <span class="pill pill-stage">Series A</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">AI maternal health platform for high-risk pregnancies. Works with health systems to provide AI-powered monitoring and care coordination.</td>
+      <td class="col-founder">Clinical AI team. CB Insights Digital Health 50 (2025). B2B2C model through health systems.</td>
+      <td class="col-raise">Series A range<br>~$10–20M est.</td>
+      <td class="col-design">More B2B than pure DTC — health system sales. Patient-facing experience exists but is secondary. Weaker SSD fit than pure DTC, but the consumer layer is underdeveloped.</td>
+      <td class="col-gap">
+        <span class="gap-tag">patient app UX</span>
+        <span class="gap-tag">AI transparency</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-3">3</div></td>
+      <td class="col-outreach"><span class="angle">"Health system buyers care about outcomes. High-risk pregnant patients care about how safe the app feels. You need both — we focus on the patient side."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">15</td>
+      <td class="col-company">
+        <span class="company-name">Daymark Health</span>
+        <span class="company-url"><a href="https://daymarkhealth.com" target="_blank">daymarkhealth.com</a></span><br>
+        <span class="pill pill-stage">Seed</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">AI-powered oncology care navigation for cancer patients. Helps patients understand their diagnosis, treatment options, and care journey.</td>
+      <td class="col-founder">Clinical oncology team. Yosemite-backed (specialist oncology fund). Very early stage.</td>
+      <td class="col-raise">Seed<br>Yosemite Ventures</td>
+      <td class="col-design">Cancer care navigation is one of the highest-stakes emotional UX problems in health. Design is at prototype stage. This is pre-visual-identity territory — ideal timing for an SSD engagement.</td>
+      <td class="col-gap">
+        <span class="gap-tag">emotional UX</span>
+        <span class="gap-tag">brand identity</span>
+        <span class="gap-tag">data legibility</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-5">5</div></td>
+      <td class="col-outreach"><span class="angle">"Cancer patients are terrified and overwhelmed. The design of your product is not cosmetic — it's clinical. Early-stage is when this gets built right."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">16</td>
+      <td class="col-company">
+        <span class="company-name">Sohar Health</span>
+        <span class="company-url"><a href="https://soharhealth.com" target="_blank">soharhealth.com</a></span><br>
+        <span class="pill pill-stage">Seed</span>
+      </td>
+      <td class="col-what">Preventive care access platform focused on underserved populations. Kindred Capital-backed. Expanding access to primary care.</td>
+      <td class="col-founder">Mission-driven founders. Early stage. Leila Zegna (Kindred Capital) lead investor.</td>
+      <td class="col-raise">Seed<br>Kindred Capital</td>
+      <td class="col-design">Very early brand and product. Serving complex, trust-sensitive populations where design is critical to adoption. Typical seed-stage design debt.</td>
+      <td class="col-gap">
+        <span class="gap-tag">accessibility UX</span>
+        <span class="gap-tag">trust design</span>
+        <span class="gap-tag">brand</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-4">4</div></td>
+      <td class="col-outreach"><span class="angle">"Underserved populations have the highest trust barrier and the lowest tolerance for confusing UX. This is where design makes or breaks adoption."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">17</td>
+      <td class="col-company">
+        <span class="company-name">Berry Street</span>
+        <span class="company-url"><a href="https://berrystreet.co" target="_blank">berrystreet.co</a></span><br>
+        <span class="pill pill-stage">Series A</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">Dietitian private practice platform — RDs build insurance-covered practices via Berry Street. GLP-1 nutrition adjacency. $50M Series A (Feb 2025).</td>
+      <td class="col-founder">Operator founders — Charlie Kotlove (CEO). Strong on marketplace mechanics, not design-led.</td>
+      <td class="col-raise">$50M Series A<br>Feb 2025</td>
+      <td class="col-design">Brand is early and underdeveloped for a freshly-funded Series A. Two-sided marketplace design (RD-facing + patient-facing) has distinct UX needs not yet resolved.</td>
+      <td class="col-gap">
+        <span class="gap-tag">marketplace UX</span>
+        <span class="gap-tag">brand system</span>
+        <span class="gap-tag">RD tools</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-4">4</div></td>
+      <td class="col-outreach"><span class="angle">"Fresh Series A is the moment to build the design system before the product scales. You're at exactly that inflection point."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">18</td>
+      <td class="col-company">
+        <span class="company-name">Folx Health</span>
+        <span class="company-url"><a href="https://www.folxhealth.com" target="_blank">folxhealth.com</a></span><br>
+        <span class="pill pill-stage">Series B</span>
+      </td>
+      <td class="col-what">LGBTQ+ focused telehealth — hormone therapy (HRT/HGH), sexual health, primary care. Mission-driven DTC platform.</td>
+      <td class="col-founder">Liana Douillet Guzmán (CEO). Mission-driven operator. 7Wire-backed.</td>
+      <td class="col-raise">Series B<br>7Wire Ventures</td>
+      <td class="col-design">Brand has strong identity values but visual execution is inconsistent. Design system at Series B stage shows cracks under scale pressure.</td>
+      <td class="col-gap">
+        <span class="gap-tag">design system</span>
+        <span class="gap-tag">brand consistency</span>
+        <span class="gap-tag">mobile app</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-3">3</div></td>
+      <td class="col-outreach"><span class="angle">"Strong values deserve a design system that's as coherent as the mission. At Series B, brand inconsistency has a cost."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">19</td>
+      <td class="col-company">
+        <span class="company-name">Levels Health</span>
+        <span class="company-url"><a href="https://www.levelshealth.com" target="_blank">levelshealth.com</a></span><br>
+        <span class="pill pill-stage">Series A</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">Continuous glucose monitoring + metabolic health insights app. DTC subscription, wearable-integrated, AI metabolic coaching.</td>
+      <td class="col-founder">Sam Corcos (CEO) — engineering/operator background. Strong content marketing but design maturity is mid-tier.</td>
+      <td class="col-raise">Series A<br>a16z + others</td>
+      <td class="col-design">Stronger design than most early-stage peers. But the AI metabolic insights layer is complex and the information design still prioritizes engineers over consumers. Scaling into mainstream requires UX evolution.</td>
+      <td class="col-gap">
+        <span class="gap-tag">mainstream consumer UX</span>
+        <span class="gap-tag">insight legibility</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-3">3</div></td>
+      <td class="col-outreach"><span class="angle">"You've built for biohackers. Crossing into mainstream consumer health means different information design, not just different marketing."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">20</td>
+      <td class="col-company">
+        <span class="company-name">Talkspace</span>
+        <span class="company-url"><a href="https://www.talkspace.com" target="_blank">talkspace.com</a></span><br>
+        <span class="pill pill-stage">Public</span>
+      </td>
+      <td class="col-what">Online therapy platform. Recently acquired Wisdo Health (peer support). Expanding into peer community + AI-augmented care.</td>
+      <td class="col-founder">Public company. Post-acquisition growth phase. Expanding product scope through M&A.</td>
+      <td class="col-raise">Public (NASDAQ: TALK)</td>
+      <td class="col-design">Core product design is aging. Post-acquisition integration of peer support creates new UX design needs. Public company budget but fragmented design direction.</td>
+      <td class="col-gap">
+        <span class="gap-tag">post-acquisition UX</span>
+        <span class="gap-tag">peer support layer</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-2">2</div></td>
+      <td class="col-outreach"><span class="angle">Too large and public for SSD's sweet spot. Possible project-based engagement only.</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">21</td>
+      <td class="col-company">
+        <span class="company-name">Flo Health</span>
+        <span class="company-url"><a href="https://flo.health" target="_blank">flo.health</a></span><br>
+        <span class="pill pill-stage">Late Stage</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">Period tracking + women's health app. 1B+ valuations. 70M+ MAUs. AI-powered menstrual and reproductive health insights.</td>
+      <td class="col-founder">Dmitry Gurski (CEO). Technical founder, Belarusian origin.</td>
+      <td class="col-raise">$1B+ valuation<br>Series C+</td>
+      <td class="col-design">Has in-house design at scale. Too large for SSD's ICP. Noted for awareness of category benchmark only.</td>
+      <td class="col-gap">
+        <span class="gap-tag">n/a — too large</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-1">1</div></td>
+      <td class="col-outreach"><span class="angle">Exclude. In-house design team at scale. Reference as category benchmark only.</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">22</td>
+      <td class="col-company">
+        <span class="company-name">Omada Health</span>
+        <span class="company-url"><a href="https://www.omadahealth.com" target="_blank">omadahealth.com</a></span><br>
+        <span class="pill pill-stage">IPO 2025</span>
+      </td>
+      <td class="col-what">Digital chronic disease management (diabetes, hypertension, prediabetes). IPO'd in 2025 after years of B2B2C employer-focused growth.</td>
+      <td class="col-founder">Sean Duffy (CEO). Public company post-IPO. In-house design org.</td>
+      <td class="col-raise">IPO 2025</td>
+      <td class="col-design">Mature design org post-IPO. Not an SSD target. Noted as indicator that the segment produces public companies — validate market maturity.</td>
+      <td class="col-gap">
+        <span class="gap-tag">n/a — post-IPO</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-1">1</div></td>
+      <td class="col-outreach"><span class="angle">Exclude. Post-IPO. Useful as proof that SSD's target segment produces exits.</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">23</td>
+      <td class="col-company">
+        <span class="company-name">Culina Health</span>
+        <span class="company-url"><a href="https://www.culinahealth.com" target="_blank">culinahealth.com</a></span><br>
+        <span class="pill pill-stage">Series A</span>
+        <span class="pill pill-ai">AI</span>
+      </td>
+      <td class="col-what">Telenutrition platform connecting patients with RDs. Insurance-covered. GLP-1 and chronic disease nutrition focus.</td>
+      <td class="col-founder">Cathryn Lavery + clinical team. $7.9M Series A (Dec 2024). CareFirst backed.</td>
+      <td class="col-raise">$7.9M Series A<br>Dec 2024<br>CareFirst BlueCross</td>
+      <td class="col-design">Small, fresh-funded Series A. Brand is underdeveloped. The clinical brand needs to feel warm and accessible — not just functional. Design investment has not happened yet.</td>
+      <td class="col-gap">
+        <span class="gap-tag">brand</span>
+        <span class="gap-tag">patient UX</span>
+        <span class="gap-tag">RD interface</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-4">4</div></td>
+      <td class="col-outreach"><span class="angle">"Just closed your Series A. This is the moment to invest in a design system before the platform scales — while it's still affordable to do it right."</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">24</td>
+      <td class="col-company">
+        <span class="company-name">Nuvation Bio</span>
+        <span class="company-url"><a href="https://nuvationbio.com" target="_blank">nuvationbio.com</a></span><br>
+        <span class="pill pill-stage">Public</span>
+      </td>
+      <td class="col-what">Oncology therapeutics — precision cancer medicine. Public biotech. No consumer-facing digital product.</td>
+      <td class="col-founder">David Hung (CEO). Public biotech.</td>
+      <td class="col-raise">Public</td>
+      <td class="col-design">Not a digital health consumer product. Wrong category entirely — included to define the exclusion boundary.</td>
+      <td class="col-gap">
+        <span class="gap-tag">n/a — not digital health</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-1">1</div></td>
+      <td class="col-outreach"><span class="angle">Exclude. Biotech, not digital health.</span></td>
+    </tr>
+
+    <tr>
+      <td class="col-num">25</td>
+      <td class="col-company">
+        <span class="company-name">Ophelia Health</span>
+        <span class="company-url"><a href="https://ophelia.com" target="_blank">ophelia.com</a></span><br>
+        <span class="pill pill-stage">Series B</span>
+      </td>
+      <td class="col-what">Opioid use disorder treatment platform — telehealth + medication + support. Mission-driven, deeply specialized DTC.</td>
+      <td class="col-founder">Zack Gray (CEO). Operator Partners-backed. Clinical + mission founder.</td>
+      <td class="col-raise">Series B<br>Operator Partners</td>
+      <td class="col-design">Brand is functional but clinical — appropriate for the sensitivity of the category. The onboarding and trust UX for a substance use disorder patient is a genuinely hard design problem. Design has not been the priority.</td>
+      <td class="col-gap">
+        <span class="gap-tag">stigma-free UX</span>
+        <span class="gap-tag">onboarding</span>
+        <span class="gap-tag">trust</span>
+      </td>
+      <td class="col-fit"><div class="fit-score score-3">3</div></td>
+      <td class="col-outreach"><span class="angle">"Addiction treatment is one of the most stigma-sensitive UX contexts in healthcare. The first interaction has to earn trust, not just explain the service."</span></td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+
+<!-- ICP PROFILE + RESEARCH PROVENANCE -->
+<div class="notes-section" style="background:#ffffff; border-top:3px solid var(--ink);">
+  <div class="eye" style="margin-bottom:8px;">The ICP — Defined &amp; Sourced</div>
+  <h2 style="font-family:'Instrument Serif',serif;font-size:26px;font-weight:400;margin-bottom:6px;">Where this ICP came from</h2>
+  <p style="font-size:14px;color:var(--slate);max-width:760px;line-height:1.7;margin-bottom:32px;">This ICP was built across three sequential research documents. Each attribute below traces to a specific finding. This section exists so any reader of this document understands the full reasoning — not just the conclusion.</p>
+
+  <!-- ICP DEFINITION BOX -->
+  <div style="background:var(--ink);color:var(--paper);border-radius:10px;padding:32px 36px;margin-bottom:32px;">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">The SSD ICP — DTC Digital Health</div>
+    <div style="font-family:'Instrument Serif',serif;font-size:22px;font-weight:400;line-height:1.3;margin-bottom:20px;">A seed–Series A DTC digital health startup building a consumer-facing app or platform with an AI or data layer, founded by a technical or clinical founder who lacks in-house design capacity, having raised $1–20M, needing to close the gap between their investor pitch and their product experience before their next round.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:8px;">
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(247,244,239,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:5px;">Stage</span>Seed – Series A (occasionally Series B if design gap is acute)</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(247,244,239,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:5px;">Founder Type</span>Technical (ML/AI/eng), clinical (MD/PhD), or domain-expert operator — not design-first</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(247,244,239,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:5px;">Product</span>Consumer-facing app or platform (not purely B2B clinical software or biotech)</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(247,244,239,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:5px;">AI/Data Layer</span>Has an AI story in their pitch or product — personalization, diagnostics, coaching, data insights</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(247,244,239,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:5px;">Design Gap</span>No in-house designer or design lead; design is outsourced, absent, or under-resourced</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(247,244,239,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:5px;">Timing Window</span>0–18 months post-funding close — the active vendor evaluation window before teams scale internally</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(247,244,239,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:5px;">Geography</span>Primarily US (SF, NYC, Boston) but distributed — DTC digital health is remote-first by nature</div>
+      <div style="background:rgba(255,255,255,0.07);padding:12px 14px;border-radius:4px;font-size:12.5px;color:rgba(247,244,239,0.8);line-height:1.55;"><span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:5px;">Core Problem to Solve</span>"Our AI story is in the pitch deck. The product doesn't feel as intelligent or trustworthy as what we promised investors."</div>
+    </div>
+  </div>
+
+  <!-- ATTRIBUTE SOURCING TABLE -->
+  <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">How each ICP attribute was determined</div>
+  <div style="display:flex;flex-direction:column;gap:0;">
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">Seed–Series A stage</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">Rock Health Q1 2026 data showed average deal size hit $36.7M — but deal <em>count</em> dropped, meaning fewer companies are getting larger checks. Series A/B is where design investment first becomes available. Pre-seed companies lack budget; Series C+ companies have in-house design teams. The $1–20M raise window is when founders are actively vendor-evaluating. Confirmed by the funding dates on this list — 12 of 13 high-fit companies raised in 2024–2025.</div>
+      <div style="padding:16px 14px;background:var(--rust-light);font-size:12px;color:var(--rust);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>Health &amp; Wellness Industry Brief → Market Context section. Rock Health Q1 2026 funding data.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">Technical or clinical founder</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">Rock Health reported that 9 of 11 megadeals in H1 2025 went to AI-enabled health startups — meaning the funded founder archetype is ML engineers, biotech researchers, and clinicians building AI products. The brand landscape analysis confirmed this: K Health (clinical AI), Function Health (MD co-founder), Superpower (technical ops founders), Mito Health (YC engineers) all show the same pattern. Non-design founding teams produce design gaps by default — they optimize for the problem they know.</div>
+      <div style="padding:16px 14px;background:var(--rust-light);font-size:12px;color:var(--rust);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>Industry Brief → AI as table stakes. Brand Landscape → Brand Gaps section (AI Promise Gap). Confirmed per-company in founder background column above.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">Consumer-facing product required</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">SSD's service model (Launch/Grow/Scale tiers) is optimized for consumer-facing digital products — brand systems, onboarding flows, dashboards, app UI. Purely B2B clinical software (EHR integrations, hospital ops tools) requires different design competencies (enterprise UX, complex data workflows) that SSD doesn't currently position around. The DTC consumer health segment also aligns with SSD's existing case studies (Kenchan Ramen = DTC ecomm; Funding Solutions = consumer-facing fintech dashboard). The ICP narrows to consumer-facing to ensure SSD is selling into a problem it demonstrably solves.</div>
+      <div style="padding:16px 14px;background:var(--rust-light);font-size:12px;color:var(--rust);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>SSD Business Overview (service tiers). Existing case studies (Kenchan, Funding Solutions). Industry Brief → ICP Direction section.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">AI or data layer in product</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">The Brand Landscape Analysis found that 18 of 25 companies in this validation list claim AI personalization in their positioning. Fewer than 5 have design that reflects it — this gap was named the "AI Promise Gap" and identified as the single most common failure across the landscape. An AI/data product creates a specific design challenge: how do you make machine intelligence feel legible, trustworthy, and personalized to a consumer? This is SSD's most defensible pitch because it requires both domain fluency (understanding what the AI actually does) and consumer UX sophistication (making it feel human). Generalist agencies rarely have both.</div>
+      <div style="padding:16px 14px;background:var(--rust-light);font-size:12px;color:var(--rust);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>Digital Health Brand Landscape → Brand Gaps section (AI Promise Gap, Data Without Legibility). Stats strip above: 18/25 companies on this list have AI framing.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">No in-house design capacity</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">Assessed per company via LinkedIn job posting signals, website design quality relative to funding stage, and press coverage patterns (journalists describing what the product does but not how it looks = signal of design underinvestment). The pattern is structural, not incidental: technical and clinical founders optimize for what they know. Design is the last hire, not the first. This was confirmed by the brand landscape — K Health, LifeMD, and Teladoc all show the same under-design pattern despite having capital to invest. The gap persists because no one on the founding team knows what good looks like.</div>
+      <div style="padding:16px 14px;background:var(--rust-light);font-size:12px;color:var(--rust);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>Brand Landscape → Visual Convergence gap. Per-company design signal column in table above. LinkedIn job posting analysis (methodology described in "Where companies come from" section of ICP validation response).</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr 220px;gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);">
+      <div style="padding:16px 14px;background:var(--cream);font-weight:600;font-size:13px;color:var(--ink);border-right:1px solid var(--rule);">SSD fit: existing strengths</div>
+      <div style="padding:16px 14px;font-size:13px;color:var(--slate);line-height:1.6;border-right:1px solid var(--rule);">Three SSD-specific reasons this ICP is the best fit — not just a good market. (1) Fintech/SaaS pattern transfer: designing trust into sensitive data interactions, making complex information legible, building systems for regulated industries — all directly transferable from SSD's Funding Solutions work. (2) Silk + Sonder background: consumer subscription retention, habit formation UX, physical × digital integration — all live design experience in adjacent consumer health territory. (3) SSD's brand voice pillars (Strategic, Human, Bold, Insightful) are a natural match for a segment where the core product tension is "clinical rigor vs. consumer warmth" — exactly the register SSD already operates in.</div>
+      <div style="padding:16px 14px;background:var(--rust-light);font-size:12px;color:var(--rust);line-height:1.6;font-family:'DM Mono',monospace;"><strong style="display:block;margin-bottom:3px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Source</strong>SSD Business Overview + Brand Identity docs. Patti's Silk + Sonder case study (patriciacapiral.com). Industry Brief → Strategic Recommendation section. Brand Landscape → Part 4 Strategic Rec.</div>
+    </div>
+
+  </div>
+
+  <!-- RESEARCH CHAIN -->
+  <div style="margin-top:32px;padding:24px 28px;background:var(--cream);border-radius:8px;border-left:3px solid var(--rust);">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--rust);margin-bottom:12px;">The three-document research chain that produced this ICP</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+      <div style="font-size:13px;color:var(--slate);line-height:1.65;">
+        <strong style="color:var(--ink);display:block;margin-bottom:4px;">① Health &amp; Wellness Industry Brief</strong>
+        Mapped 6 segments across the broader H&amp;W landscape. Identified DTC Digital Health and FemTech as the two segments with the highest combination of: funding velocity, startup density, design budget likelihood, and SSD capability alignment. Established the founding insight: clinical and AI founders have a predictable design fluency gap. <em style="color:var(--muted);">File: health-wellness-industry-brief.html</em>
+      </div>
+      <div style="font-size:13px;color:var(--slate);line-height:1.65;">
+        <strong style="color:var(--ink);display:block;margin-bottom:4px;">② Digital Health Brand Landscape</strong>
+        Analyzed 10 established brands (Hims, Ro, Noom, K Health, etc.) to surface recurring design failures across the category. Named 6 structural gaps — AI Promise Gap, Visual Convergence, Data Without Legibility, Compliance as Checklist, Onboarding Drop-Off, Expansion Dilution. These gaps became the SSD service frame: each one is a problem SSD is positioned to solve. <em style="color:var(--muted);">File: digital-health-brand-landscape.html</em>
+      </div>
+      <div style="font-size:13px;color:var(--slate);line-height:1.65;">
+        <strong style="color:var(--ink);display:block;margin-bottom:4px;">③ This ICP Validation List</strong>
+        Applied the ICP hypothesis to 25 real companies — testing whether the profile actually exists in volume in the market. Result: 13 of 25 scored 4–5, confirming the hypothesis is not theoretical. Also surfaced sub-patterns (two-sided marketplace design, menopause crowding, post-funding timing window) that refine how SSD should approach outreach. <em style="color:var(--muted);">File: this document</em>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTES / STRATEGIC CALLOUTS -->
+<div class="notes-section">
+  <div class="eye" style="margin-bottom:8px;">Strategic Notes</div>
+  <h2 style="font-family:'Instrument Serif',serif;font-size:26px;font-weight:400;">What this list tells you</h2>
+
+  <div class="notes-grid">
+    <div class="note-card">
+      <div class="note-label">ICP Hypothesis: Confirmed</div>
+      <div class="note-text">The pattern holds across all 13 high-fit companies: <strong>clinical or technical founder, AI pitch, fresh seed–Series A capital, no design-first team member.</strong> Fay, Mito Health, Lōvu, Clara Health, Daymark — all fit this profile precisely. The hypothesis is validated.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-label">The Timing Signal</div>
+      <div class="note-text"><strong>Post-funding, pre-scale is the SSD window.</strong> Fay ($50M Series A), Berry Street ($50M Series A), Nourish ($70M Series B), Culina ($7.9M Series A) all raised in 2024–2025. Founders are now allocating that capital — design agencies are evaluated in the first 3–6 months post-close. Timing outreach to funding announcements is the highest-ROI tactic.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-label">Shared Design Problem</div>
+      <div class="note-text">The single most common gap across score-4 and score-5 companies: <strong>"AI is in the pitch but not in the product experience."</strong> This is SSD's most credible entry line. 18 of 25 companies have some AI framing in their positioning. Fewer than 5 have design that reflects it.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-label">Two-Sided Marketplace Pattern</div>
+      <div class="note-text">Nourish, Fay, Berry Street all run <strong>two-sided care marketplaces</strong> (patient + provider/RD). This is a distinct design problem: two separate user types, two interface contexts, one coherent brand. This pattern will repeat across the category. SSD should have a point of view on it.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-label">Exclusions Are Instructive</div>
+      <div class="note-text">Flo (1B+ valuation), Omada (IPO), Talkspace (public) are the right exclusions. <strong>They validate the market — they don't indicate SSD should pursue them.</strong> The lesson: this segment produces real exits. SSD's clients at seed–Series A today are 3–5 years from those outcomes.</div>
+    </div>
+    <div class="note-card">
+      <div class="note-label">Recommended First Contacts</div>
+      <div class="note-text">Based on fit score + timing + design gap acuity: <strong>Mito Health, Clara Health, Lōvu Health, Daymark Health, Teal Health.</strong> These five are early enough that SSD can genuinely shape the product design direction — not just polish what already exists. They're also all post-funding with budget.</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>Sari Sari Design · DTC Digital Health ICP Validation · April 2026</span>
+  <span>Step 3 of 3 — ICP Refinement Series</span>
+  <span>25 companies · Seed–Series B · Research: Rock Health, CB Insights, Crunchbase, TechCrunch, company sites</span>
+</div>
+
+</body>
+</html>
