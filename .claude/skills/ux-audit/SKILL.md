@@ -247,35 +247,94 @@ Follow the "Google Drive Strategy" section above. The approach depends on which 
 
 4. **Upload to Google Drive** (best-effort): Follow the Drive Strategy section. Upload the .md file and screenshots to the company folder in Drive. If Drive is unreachable, the local files are the deliverable.
 
-**Tone of voice:** confident while being rational/logical, strategic but brief and plain-language, professional but warm and optimistic. AVOID language that is: sales-y, jargon-ridden.
+**Tone of voice for the .md report:** direct, specific, and practitioner-grounded. Write findings like a sharp peer reviewer, not a consultant. Name specific elements on the page. Avoid AI-isms ("It's worth noting…", "This is particularly important…"), passive hedging ("There appears to be…"), and generic observations that could apply to any website. Ground business impact in revenue, pipeline, or credibility terms.
 
 ### STEP 4 — PUBLISH REPORT OF TOP 5 FINDINGS
 
-Render top 5 findings into a branded, client-facing HTML report.
+Render the top 5 findings into a branded, client-facing HTML report.
 
-**Before generating the report, read the bundled template:** `assets/report-template.html` (relative to this skill's directory). This is a complete, working HTML file that you should use as your structural and visual reference. Adapt the content sections to the current audit's findings while preserving the template's design language (layout, typography, color scheme, component patterns).
+**Before generating the report, read the bundled template:** `assets/report-template.html` (relative to this skill's directory). This is a complete, self-contained HTML file with all CSS, design tokens, typography, and the Sari Sari logo embedded. Use it as the structural and visual base — adapt the `[PLACEHOLDER]` values to the current audit's content. Never change the visual design, layout, fonts, or color scheme; only fill in content.
 
-1. **Select Top 5:** Choose findings that demonstrate high business impact, represent a variety of audit dimensions, and would be most persuasive to a [Company Stage] [Industry] company with a [GTM Model]. Prioritize Critical and Major severity. Favor findings with concrete data.
+#### Selecting and Ordering the Top 5
 
-2. **Generate the HTML report** using the template structure:
-   1. Title: [Company Name]
-   2. Caption: [Company URL], [Audit Date]
-   3. [Business Model Profile]
-   4. [Methodology]: 1 sentence, concise, mentioning dimensions evaluated
-   5. [Evaluation Lens statement]
-   6. [Why This Matters statement]
-   7. Top 5 findings with: finding number, dimension, severity badge, title, description, why it matters (contextualized to their business), criterion IDs, recommendation, effort/impact tags
+The 5 findings in the published report are not just the "most severe" — they are the most persuasive to this company's decision-makers. The primary audience is seed-to-Series A/B founders and operators, especially in B2B and SaaS markets. They think in business metrics, not UX jargon.
 
-3. **Append the disclaimer:**
-   > This audit is based solely on publicly available information from [Company Name]'s marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.
+**Selection criteria (apply in this order):**
+1. **Business impact first.** Findings that tie directly to revenue, lead generation, conversion, pipeline, or credibility get priority. A Critical-severity accessibility violation with no clear business tie-in is less valuable in this report than a Major CRO finding that explains why demos aren't converting.
+2. **Evidence quality second.** Concrete, specific observations beat vague ones. Prefer findings with data, screenshots, or direct examples.
+3. **Variety third.** All else equal, spread findings across dimensions so the report doesn't read as one-dimensional.
 
-4. **Save the HTML file** to both:
+**Ordering rules:**
+- **Finding 1** = highest business and revenue relevance (almost always a CRO or conversion-related finding unless conversion is demonstrably not the site's primary goal)
+- **Finding 5** = lowest of the five (but still meaningful — don't include weak findings)
+- Order 1→5 by business/revenue/lead-gen relevance, not by technical severity alone
+
+**De-prioritize** findings that are purely technical, aesthetic-only, or compliance-only unless you can clearly connect them to a revenue or credibility outcome for this company's stage and GTM.
+
+#### Report Content
+
+Generate the HTML report by filling in every `[PLACEHOLDER]` in the template:
+
+1. **Header section:**
+   - `[COMPANY_NAME]` — company name
+   - `[COMPANY_URL]` / `[COMPANY_DOMAIN]` — full URL and display domain
+   - `[AUDIT_DATE]` — formatted date (e.g., "April 2026")
+   - `[WHY_THIS_MATTERS]` — 3 punchy sentences grounded in this company's specific business situation. What does website friction cost them? Answer in revenue, pipeline, or credibility terms. No generic UX platitudes. Write it like you're speaking directly to the founder.
+
+2. **Business properties:** fill all 6 fields from the Business Model Profile (Industry, Stage, GTM Model, Conversion Goal, Customer Type, Competitors)
+
+3. **Findings:** for each of the 5 findings, fill:
+   - Finding number (1–5)
+   - `[DIMENSION_NAME]` — the audit dimension (e.g., "Conversion Rate Optimization")
+   - Severity badge class: `.bc` (Critical), `.bm` (Major), `.bn` (Minor)
+   - `[FINDING_TITLE]` — short, punchy, specific (not "Poor CTA Design" — more like "No secondary CTA for visitors not ready to book a demo")
+   - `[OBSERVATION]` — 2–3 sentences: what was seen, where, with specifics. No hedging. Write it like a peer reviewing the site, not a consultant writing a report.
+   - `[BUSINESS_IMPACT]` in the "Why This Finding Matters" callout — grounded in this company's stage, GTM, and conversion goal. Revenue, pipeline, or credibility language. Not generic UX advice.
+   - `[CRITERION_ID]` chips — cite criterion IDs from the reference checklist (e.g., `CRO-03`, `ACC-20`)
+   - Recommendation bullets — specific, actionable, one bullet per distinct action
+   - Effort/Impact tags — use appropriate classes
+
+4. **Methodology block:**
+   - `[METHODOLOGY_STATEMENT]` — 1–2 sentences. Name all 11 dimensions evaluated. Mention AI assistance. Use this template as a base:
+     > "This audit was conducted by an AI-assisted analyst using a structured 11-dimension UX framework covering Nielsen's heuristics, conversion rate optimization, information architecture, QA, visual and brand design, accessibility (WCAG 2.1 AA), mobile responsiveness, performance and Core Web Vitals, SEO, competitor benchmarking, and content hierarchy. Automated scripts captured accessibility violations, performance data, and SEO metadata; all findings were reviewed for accuracy and business relevance."
+   - `[EVALUATION_LENS_STATEMENT]` — 2 sentences tailored to this company's specific GTM, industry, and stage. Show strategic framing, not boilerplate.
+
+5. **CTA block:**
+   - `[TOTAL_FINDINGS]` — total number of findings from Step 2
+   - `[COMPANY_NAME]` in the mailto subject line
+   - The CTA copy is fixed — do not rewrite it:
+     > Eyebrow: "See the Full Picture"
+     > H3: "Create more leverage with all [N] findings."
+     > Body: "These 5 are the most business-critical — but there's more on the table. The full report covers every finding across all 11 dimensions, with prioritized recommendations your team can act on immediately."
+     > Button: "Get the full report" → `mailto:admin@sarisari.design?subject=Full UX Report for [COMPANY_NAME]`
+
+6. **Disclaimer (fixed copy — do not rewrite):**
+   > "This audit is based on [Company Name]'s publicly available marketing site. Direct access to the product, supporting flows, analytics, and user data would enable a deeper, more comprehensive review."
+
+#### Tone of Voice for the Report
+
+The report is a lead magnet. Every word should build confidence in Sari Sari's judgment and create a pull toward the full engagement. Write like a sharp practitioner who has done this a hundred times — not like a consultant trying to sound authoritative.
+
+**Voice:** direct, specific, confident. No hedging. No throat-clearing.
+
+**Avoid:**
+- AI-isms: "It's worth noting that…", "This is particularly important because…", "Overall, the site demonstrates…"
+- Consultant-speak: "suboptimal", "leverage" (as a verb), "actionable insights", "best practices"
+- Passive observations: "There appears to be…", "It could be argued that…"
+- Generic findings that could apply to any website
+
+**Aim for:**
+- Named elements: "The hero CTA…", "The pricing page…", "The nav bar on mobile…"
+- Business-grounded impact: "…which means visitors who aren't ready to commit have nowhere to go"
+- Concrete recommendations: "Add a secondary CTA ('See how it works') that routes to a product video or case study"
+
+#### Saving and Distributing the Report
+
+1. **Save the HTML file** to:
    - The local workspace: `knowledge-base/clients/[Company Name]/ux-audit-report-[Company Name]-[YYYY-MM-DD].html`
    - The user's output folder (so they can view it immediately)
 
-5. **Upload to Google Drive** (best-effort) and generate a shareable link if possible.
-
-**Tone of voice:** confident while being rational/logical, strategic but brief and plain-language, professional but warm and optimistic. AVOID language that is: sales-y, jargon-ridden.
+2. **Upload to Google Drive** (best-effort) and generate a shareable link if possible.
 
 ---
 
