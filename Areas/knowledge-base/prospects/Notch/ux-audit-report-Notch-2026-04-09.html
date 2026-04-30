@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Audit Report — Notch</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+:root{--bg-dark:#0d0d14;--bg-card:#16161f;--bg-card-alt:#1c1c28;--accent-pink:#e01ee6;--accent-purple:#8b5cf6;--accent-gradient:linear-gradient(135deg,#e01ee6 0%,#8b5cf6 100%);--text-primary:#fff;--text-secondary:#a0a0b8;--text-muted:#6b6b80;--border-subtle:rgba(255,255,255,0.06);--severity-critical:#ef4444;--severity-major:#f59e0b;--severity-minor:#3b82f6;--effort-low:#10b981;--effort-med:#f59e0b;--effort-high:#ef4444;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg-dark);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.container{max-width:860px;margin:0 auto;padding:0 32px;}
+.report-header{padding:80px 0 60px;border-bottom:1px solid var(--border-subtle);}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent-pink);margin-bottom:16px;}
+.report-title{font-size:48px;font-weight:800;line-height:1.1;margin-bottom:12px;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.report-caption{font-size:14px;color:var(--text-muted);margin-bottom:40px;}.report-caption a{color:var(--text-secondary);text-decoration:none;}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;margin-bottom:32px;}
+.profile-item{display:flex;gap:8px;font-size:13px;}.profile-label{color:var(--text-muted);min-width:100px;flex-shrink:0;}.profile-value{color:var(--text-secondary);font-weight:500;}
+.methodology-block{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;padding:28px 32px;margin:40px 0;}
+.methodology-block h3{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent-pink);margin-bottom:12px;margin-top:20px;}.methodology-block h3:first-child{margin-top:0;}
+.methodology-block p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;}.methodology-block p:last-child{margin-bottom:0;}
+.findings-section{padding:60px 0;}.findings-header{margin-bottom:48px;}.findings-header h2{font-size:28px;font-weight:700;margin-bottom:8px;}.findings-header p{font-size:14px;color:var(--text-secondary);}
+.finding-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:16px;padding:36px;margin-bottom:24px;transition:border-color 0.2s;}
+.finding-card:hover{border-color:rgba(224,30,230,0.2);}
+.finding-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.finding-number{font-size:12px;font-weight:700;color:var(--bg-dark);background:var(--accent-gradient);width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.finding-dimension{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);}
+.badge{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:100px;}
+.badge-critical{background:rgba(239,68,68,0.15);color:var(--severity-critical);border:1px solid rgba(239,68,68,0.3);}
+.badge-major{background:rgba(245,158,11,0.15);color:var(--severity-major);border:1px solid rgba(245,158,11,0.3);}
+.badge-minor{background:rgba(59,130,246,0.15);color:var(--severity-minor);border:1px solid rgba(59,130,246,0.3);}
+.finding-title{font-size:20px;font-weight:700;margin-bottom:16px;line-height:1.3;}
+.finding-body p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:16px;}.finding-body strong{color:var(--text-primary);font-weight:600;}
+.finding-subsection{margin-top:20px;padding-top:20px;border-top:1px solid var(--border-subtle);}
+.finding-subsection h4{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent-purple);margin-bottom:8px;}
+.finding-subsection p{font-size:14px;color:var(--text-secondary);line-height:1.7;}
+.criterion-id{font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:var(--accent-purple);background:rgba(139,92,246,0.1);padding:2px 8px;border-radius:4px;}
+.tags-row{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;}
+.tag{font-size:11px;font-weight:500;padding:4px 12px;border-radius:100px;background:var(--bg-card-alt);border:1px solid var(--border-subtle);color:var(--text-muted);}
+.tag-effort-low{color:var(--effort-low);border-color:rgba(16,185,129,0.3);}.tag-effort-med{color:var(--effort-med);border-color:rgba(245,158,11,0.3);}.tag-effort-high{color:var(--effort-high);border-color:rgba(239,68,68,0.3);}
+.tag-impact-high{color:var(--severity-critical);border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.05);}.tag-impact-med{color:var(--effort-med);border-color:rgba(245,158,11,0.2);background:rgba(245,158,11,0.05);}
+.report-footer{border-top:1px solid var(--border-subtle);padding:48px 0 80px;}
+.footer-cta{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:16px;padding:36px;text-align:center;margin-bottom:40px;}
+.footer-cta h3{font-size:22px;font-weight:700;margin-bottom:12px;}.footer-cta p{font-size:14px;color:var(--text-secondary);line-height:1.7;max-width:600px;margin:0 auto;}
+.disclaimer{font-size:12px;color:var(--text-muted);line-height:1.7;text-align:center;padding-top:24px;border-top:1px solid var(--border-subtle);}
+.brand-footer{text-align:center;margin-top:32px;font-size:12px;color:var(--text-muted);}.brand-footer span{color:var(--accent-pink);font-weight:600;}
+@media (max-width:640px){.container{padding:0 20px;}.report-title{font-size:32px;}.profile-grid{grid-template-columns:1fr;}.finding-card{padding:24px;}}
+</style></head><body><div class="container">
+<header class="report-header"><div class="eyebrow">UX Audit Report</div><h1 class="report-title">Notch</h1>
+<p class="report-caption"><a href="https://notch.cx">notch.cx</a> &nbsp;|&nbsp; April 9, 2026</p>
+<div class="profile-grid">
+<div class="profile-item"><span class="profile-label">Industry</span><span class="profile-value">AI Customer Support (Regulated)</span></div>
+<div class="profile-item"><span class="profile-label">Stage</span><span class="profile-value">Growth</span></div>
+<div class="profile-item"><span class="profile-label">GTM Model</span><span class="profile-value">Sales-Led, Demo-Gated</span></div>
+<div class="profile-item"><span class="profile-label">Conversion Goal</span><span class="profile-value">Book a Demo</span></div>
+<div class="profile-item"><span class="profile-label">Customer Type</span><span class="profile-value">B2B Mid-Market + Enterprise</span></div>
+<div class="profile-item"><span class="profile-label">Competitors</span><span class="profile-value">Ada, Sierra, Decagon, Intercom Fin</span></div>
+</div>
+<div class="methodology-block">
+<h3>Evaluation Lens</h3><p>Notch's whole differentiation is "AI built for regulated industries." Buyers in insurance, banking, and gaming have been burned by generic AI vendors that can't handle compliance, audit trails, and PII. The site's job is to make the compliance story the hero — not an afterthought in the footer.</p>
+<h3>Why This Matters</h3><p>Notch is competing in one of the most crowded AI categories of the year where Ada, Sierra, Decagon, and Intercom Fin are fighting for the same buyers. The only way to stand out is to own a niche — "regulated industries" — and make that ownership obvious within 5 seconds of landing.</p>
+</div></header>
+<section class="findings-section"><div class="findings-header"><h2>Top 5 Findings</h2><p>Ranked by estimated impact on pipeline conversion.</p></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">1</div><span class="finding-dimension">Trust Signals</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">SOC 2 Type II and ISO 27001 live in the footer — they should live in the hero</h3>
+<div class="finding-body">
+<p>Notch is SOC 2 Type II and ISO 27001 certified — the exact proof points that the positioning ("AI Built for Regulated Industries") promises. But both certifications appear only in the footer, meaning the first scroll doesn't deliver on the promise the headline just made.</p>
+<p><strong>Why this matters for Notch:</strong> For the target persona — a compliance-cautious enterprise buyer in insurance, banking, or gaming — the certifications ARE the value proposition. Every competitor (Ada, Sierra, Decagon) can claim "AI customer support." Only a subset can prove enterprise compliance on day one. Burying that proof wastes your biggest wedge.</p>
+<p><span class="criterion-id">CRO-06</span> Trust Signal Placement / <span class="criterion-id">CRO-07</span> Social Proof Depth</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Add a compliance badge strip immediately below the hero: "SOC 2 Type II · ISO 27001 · CCPA compliant · GDPR ready." Link to a dedicated Security & Compliance page with audit dates, subprocessor list, DPA templates, and penetration test summaries. This is your moat — treat it like one.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">2</div><span class="finding-dimension">Content Hierarchy & Copywriting</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">The hero makes the claim — but doesn't show the proof</h3>
+<div class="finding-body">
+<p>The hero reads: "AI Built for Regulated Industries" with a subhead of "Designed for the complexity of real-life support. Notch handles regulated workflows, sensitive data, and enterprise compliance at scale." It's a clear positioning claim, but the subhead doubles down on the same abstract promise without naming a single proof point.</p>
+<p><strong>Why this matters for Notch:</strong> Regulated-industry buyers are professionally skeptical — their job is to find reasons NOT to trust a vendor. A hero that says "trust us, we handle compliance" without naming a certification, vertical, or stat loses those buyers before they scroll. Meanwhile, you already have the proof: SOC 2, ISO 27001, 20M conversations, 30% autonomous resolution in 90 days.</p>
+<p><span class="criterion-id">COPY-03</span> Headline Specificity / <span class="criterion-id">COPY-08</span> Proof & Credibility</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Rewrite the subhead to lead with proof: "SOC 2 Type II and ISO 27001 certified. Resolves 30% of tickets autonomously in 90 days. Trusted by operators in insurance, gaming, and finance." Let the facts do the credibility work the adjectives can't.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">3</div><span class="finding-dimension">Content Hierarchy & Copywriting</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">Your three strongest stats are buried below the fold</h3>
+<div class="finding-body">
+<p>Notch has three exceptionally strong quantitative claims — "20M conversations handled," "70% cost reduction," and "30% of tickets autonomously resolved within 90 days" — but they appear as a mid-page stat strip rather than anchoring the hero.</p>
+<p><strong>Why this matters for Notch:</strong> In a category where every competitor promises "AI that resolves tickets," specific numbers are the only defensible proof. A buyer who bounces after reading the hero never sees them — and bounces because the hero didn't give them a reason to stay.</p>
+<p><span class="criterion-id">COPY-04</span> Information Hierarchy / <span class="criterion-id">CRO-05</span> Value Proposition Clarity</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Promote "30% of tickets autonomously resolved within 90 days" into the hero as a proof line directly below the headline. Keep the remaining two as a stat strip immediately below. This single change converts a generic category claim into a defensible product truth.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">4</div><span class="finding-dimension">Conversion Rate Optimization</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">No mid-funnel asset for compliance officers, security reviewers, and procurement</h3>
+<div class="finding-body">
+<p>Every CTA on the site leads to the same destination: "Book a demo." There's no gated case study, ROI calculator, compliance whitepaper, or vendor comparison — nothing for a buyer who isn't yet ready to book a 30-minute sales call.</p>
+<p><strong>Why this matters for Notch:</strong> Regulated-industry buying committees take 3-6 months and involve 5-10 stakeholders. Compliance officers and security reviewers — the people who can veto a deal — will not book a demo until they've independently vetted the vendor. Without a mid-funnel capture, Notch has no way to identify those evaluators or nurture them. The only leads you capture are the 5% already ready to buy.</p>
+<p><span class="criterion-id">CRO-03</span> CTA Redundancy / <span class="criterion-id">CRO-04</span> Engagement Path Variety</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Publish a gated "Compliance Brief: AI Customer Support in Regulated Industries" covering SOC 2, ISO 27001, data residency, PII handling, and audit trails. This becomes both your mid-funnel lead magnet and your sales collateral — and it gives security reviewers a reason to give you their email months before a demo.</p></div>
+<div class="tags-row"><span class="tag tag-effort-med">Effort: Medium</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">5</div><span class="finding-dimension">Conversion Rate Optimization</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">Six verticals, one generic CTA — the demo moment is wasted</h3>
+<div class="finding-body">
+<p>The nav lists 6 vertical solutions (Ecommerce, SaaS, Gaming, Insurance, Banking & Finance, Travel), but every CTA on the homepage is the generic "Book a demo." Even on vertical-specific solution pages, the CTA doesn't capture which vertical the visitor came from.</p>
+<p><strong>Why this matters for Notch:</strong> An insurance buyer and a gaming operator have completely different compliance concerns, ticket types, and ROI models. A generic demo CTA fails to signal "we've solved YOUR specific problem" at the moment of highest intent — and means the first sales call starts by asking questions the website should have captured.</p>
+<p><span class="criterion-id">CRO-04</span> Engagement Path Variety / <span class="criterion-id">CRO-02</span> CTA Specificity</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>On vertical solution pages, swap the CTA to "See Notch for Insurance" (or the relevant vertical) and pre-fill that vertical in the demo form. At minimum, capture vertical + priority use case in the form so the sales call is tailored from minute one. Also group the nav dropdown visually as "Regulated" (Insurance, Banking, Gaming) vs "Commerce" (Ecommerce, SaaS, Travel) — reinforce your wedge even in the navigation.</p></div>
+<div class="tags-row"><span class="tag tag-effort-med">Effort: Medium</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+</section>
+<footer class="report-footer">
+<div class="footer-cta"><h3>Want the complete picture?</h3><p>This Top 5 is drawn from a broader audit covering content hierarchy, CRO, trust signals, IA, visual design, accessibility, and SEO. We can walk through the full set of findings and help prioritize what to ship first.</p></div>
+<div class="disclaimer">This audit is based solely on publicly available information from Notch's marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.</div>
+<div class="brand-footer"><span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; April 2026</div>
+</footer></div></body></html>

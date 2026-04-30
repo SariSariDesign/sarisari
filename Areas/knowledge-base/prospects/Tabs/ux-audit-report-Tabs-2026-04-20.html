@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Audit Report — Tabs</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #0d0d14;
+      --bg-card: #16161f;
+      --bg-card-alt: #1c1c28;
+      --accent-pink: #e01ee6;
+      --accent-purple: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #e01ee6 0%, #8b5cf6 100%);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6b6b80;
+      --border-subtle: rgba(255,255,255,0.06);
+      --severity-critical: #ef4444;
+      --severity-major: #f59e0b;
+      --severity-minor: #3b82f6;
+      --effort-low: #10b981;
+      --effort-med: #f59e0b;
+      --effort-high: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+    .report-header { padding: 80px 0 60px; border-bottom: 1px solid var(--border-subtle); }
+
+    .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 16px;
+    }
+
+    .report-title {
+      font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 12px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .report-caption { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; }
+    .report-caption a { color: var(--text-secondary); text-decoration: none; }
+
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 32px; }
+    .profile-item { display: flex; gap: 8px; font-size: 13px; }
+    .profile-label { color: var(--text-muted); min-width: 120px; flex-shrink: 0; }
+    .profile-value { color: var(--text-secondary); font-weight: 500; }
+
+    .methodology-block {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 28px 32px; margin: 40px 0;
+    }
+    .methodology-block h3 {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 12px; margin-top: 20px;
+    }
+    .methodology-block h3:first-child { margin-top: 0; }
+    .methodology-block p {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px;
+    }
+    .methodology-block p:last-child { margin-bottom: 0; }
+
+    .findings-section { padding: 60px 0; }
+    .findings-header { margin-bottom: 48px; }
+    .findings-header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .findings-header p { font-size: 14px; color: var(--text-secondary); }
+
+    .finding-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; margin-bottom: 24px; transition: border-color 0.2s;
+    }
+    .finding-card:hover { border-color: rgba(224, 30, 230, 0.2); }
+
+    .finding-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .finding-number {
+      font-size: 12px; font-weight: 700; color: var(--bg-dark);
+      background: var(--accent-gradient); width: 28px; height: 28px;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .finding-dimension {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    .badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
+    }
+    .badge-critical { background: rgba(239,68,68,0.15); color: var(--severity-critical); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-major { background: rgba(245,158,11,0.15); color: var(--severity-major); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-minor { background: rgba(59,130,246,0.15); color: var(--severity-minor); border: 1px solid rgba(59,130,246,0.3); }
+
+    .finding-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; line-height: 1.3; }
+
+    .finding-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+    .finding-body strong { color: var(--text-primary); font-weight: 600; }
+
+    .finding-subsection { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle); }
+    .finding-subsection h4 {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--accent-purple); margin-bottom: 8px;
+    }
+    .finding-subsection p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+    .criterion-id {
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px;
+      color: var(--accent-purple); background: rgba(139,92,246,0.1);
+      padding: 2px 8px; border-radius: 4px;
+    }
+
+    .tags-row { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+    .tag {
+      font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 100px;
+      background: var(--bg-card-alt); border: 1px solid var(--border-subtle); color: var(--text-muted);
+    }
+    .tag-effort-low { color: var(--effort-low); border-color: rgba(16,185,129,0.3); }
+    .tag-effort-med { color: var(--effort-med); border-color: rgba(245,158,11,0.3); }
+    .tag-effort-high { color: var(--effort-high); border-color: rgba(239,68,68,0.3); }
+    .tag-impact-high { color: var(--severity-critical); border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.05); }
+    .tag-impact-med { color: var(--effort-med); border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.05); }
+    .tag-impact-low { color: var(--text-muted); }
+
+    .report-footer { border-top: 1px solid var(--border-subtle); padding: 48px 0 80px; }
+    .footer-cta {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; text-align: center; margin-bottom: 40px;
+    }
+    .footer-cta h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .footer-cta p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 600px; margin: 0 auto; }
+
+    .disclaimer {
+      font-size: 12px; color: var(--text-muted); line-height: 1.7;
+      text-align: center; padding-top: 24px; border-top: 1px solid var(--border-subtle);
+    }
+    .brand-footer { text-align: center; margin-top: 32px; font-size: 12px; color: var(--text-muted); }
+    .brand-footer span { color: var(--accent-pink); font-weight: 600; }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      .report-title { font-size: 32px; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .finding-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="report-header">
+      <div class="eyebrow">UX Audit Report</div>
+      <h1 class="report-title">Tabs</h1>
+      <p class="report-caption">
+        <a href="https://www.tabs.com">tabs.com</a> &nbsp;|&nbsp; April 20, 2026
+      </p>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span class="profile-label">Industry</span>
+          <span class="profile-value">Fintech — AI-native revenue automation</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Stage</span>
+          <span class="profile-value">Series B (~$91M total raised)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">GTM Model</span>
+          <span class="profile-value">Sales-Led (Demo-first) + light PLG entry</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Conversion Goal</span>
+          <span class="profile-value">Book a demo</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Customer Type</span>
+          <span class="profile-value">B2B SaaS, $5M–$50M+ ARR</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Competitors</span>
+          <span class="profile-value">Maxio, Chargebee, Zuora, Stripe Billing, Zenskar</span>
+        </div>
+      </div>
+
+      <div class="methodology-block">
+        <h3>Methodology</h3>
+        <p>Evaluated tabs.com against 11 audit dimensions — Nielsen's 10 Heuristics, CRO, IA, QA, Visual &amp; Brand, Accessibility, Mobile, Performance, SEO, Competitor Benchmarking, and Content &amp; Copy — using Sari Sari Design's internal UX Audit Reference Checklist.</p>
+
+        <h3>Evaluation Lens</h3>
+        <p>Tabs is a Series B, sales-led B2B fintech competing in a mature category where the entire field is repositioning around "AI." The marketing site's job is to convert a skeptical CFO's 90-second first visit into a booked demo — which means the page has to differentiate from Maxio and Chargebee, prove security and accounting rigor, and route three distinct personas without confusing any of them.</p>
+
+        <h3>Why This Matters</h3>
+        <p>For a Series B SLG fintech, every unqualified demo drags on the sales team, and every high-fit CFO who bounces is a lost $60K–$500K+ ARR deal. A 90-second homepage is the top of the pipeline — and the difference between a headline that differentiates Tabs from Maxio in 5 seconds and one that doesn't is directly measurable in SAL volume per marketing dollar.</p>
+      </div>
+    </header>
+
+    <section class="findings-section">
+      <div class="findings-header">
+        <h2>Top 5 Findings</h2>
+        <p>Selected for business impact, evidence quality, and relevance to Tabs' Series B stage, sales-led motion, and crowded AI-native category.</p>
+      </div>
+
+      <!-- FINDING 1 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">1</div>
+          <span class="finding-dimension">Content &amp; Copywriting</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">The hero headline fails the 5-second test</h3>
+        <div class="finding-body">
+          <p>The hero reads <strong>"AI for modern finance"</strong> with a subhead <strong>"The billing and revenue platform, built to close."</strong> A first-time visitor can't reliably answer what Tabs does, who it's for, or what to do next within five seconds. "AI for modern finance" is a category label, not a product promise; "built to close" is ambiguous — close the books, close deals, or close invoices?</p>
+          <p><strong>Why this matters for Tabs:</strong> In a category where Maxio, Chargebee, Zenskar, and Stripe Billing have all adopted AI language, a generic AI headline cedes differentiation. The hero is the single highest-leverage conversion asset for a sales-led motion — it sets whether a skeptical CFO scrolls or bounces.</p>
+          <p><span class="criterion-id">COPY-01</span> 5-Second Test &nbsp; <span class="criterion-id">COPY-03</span> Headline Specificity</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Replace the hero with a benefit-led, specific, differentiated headline — and name the audience. One direction: <em>"Turn every contract into invoiced revenue — automatically. The AI billing platform for B2B finance teams."</em> Anchor with a second-line proof using Tabs' own data: <em>"Used by 200+ B2B SaaS teams to close books 3x faster and cut aged receivables by up to 87%."</em></p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+          <span class="tag">Confidence: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 2 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">2</div>
+          <span class="finding-dimension">Competitor Benchmarking</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Tabs' real differentiation is buried below the hero</h3>
+        <div class="finding-body">
+          <p>Tabs' defensible wedge — AI Agents that read actual contracts, full contract-to-cash coverage, and the newly launched Contract Agent — appears mid-page rather than above the fold. Every direct competitor claims "AI" on their homepage. A CFO evaluating Tabs alongside Zenskar or Maxio will see two AI-native billing platforms with interchangeable top-of-page copy.</p>
+          <p><strong>Why this matters for Tabs:</strong> Series B differentiation gates enterprise deal velocity. In a field where "AI" is table stakes, the company that names a specific wedge first wins the evaluation shortlist. The Contract Agent launch is the strongest recent news — it should be the frame, not the footnote.</p>
+          <p><span class="criterion-id">COMP-01</span> Competitor Benchmarking &nbsp; <span class="criterion-id">COPY-04</span> Audience Clarity</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Lead with the specific wedge no competitor has: contract-reading AI. Promote the Contract Agent narrative to the hero. Build two or three /compare pages (Tabs vs. Maxio, Tabs vs. Chargebee) — they are high-intent SEO real estate and meaningfully compress bottom-funnel buyer evaluation cycles.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+          <span class="tag">Confidence: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 3 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">3</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">13+ CTAs dilute the demo conversion path</h3>
+        <div class="finding-body">
+          <p>The homepage presents at least 13 distinct CTAs: <em>Get a demo, Sign in, Explore Tabs Platform, Explore Billing, Explore Collections, Explore RevRec, Explore Reporting, Explore Tabs AI, Explore AI Agents, See all integrations, Explore the API, Security,</em> and <em>All Resources</em>. The primary conversion action sits in the same visual hierarchy as many of the "Explore X" secondary links, training visitors to wander rather than convert.</p>
+          <p><strong>Why this matters for Tabs:</strong> For a sales-led motion where demo bookings are the only pipeline-generating action, every secondary CTA is a tax on the primary one. This is the kind of thing that often shows up as a 10–25% lift in demo conversion rate when fixed — visible in the sales pipeline within a quarter.</p>
+          <p><span class="criterion-id">CRO-03</span> CTA Redundancy &nbsp; <span class="criterion-id">N-08</span> Aesthetic &amp; Minimalist Design</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Collapse the "Explore X" pattern into one tabbed product overview component. Reserve standalone CTAs for three actions: <em>Get a demo</em> (primary), <em>See pricing</em> (self-qualification), and one gated content asset (low-intent capture). Repeat "Get a demo" at natural decision points — end of hero, end of product overview, end of testimonial section, end of page.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+          <span class="tag">Confidence: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 4 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">4</div>
+          <span class="finding-dimension">Information Architecture</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">No persona-based routing for a multi-persona product</h3>
+        <div class="finding-body">
+          <p>Tabs' product touches three distinct buyers: finance leaders (CFO, Controller), RevOps, and product/engineering owners of billing. The homepage and top nav don't surface persona-specific entry points — all roles are funnelled through a single generic narrative. Direct navigation to <code>/products</code> also returns a 404, suggesting top-nav items are mega-menus without destination pages.</p>
+          <p><strong>Why this matters for Tabs:</strong> Persona routing is standard B2B SaaS practice because it lets visitors self-qualify into relevant content (less sales drag) and creates dedicated SEO pages for persona-intent queries like "billing automation for CFOs" or "revenue recognition API." Without it, a Controller and a billing engineer see the same generic pitch.</p>
+          <p><span class="criterion-id">IA-04</span> Persona Routing &nbsp; <span class="criterion-id">IA-01</span> Navigation Clarity</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Add "For Finance Leaders," "For RevOps," and "For Engineering" entries under Solutions — each with its own page written in that persona's language, prioritizing the capabilities most relevant to them. Ensure top-nav items resolve to valid destination pages rather than 404s, so direct and shared URLs don't hit dead ends.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-high">Effort: High</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+          <span class="tag">Confidence: Medium</span>
+        </div>
+      </div>
+
+      <!-- FINDING 5 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">5</div>
+          <span class="finding-dimension">SEO &amp; Discoverability</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">H1 is semantically disconnected from the page title</h3>
+        <div class="finding-body">
+          <p>The page title tells Google "Revenue Automation for B2B: Streamline with Tabs." The single H1 tells Google "AI for modern finance." The target keyword cluster — <em>revenue automation B2B, AI billing platform, contract-to-cash automation</em> — is in the title, but entirely absent from the H1. Search engines weight H1s heavily for topical relevance, and the current H1 delivers zero primary-keyword signal.</p>
+          <p><strong>Why this matters for Tabs:</strong> "Revenue automation" and "billing platform" are high-intent, high-cost keywords where Tabs competes directly with Maxio, Chargebee, and Zuora. Closing the title-to-H1 alignment gap is a one-day fix that affects rankings on every high-intent query the marketing team is already paying Google to rank for.</p>
+          <p><span class="criterion-id">SEO-03</span> H1 Tag &nbsp; <span class="criterion-id">SEO-01</span> Page Title</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Rewrite the H1 to carry the primary keyword and match search intent. Example: <em>"AI Revenue Automation for Modern B2B Finance Teams."</em> Keep the brand-slogan framing as an eyebrow/kicker if visually important. Also remove the duplicate "Tabs" in the page title — it burns ~4 characters of a 60-character budget that could carry another keyword.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+          <span class="tag">Confidence: High</span>
+        </div>
+      </div>
+
+    </section>
+
+    <footer class="report-footer">
+      <div class="footer-cta">
+        <h3>Want the complete picture?</h3>
+        <p>This report covers the top 5 of 24 findings from an evaluation across 11 UX dimensions. The full audit includes additional recommendations for CTA sequencing, trust-signal placement, accessibility gaps, the ambiguous "built to close" subhead, and the /products URL 404.</p>
+      </div>
+
+      <div class="disclaimer">
+        This audit is based solely on publicly available information from Tabs' marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.
+      </div>
+
+      <div class="brand-footer">
+        <span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; April 2026
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

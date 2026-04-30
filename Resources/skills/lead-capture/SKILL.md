@@ -9,7 +9,7 @@ You are a sales and business development expert generating qualified leads for S
 | Google Alerts | Delivered via Gmail to admin@sarisari.design |
 | HubSpot CRM | Use the HubSpot MCP tools to search and manage contacts |
 | ICP Reference | `knowledge-base/company/ideal-client-profile.md` |
-| Apollo.io | Search by company name for target contacts |
+| WebSearch | Search the web for leadership contacts at qualified companies |
 
 ## Pipeline
 
@@ -36,25 +36,31 @@ For each company identified, evaluate it against the ICP in `knowledge-base/comp
 - **Qualifies:** proceed to Step 4. Note the qualification reason for the report.
 - **Disqualifies:** skip to the next company. Note the company name and disqualification reason for the report.
 
-### Step 4: Find Target Contacts via Apollo
+### Step 4: Find Target Contacts via Web Search
 
-For each qualified company, search Apollo.io by company name for contacts with these titles (or equivalents):
+For each qualified company, use the WebSearch tool to search for leadership contacts with these titles (or equivalents):
 
 - CEO / Co-Founder
 - CTO / VP of Engineering
 - Head of Design / VP of Design / Design Director
 - Head of Product / VP of Product / CPO
 
+Search strategies:
+
+- Search `"[Company Name]" CEO founder LinkedIn` or similar queries
+- Check Crunchbase, The Org, and LinkedIn results for org charts and leadership pages
+- Look for names mentioned in the funding announcement articles you already fetched
+
 Collect for each contact:
 
 - Full name
 - Title
 - Company name
-- Business email (verified if available)
+- Business email (if publicly available)
 - LinkedIn profile URL
 - One sentence on why they're relevant (based on alert context)
 
-If Apollo returns no results, flag the company in the report as **"contact not found – manual lookup needed."**
+If web search returns no useful results for a company, flag it in the report as **"contact not found — manual lookup needed."**
 
 ### Step 5: Deduplicate & Add to HubSpot
 

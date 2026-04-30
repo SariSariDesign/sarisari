@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Audit Report — Evvy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+:root{--bg-dark:#0d0d14;--bg-card:#16161f;--bg-card-alt:#1c1c28;--accent-pink:#e01ee6;--accent-purple:#8b5cf6;--accent-gradient:linear-gradient(135deg,#e01ee6 0%,#8b5cf6 100%);--text-primary:#fff;--text-secondary:#a0a0b8;--text-muted:#6b6b80;--border-subtle:rgba(255,255,255,0.06);--severity-critical:#ef4444;--severity-major:#f59e0b;--severity-minor:#3b82f6;--effort-low:#10b981;--effort-med:#f59e0b;--effort-high:#ef4444;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg-dark);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.container{max-width:860px;margin:0 auto;padding:0 32px;}
+.report-header{padding:80px 0 60px;border-bottom:1px solid var(--border-subtle);}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent-pink);margin-bottom:16px;}
+.report-title{font-size:48px;font-weight:800;line-height:1.1;margin-bottom:12px;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.report-caption{font-size:14px;color:var(--text-muted);margin-bottom:40px;}.report-caption a{color:var(--text-secondary);text-decoration:none;}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;margin-bottom:32px;}
+.profile-item{display:flex;gap:8px;font-size:13px;}.profile-label{color:var(--text-muted);min-width:100px;flex-shrink:0;}.profile-value{color:var(--text-secondary);font-weight:500;}
+.methodology-block{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;padding:28px 32px;margin:40px 0;}
+.methodology-block h3{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent-pink);margin-bottom:12px;margin-top:20px;}.methodology-block h3:first-child{margin-top:0;}
+.methodology-block p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;}.methodology-block p:last-child{margin-bottom:0;}
+.findings-section{padding:60px 0;}.findings-header{margin-bottom:48px;}.findings-header h2{font-size:28px;font-weight:700;margin-bottom:8px;}.findings-header p{font-size:14px;color:var(--text-secondary);}
+.finding-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:16px;padding:36px;margin-bottom:24px;transition:border-color 0.2s;}
+.finding-card:hover{border-color:rgba(224,30,230,0.2);}
+.finding-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.finding-number{font-size:12px;font-weight:700;color:var(--bg-dark);background:var(--accent-gradient);width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.finding-dimension{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);}
+.badge{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:100px;}
+.badge-critical{background:rgba(239,68,68,0.15);color:var(--severity-critical);border:1px solid rgba(239,68,68,0.3);}
+.badge-major{background:rgba(245,158,11,0.15);color:var(--severity-major);border:1px solid rgba(245,158,11,0.3);}
+.badge-minor{background:rgba(59,130,246,0.15);color:var(--severity-minor);border:1px solid rgba(59,130,246,0.3);}
+.finding-title{font-size:20px;font-weight:700;margin-bottom:16px;line-height:1.3;}
+.finding-body p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:16px;}.finding-body strong{color:var(--text-primary);font-weight:600;}
+.finding-subsection{margin-top:20px;padding-top:20px;border-top:1px solid var(--border-subtle);}
+.finding-subsection h4{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent-purple);margin-bottom:8px;}
+.finding-subsection p{font-size:14px;color:var(--text-secondary);line-height:1.7;}
+.criterion-id{font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:var(--accent-purple);background:rgba(139,92,246,0.1);padding:2px 8px;border-radius:4px;}
+.tags-row{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;}
+.tag{font-size:11px;font-weight:500;padding:4px 12px;border-radius:100px;background:var(--bg-card-alt);border:1px solid var(--border-subtle);color:var(--text-muted);}
+.tag-effort-low{color:var(--effort-low);border-color:rgba(16,185,129,0.3);}.tag-effort-med{color:var(--effort-med);border-color:rgba(245,158,11,0.3);}.tag-effort-high{color:var(--effort-high);border-color:rgba(239,68,68,0.3);}
+.tag-impact-high{color:var(--severity-critical);border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.05);}.tag-impact-med{color:var(--effort-med);border-color:rgba(245,158,11,0.2);background:rgba(245,158,11,0.05);}
+.report-footer{border-top:1px solid var(--border-subtle);padding:48px 0 80px;}
+.footer-cta{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:16px;padding:36px;text-align:center;margin-bottom:40px;}
+.footer-cta h3{font-size:22px;font-weight:700;margin-bottom:12px;}.footer-cta p{font-size:14px;color:var(--text-secondary);line-height:1.7;max-width:600px;margin:0 auto;}
+.disclaimer{font-size:12px;color:var(--text-muted);line-height:1.7;text-align:center;padding-top:24px;border-top:1px solid var(--border-subtle);}
+.brand-footer{text-align:center;margin-top:32px;font-size:12px;color:var(--text-muted);}.brand-footer span{color:var(--accent-pink);font-weight:600;}
+@media (max-width:640px){.container{padding:0 20px;}.report-title{font-size:32px;}.profile-grid{grid-template-columns:1fr;}.finding-card{padding:24px;}}
+</style></head><body><div class="container">
+<header class="report-header"><div class="eyebrow">UX Audit Report</div><h1 class="report-title">Evvy</h1>
+<p class="report-caption"><a href="https://evvy.com">evvy.com</a> &nbsp;|&nbsp; April 9, 2026</p>
+<div class="profile-grid">
+<div class="profile-item"><span class="profile-label">Industry</span><span class="profile-value">Femtech / Consumer Diagnostics</span></div>
+<div class="profile-item"><span class="profile-label">Stage</span><span class="profile-value">Growth (Labcorp-backed)</span></div>
+<div class="profile-item"><span class="profile-label">GTM Model</span><span class="profile-value">D2C Ecommerce</span></div>
+<div class="profile-item"><span class="profile-label">Conversion Goal</span><span class="profile-value">Test Purchase / Quiz</span></div>
+<div class="profile-item"><span class="profile-label">Customer Type</span><span class="profile-value">D2C Consumer</span></div>
+<div class="profile-item"><span class="profile-label">Competitors</span><span class="profile-value">Wisp, Nurx, Stix, Winx</span></div>
+</div>
+<div class="methodology-block">
+<h3>Evaluation Lens</h3><p>Evvy sells into women who have tried and failed to get help from their existing providers. The audience is emotionally burnt out on the healthcare system. The site's job is to feel like a credible, expert, empathetic alternative — not like another supplement brand.</p>
+<h3>Why This Matters</h3><p>Consumer diagnostics is a trust-first category: a woman ordering a vaginal microbiome test is entrusting Evvy with intimate biological data AND relying on the result to make treatment decisions. Any ambiguity about CLIA certification, provider oversight, or data privacy will hard-stop the purchase.</p>
+</div></header>
+<section class="findings-section"><div class="findings-header"><h2>Top 5 Findings</h2><p>Ranked by estimated impact on purchase conversion.</p></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">1</div><span class="finding-dimension">Conversion Rate Optimization</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">"Shop all" is the wrong primary CTA for a condition-driven buyer</h3>
+<div class="finding-body">
+<p>The primary CTA is "Shop all." But the buyer arriving at evvy.com is almost always condition-driven — "I have recurring BV," "I'm going through menopause," "I can't figure out what's wrong" — not shopping for a category.</p>
+<p><strong>Why this matters for Evvy:</strong> "Shop all" assumes the visitor already knows what she wants. Condition-driven buyers want triage: "which test or treatment do I need?" A generic shop CTA forces her into a catalog page where she has to self-sort — and a meaningful fraction drops off during that sort. The symptom quiz you already built is the right experience; it just isn't positioned as the primary.</p>
+<p><span class="criterion-id">CRO-02</span> CTA Specificity / <span class="criterion-id">CRO-01</span> Primary CTA Prominence</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Lead with a symptom-based primary CTA: "Find the right test for your symptoms" → routes to the quiz. Route quiz completers to condition-specific landing pages rather than the generic shop. Keep "Shop all" as a secondary path for returning customers.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">2</div><span class="finding-dimension">Trust Signals</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">75,000 users + CLIA/CAP/CLEP are your strongest proof — they aren't hero-anchored</h3>
+<div class="finding-body">
+<p>The page shows "Trusted by 75,000+ users" and discloses CLIA, CAP, and CLEP certification — but only in a mid-page strip and the footer. These are the two strongest proof points Evvy has. 75K customers is a category-leading number, and CLIA/CAP is literally the line between "legitimate medical diagnostic" and "wellness supplement."</p>
+<p><strong>Why this matters for Evvy:</strong> In a trust-gated category, proof has to lead. A skeptical visitor scanning the homepage decides whether to trust Evvy within 8-10 seconds. If the 75K number and the certifications aren't in those first 10 seconds, the visitor has already decided before the evidence arrives.</p>
+<p><span class="criterion-id">CRO-06</span> Trust Signal Placement / <span class="criterion-id">COPY-08</span> Proof & Credibility</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Add a proof strip directly below the hero: "75,000+ users · CLIA, CAP & CLEP certified · Backed by Labcorp · As seen in Vogue, TechCrunch." Let the credibility do the convincing that adjectives like "innovative" and "effective" can't.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">3</div><span class="finding-dimension">Content Hierarchy & Copywriting</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">"Know what's up down there" is warm — but it doesn't carry any clinical weight</h3>
+<div class="finding-body">
+<p>Hero: "Know what's up down there." Subhead: "Get innovative & effective vaginal healthcare, powered by our state-of-the-art vaginal microbiome test."</p>
+<p><strong>Why this matters for Evvy:</strong> The headline is tonally warm and destigmatizing — a real strength in this category. But it carries zero specificity about what the test actually does, and the subhead uses "innovative & effective" — flag words for unproven wellness brands, exactly the adjacency Evvy needs to avoid. A woman who found Evvy because a friend recommended it is coming already curious. The hero's job is to convert curiosity to belief, not to stay warm and vague.</p>
+<p><span class="criterion-id">COPY-03</span> Headline Specificity / <span class="criterion-id">COPY-02</span> Benefit-led vs Feature-led</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Keep the warm tone but add specificity. Direction: "Finally know what's causing your symptoms. A CLIA-certified vaginal microbiome test that screens 700+ species." Lead with the outcome AND a credibility anchor in the first 15 words.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">4</div><span class="finding-dimension">Conversion Rate Optimization</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">The symptom quiz is the better first touch — promote it</h3>
+<div class="finding-body">
+<p>"Take the Quiz" exists as a secondary CTA on the homepage. The quiz is exactly the mid-funnel engagement mechanism a D2C medical brand needs — it qualifies the buyer, segments by condition, and routes to the right product. Its diagnostic framing is also emotionally lower-stakes than "buy a test," which means higher first-click conversion for cold traffic.</p>
+<p><strong>Why this matters for Evvy:</strong> A woman who lands on the site from a paid Instagram ad isn't ready to drop $159 on a test in 8 seconds. She IS ready to answer 5 questions about her symptoms. The quiz is the on-ramp; the test is the destination. Making it secondary means treating the on-ramp like an afterthought.</p>
+<p><span class="criterion-id">CRO-04</span> Engagement Path Variety</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Elevate the quiz to primary CTA for cold traffic. Direction: "Not sure where to start? Take the 90-second symptom quiz." Route quiz completers directly to condition-specific landing pages — not the generic shop catalog.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">5</div><span class="finding-dimension">Trust Signals</span><span class="badge badge-minor">Minor</span></div>
+<h3 class="finding-title">Clinical oversight is a strength — frame it positively, not just as a disclaimer</h3>
+<div class="finding-body">
+<p>The footer carries the required disclaimer: "Evvy is not intended to replace the advice of your doctor..." That's good legal practice. But there is no affirmative homepage framing of the clinical-oversight story — no above-the-fold statement that licensed providers review every result and write every treatment plan.</p>
+<p><strong>Why this matters for Evvy:</strong> Disclaimers protect Evvy legally but do nothing to convert. What converts is affirmative framing: the people reviewing results are real licensed clinicians, not an algorithm. For a buyer deciding between "I'll just Google my symptoms" and "I'll order Evvy," that reassurance is the difference.</p>
+<p><span class="criterion-id">CRO-06</span> Trust Signal Placement</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Add an affirmative clinical-oversight block above or directly below the hero: "Every test is reviewed by a licensed provider. Treatment plans are written by clinicians, not algorithms. Available in all 50 states." Keep the legal disclaimer in the footer where it belongs.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-med">Impact: Medium</span></div></div>
+
+</section>
+<footer class="report-footer">
+<div class="footer-cta"><h3>Want the complete picture?</h3><p>This Top 5 is drawn from a broader audit covering content hierarchy, CRO, trust signals, IA, visual design, accessibility, and SEO. We can walk through the full set of findings and help prioritize what to ship first.</p></div>
+<div class="disclaimer">This audit is based solely on publicly available information from Evvy's marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete purchase-to-treatment journey.</div>
+<div class="brand-footer"><span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; April 2026</div>
+</footer></div></body></html>

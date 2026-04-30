@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Audit Report — Finix</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+:root{--bg-dark:#0d0d14;--bg-card:#16161f;--bg-card-alt:#1c1c28;--accent-pink:#e01ee6;--accent-purple:#8b5cf6;--accent-gradient:linear-gradient(135deg,#e01ee6 0%,#8b5cf6 100%);--text-primary:#fff;--text-secondary:#a0a0b8;--text-muted:#6b6b80;--border-subtle:rgba(255,255,255,0.06);--severity-critical:#ef4444;--severity-major:#f59e0b;--severity-minor:#3b82f6;--effort-low:#10b981;--effort-med:#f59e0b;--effort-high:#ef4444;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg-dark);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.container{max-width:860px;margin:0 auto;padding:0 32px;}
+.report-header{padding:80px 0 60px;border-bottom:1px solid var(--border-subtle);}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent-pink);margin-bottom:16px;}
+.report-title{font-size:48px;font-weight:800;line-height:1.1;margin-bottom:12px;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.report-caption{font-size:14px;color:var(--text-muted);margin-bottom:40px;}.report-caption a{color:var(--text-secondary);text-decoration:none;}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;margin-bottom:32px;}
+.profile-item{display:flex;gap:8px;font-size:13px;}.profile-label{color:var(--text-muted);min-width:100px;flex-shrink:0;}.profile-value{color:var(--text-secondary);font-weight:500;}
+.methodology-block{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;padding:28px 32px;margin:40px 0;}
+.methodology-block h3{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent-pink);margin-bottom:12px;margin-top:20px;}.methodology-block h3:first-child{margin-top:0;}
+.methodology-block p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;}.methodology-block p:last-child{margin-bottom:0;}
+.findings-section{padding:60px 0;}.findings-header{margin-bottom:48px;}.findings-header h2{font-size:28px;font-weight:700;margin-bottom:8px;}.findings-header p{font-size:14px;color:var(--text-secondary);}
+.finding-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:16px;padding:36px;margin-bottom:24px;transition:border-color 0.2s;}
+.finding-card:hover{border-color:rgba(224,30,230,0.2);}
+.finding-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.finding-number{font-size:12px;font-weight:700;color:var(--bg-dark);background:var(--accent-gradient);width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.finding-dimension{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);}
+.badge{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:100px;}
+.badge-critical{background:rgba(239,68,68,0.15);color:var(--severity-critical);border:1px solid rgba(239,68,68,0.3);}
+.badge-major{background:rgba(245,158,11,0.15);color:var(--severity-major);border:1px solid rgba(245,158,11,0.3);}
+.badge-minor{background:rgba(59,130,246,0.15);color:var(--severity-minor);border:1px solid rgba(59,130,246,0.3);}
+.finding-title{font-size:20px;font-weight:700;margin-bottom:16px;line-height:1.3;}
+.finding-body p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:16px;}.finding-body strong{color:var(--text-primary);font-weight:600;}
+.finding-subsection{margin-top:20px;padding-top:20px;border-top:1px solid var(--border-subtle);}
+.finding-subsection h4{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent-purple);margin-bottom:8px;}
+.finding-subsection p{font-size:14px;color:var(--text-secondary);line-height:1.7;}
+.criterion-id{font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:var(--accent-purple);background:rgba(139,92,246,0.1);padding:2px 8px;border-radius:4px;}
+.tags-row{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;}
+.tag{font-size:11px;font-weight:500;padding:4px 12px;border-radius:100px;background:var(--bg-card-alt);border:1px solid var(--border-subtle);color:var(--text-muted);}
+.tag-effort-low{color:var(--effort-low);border-color:rgba(16,185,129,0.3);}.tag-effort-med{color:var(--effort-med);border-color:rgba(245,158,11,0.3);}.tag-effort-high{color:var(--effort-high);border-color:rgba(239,68,68,0.3);}
+.tag-impact-high{color:var(--severity-critical);border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.05);}.tag-impact-med{color:var(--effort-med);border-color:rgba(245,158,11,0.2);background:rgba(245,158,11,0.05);}
+.report-footer{border-top:1px solid var(--border-subtle);padding:48px 0 80px;}
+.footer-cta{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:16px;padding:36px;text-align:center;margin-bottom:40px;}
+.footer-cta h3{font-size:22px;font-weight:700;margin-bottom:12px;}.footer-cta p{font-size:14px;color:var(--text-secondary);line-height:1.7;max-width:600px;margin:0 auto;}
+.disclaimer{font-size:12px;color:var(--text-muted);line-height:1.7;text-align:center;padding-top:24px;border-top:1px solid var(--border-subtle);}
+.brand-footer{text-align:center;margin-top:32px;font-size:12px;color:var(--text-muted);}.brand-footer span{color:var(--accent-pink);font-weight:600;}
+@media (max-width:640px){.container{padding:0 20px;}.report-title{font-size:32px;}.profile-grid{grid-template-columns:1fr;}.finding-card{padding:24px;}}
+</style></head><body><div class="container">
+<header class="report-header"><div class="eyebrow">UX Audit Report</div><h1 class="report-title">Finix</h1>
+<p class="report-caption"><a href="https://finix.com">finix.com</a> &nbsp;|&nbsp; April 9, 2026</p>
+<div class="profile-grid">
+<div class="profile-item"><span class="profile-label">Industry</span><span class="profile-value">Payments Infrastructure</span></div>
+<div class="profile-item"><span class="profile-label">Stage</span><span class="profile-value">Growth (Mature)</span></div>
+<div class="profile-item"><span class="profile-label">GTM Model</span><span class="profile-value">SLG + Developer Sandbox</span></div>
+<div class="profile-item"><span class="profile-label">Conversion Goal</span><span class="profile-value">Contact Sales / Sandbox</span></div>
+<div class="profile-item"><span class="profile-label">Customer Type</span><span class="profile-value">B2B Mid-Market Platforms</span></div>
+<div class="profile-item"><span class="profile-label">Competitors</span><span class="profile-value">Stripe Connect, Adyen, Payrix</span></div>
+</div>
+<div class="methodology-block">
+<h3>Evaluation Lens</h3><p>Finix exists as the "not Stripe Connect" for vertical SaaS platforms that want to own payment margin without being locked into Stripe's economics. The site's job is to make that wedge — "own your economics, keep the control, without the build" — blindingly obvious in 10 seconds. Against Stripe, generic "payments platform" framing is a losing play.</p>
+<h3>Why This Matters</h3><p>Every month Finix doesn't sharpen its positioning is a month where a vertical SaaS CTO defaults to Stripe Connect for ease. The marketing site isn't just a lead source — it's the place where "why not just Stripe?" gets answered, or doesn't.</p>
+</div></header>
+<section class="findings-section"><div class="findings-header"><h2>Top 5 Findings</h2><p>Ranked by estimated impact on pipeline conversion.</p></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">1</div><span class="finding-dimension">Content Hierarchy & Copywriting</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">The hero never answers the one question every buyer is asking: "why not just Stripe?"</h3>
+<div class="finding-body">
+<p>Hero: "Payments built to scale with your business." The headline could be pasted onto Stripe, Adyen, or any other payments platform without changing a word. The subhead runs three sentences covering APIs, tools, compliance, and experience — but never addresses the core buyer question. Finix's wedge is economics and ownership. Neither word appears.</p>
+<p><strong>Why this matters for Finix:</strong> A vertical SaaS CTO comparing payment stacks is asking exactly one question on the homepage: "why not just Stripe Connect?" If Finix doesn't answer that in the first 15 words, the CTO leaves with the default answer — which is "just use Stripe." Every day this headline stays generic is a day the market defaults to the incumbent.</p>
+<p><span class="criterion-id">COPY-03</span> Headline Specificity / <span class="criterion-id">CRO-05</span> Value Proposition Clarity</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Rewrite the hero around the wedge. Direction: "Own your payments economics. Finix gives vertical SaaS platforms the PayFac stack they'd otherwise build from scratch — so you keep the margin, not your processor." Answer "why not Stripe?" in the first 15 words, not the 50th.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">2</div><span class="finding-dimension">Conversion Rate Optimization</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">The developer sandbox — your Stripe-equivalent weapon — is buried in secondary actions</h3>
+<div class="finding-body">
+<p>"Create Sandbox" exists, but it's parked in the secondary top-chrome next to Log In and Contact Sales. The above-the-fold CTAs are "Explore Solutions" and "Contact Sales." The developer path — the exact path Stripe pioneered and won with — is hidden.</p>
+<p><strong>Why this matters for Finix:</strong> Developer-led evaluation is the dominant path in payments infrastructure. Platform CTOs assign engineers to prove out Finix vs. Stripe in a sandbox before taking a sales call. Burying "Create Sandbox" signals "sales-first" when the buyer wants "sandbox-first." The reason developers default to Stripe isn't that Stripe is better — it's that the path is obvious. Copy the pattern.</p>
+<p><span class="criterion-id">CRO-04</span> Engagement Path Variety / <span class="criterion-id">CRO-01</span> Primary CTA Prominence</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Promote "Create Sandbox" as the primary hero CTA. Keep "Contact Sales" as the secondary enterprise path. This single change gives the developer-led buying motion the on-ramp it expects and removes a major friction point in the Stripe-vs-Finix comparison.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">3</div><span class="finding-dimension">Trust Signals</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">"99.999% uptime, tens of billions processed" are hero-worthy — they're below the fold</h3>
+<div class="finding-body">
+<p>Finix has category-defining scale claims: "99.999% Uptime 365 days a year," "Tens of Billions Processed," "10s of billions of API calls annually." All of them appear as a mid-page stat strip rather than anchoring the hero.</p>
+<p><strong>Why this matters for Finix:</strong> In payments infrastructure, uptime and volume ARE the trust currencies. A CTO comparing Finix to Stripe looks for these numbers first. Putting them above the fold would do more conversion work than any adjective could. Meanwhile, buyers who bounce after the hero never see them — and Finix loses on a comparison that, with the numbers visible, it wins.</p>
+<p><span class="criterion-id">CRO-07</span> Social Proof Depth / <span class="criterion-id">COPY-04</span> Information Hierarchy</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Pull "99.999% uptime · Tens of billions processed · 10B+ API calls/year" into a proof strip directly below the hero. Add "Trusted by Vroom, Lunchbox, Meadow, and hundreds of platforms" underneath. Let the numbers do the heavy lifting.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">4</div><span class="finding-dimension">Content Hierarchy & Copywriting</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">Three-sentence subhead does four jobs and none of them well</h3>
+<div class="finding-body">
+<p>The subhead reads: "Create a seamless payment experience that drives customer engagement, using our end-to-end solution. Integrate with reliable, intuitive APIs and convenient out-of-the box features. Manage payment operations with productivity-enhancing tools for fees, compliance, and more." Three sentences, four jobs (experience, APIs, tools, ops), zero specifics.</p>
+<p><strong>Why this matters for Finix:</strong> A busy platform CTO scans for 8 seconds. A three-sentence subhead is three sentences too many — she reads the first noun and bounces. Compressing the subhead to one concrete, benefit-led sentence is the single cheapest conversion lift available.</p>
+<p><span class="criterion-id">COPY-06</span> Scannability / <span class="criterion-id">COPY-02</span> Benefit-led vs Feature-led</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Collapse to one sentence with a specific, quantified benefit: "Launch a branded payments business in weeks — not the 18 months it takes to build your own payfac." Replace "18 months" with whatever the accurate build-vs-buy delta is. The delta IS the value proposition.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">5</div><span class="finding-dimension">Conversion Rate Optimization</span><span class="badge badge-minor">Minor</span></div>
+<h3 class="finding-title">"Explore Solutions" is a nav label, not a primary CTA</h3>
+<div class="finding-body">
+<p>The primary CTA is "Explore Solutions." This is a navigational action, not a conversion action — essentially a label on a secondary nav promoted to hero position.</p>
+<p><strong>Why this matters for Finix:</strong> Primary CTAs should compress a decision, not expand one. "Explore Solutions" makes the visitor do more work; "Create Sandbox" or "Start building" compresses the decision and gives the visitor an obvious next step. The former is a dead-end; the latter is a commitment.</p>
+<p><span class="criterion-id">CRO-01</span> Primary CTA Prominence / <span class="criterion-id">CRO-02</span> CTA Specificity</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Replace "Explore Solutions" with "Create Sandbox" as the hero primary. Keep "Contact Sales" as secondary. Move the solutions dropdown discovery into the normal nav, where it belongs.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-med">Impact: Medium</span></div></div>
+
+</section>
+<footer class="report-footer">
+<div class="footer-cta"><h3>Want the complete picture?</h3><p>This Top 5 is drawn from a broader audit covering content hierarchy, CRO, trust signals, IA, visual design, accessibility, and SEO. We can walk through the full set of findings and help prioritize what to ship first.</p></div>
+<div class="disclaimer">This audit is based solely on publicly available information from Finix's marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete sandbox-to-production journey.</div>
+<div class="brand-footer"><span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; April 2026</div>
+</footer></div></body></html>

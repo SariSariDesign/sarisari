@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UX Audit Report — GoSats</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg-dark: #0d0d14;
+      --bg-card: #16161f;
+      --bg-card-alt: #1c1c28;
+      --accent-pink: #e01ee6;
+      --accent-purple: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #e01ee6 0%, #8b5cf6 100%);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6b6b80;
+      --border-subtle: rgba(255,255,255,0.06);
+      --severity-critical: #ef4444;
+      --severity-major: #f59e0b;
+      --severity-minor: #3b82f6;
+      --effort-low: #10b981;
+      --effort-med: #f59e0b;
+      --effort-high: #ef4444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 0 32px; }
+
+    .report-header { padding: 80px 0 60px; border-bottom: 1px solid var(--border-subtle); }
+
+    .eyebrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 16px;
+    }
+
+    .report-title {
+      font-size: 48px; font-weight: 800; line-height: 1.1; margin-bottom: 12px;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .report-caption { font-size: 14px; color: var(--text-muted); margin-bottom: 40px; }
+    .report-caption a { color: var(--text-secondary); text-decoration: none; }
+
+    .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; margin-bottom: 32px; }
+    .profile-item { display: flex; gap: 8px; font-size: 13px; }
+    .profile-label { color: var(--text-muted); min-width: 120px; flex-shrink: 0; }
+    .profile-value { color: var(--text-secondary); font-weight: 500; }
+
+    .methodology-block {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 28px 32px; margin: 40px 0;
+    }
+    .methodology-block h3 {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent-pink); margin-bottom: 12px; margin-top: 20px;
+    }
+    .methodology-block h3:first-child { margin-top: 0; }
+    .methodology-block p {
+      font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 0;
+    }
+
+    .findings-section { padding: 60px 0; }
+    .findings-header { margin-bottom: 48px; }
+    .findings-header h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .findings-header p { font-size: 14px; color: var(--text-secondary); }
+
+    .finding-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; margin-bottom: 24px; transition: border-color 0.2s;
+    }
+    .finding-card:hover { border-color: rgba(224, 30, 230, 0.2); }
+
+    .finding-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .finding-number {
+      font-size: 12px; font-weight: 700; color: var(--bg-dark);
+      background: var(--accent-gradient); width: 28px; height: 28px;
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .finding-dimension {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted);
+    }
+
+    .badge {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
+    }
+    .badge-critical { background: rgba(239,68,68,0.15); color: var(--severity-critical); border: 1px solid rgba(239,68,68,0.3); }
+    .badge-major { background: rgba(245,158,11,0.15); color: var(--severity-major); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-minor { background: rgba(59,130,246,0.15); color: var(--severity-minor); border: 1px solid rgba(59,130,246,0.3); }
+
+    .finding-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; line-height: 1.3; }
+
+    .finding-body p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+    .finding-body strong { color: var(--text-primary); font-weight: 600; }
+    .finding-body code {
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px;
+      background: var(--bg-card-alt); padding: 1px 6px; border-radius: 4px;
+      color: var(--accent-pink);
+    }
+
+    .finding-subsection { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle); }
+    .finding-subsection h4 {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--accent-purple); margin-bottom: 8px;
+    }
+    .finding-subsection p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+
+    .criterion-id {
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px;
+      color: var(--accent-purple); background: rgba(139,92,246,0.1);
+      padding: 2px 8px; border-radius: 4px; margin-right: 6px;
+    }
+
+    .tags-row { display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+    .tag {
+      font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 100px;
+      background: var(--bg-card-alt); border: 1px solid var(--border-subtle); color: var(--text-muted);
+    }
+    .tag-effort-low { color: var(--effort-low); border-color: rgba(16,185,129,0.3); }
+    .tag-effort-med { color: var(--effort-med); border-color: rgba(245,158,11,0.3); }
+    .tag-effort-high { color: var(--effort-high); border-color: rgba(239,68,68,0.3); }
+    .tag-impact-high { color: var(--severity-critical); border-color: rgba(239,68,68,0.2); background: rgba(239,68,68,0.05); }
+    .tag-impact-med { color: var(--effort-med); border-color: rgba(245,158,11,0.2); background: rgba(245,158,11,0.05); }
+
+    .report-footer { border-top: 1px solid var(--border-subtle); padding: 48px 0 80px; }
+    .footer-cta {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 16px; padding: 36px; text-align: center; margin-bottom: 40px;
+    }
+    .footer-cta h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .footer-cta p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 600px; margin: 0 auto; }
+
+    .disclaimer {
+      font-size: 12px; color: var(--text-muted); line-height: 1.7;
+      text-align: center; padding-top: 24px; border-top: 1px solid var(--border-subtle);
+    }
+    .brand-footer { text-align: center; margin-top: 32px; font-size: 12px; color: var(--text-muted); }
+    .brand-footer span { color: var(--accent-pink); font-weight: 600; }
+
+    @media (max-width: 640px) {
+      .container { padding: 0 20px; }
+      .report-title { font-size: 32px; }
+      .profile-grid { grid-template-columns: 1fr; }
+      .finding-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="report-header">
+      <div class="eyebrow">UX Audit Report</div>
+      <h1 class="report-title">GoSats</h1>
+      <p class="report-caption">
+        <a href="https://gosats.io/">gosats.io</a> &nbsp;|&nbsp; April 10, 2026
+      </p>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span class="profile-label">Industry</span>
+          <span class="profile-value">Consumer fintech / Crypto rewards</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Stage</span>
+          <span class="profile-value">Series A ($5M, April 2026)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">GTM Model</span>
+          <span class="profile-value">Product-led / App install funnel</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Conversion Goal</span>
+          <span class="profile-value">App install (iOS + Android)</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Customer Type</span>
+          <span class="profile-value">B2C — Indian urban shoppers 22–38</span>
+        </div>
+        <div class="profile-item">
+          <span class="profile-label">Competitors</span>
+          <span class="profile-value">CRED, CoinDCX, CashKaro, Zerodha</span>
+        </div>
+      </div>
+
+      <div class="methodology-block">
+        <h3>Methodology</h3>
+        <p>Evaluation across 11 UX dimensions using the Sari Sari Design reference checklist, combining raw HTML inspection, JavaScript bundle string analysis, and external research. A live-browser pass for accessibility, performance, and mobile rendering is flagged for a follow-up session.</p>
+
+        <h3>Evaluation Lens</h3>
+        <p>GoSats is a freshly-funded Series A consumer app whose homepage is a performance marketing funnel with one real job — convert a curious visitor into an app install fast enough to justify paid traffic. Every element is evaluated through that lens and against the trust bar an average Indian consumer requires before linking a payment method to a crypto-adjacent product.</p>
+
+        <h3>Why This Matters</h3>
+        <p>At Series A, every percentage point of website-to-install conversion compounds — it lowers blended CAC on paid, widens the return on earned press from the $5M raise, and extends runway. Hero-level friction and broken share previews are not cosmetic problems; they tax every rupee of growth spend and every LinkedIn post the founding team publishes.</p>
+      </div>
+    </header>
+
+    <section class="findings-section">
+      <div class="findings-header">
+        <h2>Top 5 Findings</h2>
+        <p>Selected for business impact, evidence quality, and relevance to a Series A B2C consumer app with an active LinkedIn-led distribution motion.</p>
+      </div>
+
+      <!-- FINDING 1 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">1</div>
+          <span class="finding-dimension">QA / Bug Reporting</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Broken Open Graph title tag silently kills LinkedIn, Slack, and Twitter previews</h3>
+        <div class="finding-body">
+          <p>The homepage <code>&lt;head&gt;</code> contains <code>&lt;meta property="og:tp" content="..."&gt;</code> where the property name should be <code>og:title</code>. Because the property is misspelled, every LinkedIn, Slack, Facebook, and WhatsApp link preview silently falls back to whatever title the scraper can recover — usually the 84-character internal-marketing <code>&lt;title&gt;</code> string, or nothing at all.</p>
+          <p><strong>Why this matters for GoSats:</strong> The founding team is actively distributing on LinkedIn right now, and press from the April 6 $5M raise is still in circulation. Every share that renders with a broken or off-brand preview leaks intent at exactly the moment earned attention is highest. This is a silent tax on press coverage and founder-led growth.</p>
+          <p><span class="criterion-id">SEO-07</span> Open Graph Tags &nbsp; <span class="criterion-id">QA</span></p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Rename the attribute from <code>og:tp</code> to <code>og:title</code> and write the value to be a shorter, benefit-led line (e.g., "Get Bitcoin and Gold Back on Every Spend | GoSats"). Re-run the LinkedIn Post Inspector and Twitter Card Validator to flush cached previews.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 2 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">2</div>
+          <span class="finding-dimension">SEO &amp; Discoverability</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Meta description and page title omit "Bitcoin" — the single most differentiating word in the product</h3>
+        <div class="finding-body">
+          <p>The meta description reads <em>"Earn rewards when you shop online at your favourite brands in India."</em> — 69 characters, no mention of Bitcoin or Gold. The page title reads <em>"GoSats - Transforming Spends into Valuable Assets | Trusted by 1M+ Indians"</em> — 84 characters, abstract internal-marketing language, and also no mention of Bitcoin. Meanwhile the Twitter description <em>does</em> include "bitcoin rewards" — so the positioning is split across platforms.</p>
+          <p><strong>Why this matters for GoSats:</strong> "Bitcoin" and "bitcoin rewards India" are the exact search surfaces where GoSats should dominate, and they are the keywords most likely to convert a curious visitor into an installer. Ceding them at the meta-tag level is leaving the cheapest organic growth lever untouched and making Google snippets feel generic next to CoinDCX and Mudrex results.</p>
+          <p><span class="criterion-id">SEO-01</span> Page Title &nbsp; <span class="criterion-id">SEO-02</span> Meta Description</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Unify the description across platforms and lead with the differentiator: <em>"Earn Bitcoin and Gold rewards every time you shop at Flipkart, Swiggy, Myntra and more. Join 1M+ Indians stacking Sats daily."</em> Shorten the title to ~60 characters: <em>"GoSats — Bitcoin &amp; Gold Rewards on Every Spend | 1M+ Indians"</em>.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-low">Effort: Low</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 3 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">3</div>
+          <span class="finding-dimension">SEO &amp; Discoverability</span>
+          <span class="badge badge-critical">Critical</span>
+        </div>
+        <h3 class="finding-title">Client-side-only React app — the homepage is invisible to every preview bot that isn't Googlebot</h3>
+        <div class="finding-body">
+          <p>The initial HTML response contains only <code>&lt;noscript&gt;You need to enable JavaScript to run this app.&lt;/noscript&gt;</code> and an empty <code>&lt;div id="root"&gt;&lt;/div&gt;</code>. All visible content is injected at runtime by <code>main.108b12fc.js</code>. There is no server-side rendering, no static prerender, and no sitemap.xml (that URL currently returns the SPA shell). Canonical tag and JSON-LD structured data are also missing.</p>
+          <p><strong>Why this matters for GoSats:</strong> Google's evergreen Googlebot can render JavaScript, but LinkedIn, Slack, WhatsApp, X, Facebook, and virtually every other preview scraper cannot. Combined with Finding 1 (broken <code>og:title</code>) and Finding 2 (Bitcoin missing from meta), every organic share of gosats.io lands thin and off-brand. For a Series A consumer app relying on LinkedIn, press coverage, and word-of-mouth to amplify the $5M announcement, this is a structural growth tax — not a cosmetic issue.</p>
+          <p><span class="criterion-id">SEO-12</span> Page Indexability &nbsp; <span class="criterion-id">SEO-06</span> Canonical &nbsp; <span class="criterion-id">SEO-09</span> Structured Data</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Move the marketing site to SSR or static export — Next.js with <code>next export</code> or the App Router's static rendering is the low-friction path. Keep the in-app UI as-is and statically render only the marketing pages (<code>/</code>, <code>/card</code>, <code>/faq</code>, <code>/legal</code>). This one migration unlocks fixes for the OG tag, canonical, structured data, sitemap, and LCP performance in a single shot.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-high">Effort: High</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 4 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">4</div>
+          <span class="finding-dimension">Content &amp; Copywriting</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">The hero appears to carry several competing messages — the 5-second test is unlikely to pass</h3>
+        <div class="finding-body">
+          <p>JavaScript bundle strings surface multiple hero-level fragments that coexist on the same screen: <em>"Get India's Most…"</em>, <em>"Earn Rewards on Everything"</em>, <em>"Earn up to…"</em>, <em>"Get India's First Sats Rewards Card"</em>, and <em>"Download GoSats App"</em>. This pattern strongly indicates a rotating headline or two stacked hero modules (app + card) fighting for the same attention. The page title meanwhile leads with abstract internal language — <em>"Transforming Spends into Valuable Assets"</em> — which doesn't match how the target user searches or talks.</p>
+          <p><strong>Why this matters for GoSats:</strong> For a B2C install funnel, hero clarity is the single biggest conversion lever. A visitor who cannot answer "what is this, who is it for, and what do I do next" in under five seconds will bounce — and every bounce is either a lost install or a wasted paid click. Rotating headlines and stacked hero modules guarantee no single answer locks in during the scan.</p>
+          <p><span class="criterion-id">COPY-01</span> 5-Second Test &nbsp; <span class="criterion-id">COPY-03</span> Headline Specificity &nbsp; <span class="criterion-id">CRO-01</span> Above-the-Fold Clarity</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Pick one hero. The app is almost certainly the right primary — lower friction, larger addressable market, no KYC required to install. Anchor the headline to a single concrete benefit in user language: <em>"Get Bitcoin Back on Every Rupee You Spend"</em>, paired with a proof point hoisted from below the fold: <em>"1M+ Indians have already stacked ₹50 Cr in Bitcoin rewards."</em> Demote the card to a secondary scroll section. A/B the new hero against the rotating pattern over two weeks.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+      <!-- FINDING 5 -->
+      <div class="finding-card">
+        <div class="finding-meta">
+          <div class="finding-number">5</div>
+          <span class="finding-dimension">Conversion Rate Optimization</span>
+          <span class="badge badge-major">Major</span>
+        </div>
+        <h3 class="finding-title">Two primary CTAs (Download App vs Get Card) split attention and blur the funnel</h3>
+        <div class="finding-body">
+          <p>The page exposes two parallel hero-level actions — "Download GoSats App" and "Get GoSats Card" — with their own dedicated modules in the bundle (<code>cardDownloadContainer</code>, <code>cardScreenMain</code>, <code>cardDownloadTitle</code>). These are meaningfully different funnels: the card requires digital KYC and a shipping address, the app install does not.</p>
+          <p><strong>Why this matters for GoSats:</strong> Parallel primary CTAs force visitors to self-triage into product lines they don't yet understand, and they make funnel measurement noisy — you cannot cleanly optimize paid traffic against "installs" when half the attention is pulled toward a card decision. In a consumer install funnel, one clear next step is the single most important design constraint.</p>
+          <p><span class="criterion-id">CRO-02</span> CTA Specificity &nbsp; <span class="criterion-id">CRO-03</span> CTA Dilution &nbsp; <span class="criterion-id">IA-04</span> Persona Routing</p>
+        </div>
+        <div class="finding-subsection">
+          <h4>Recommendation</h4>
+          <p>Establish a single primary CTA (Download App) across the hero and sticky nav. Reframe the card as a benefit unlocked <em>inside</em> the app — a second scroll section with a secondary "Reserve your GoSats Card" CTA that only activates after signup. This preserves the card narrative without fragmenting the install funnel.</p>
+        </div>
+        <div class="tags-row">
+          <span class="tag tag-effort-med">Effort: Medium</span>
+          <span class="tag tag-impact-high">Impact: High</span>
+        </div>
+      </div>
+
+    </section>
+
+    <footer class="report-footer">
+      <div class="footer-cta">
+        <h3>Want the complete picture?</h3>
+        <p>This report covers the top 5 findings from a 20-finding evaluation across 11 UX dimensions. The full audit includes additional findings across QA, SEO, information architecture, visual design, performance, and accessibility — plus a prioritized "ship this week" punch list.</p>
+      </div>
+
+      <div class="disclaimer">
+        This audit is based solely on publicly available information from GoSats' marketing site. With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.
+      </div>
+
+      <div class="brand-footer">
+        <span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; April 2026
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX Audit Report — Tazapay</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+:root{--bg-dark:#0d0d14;--bg-card:#16161f;--bg-card-alt:#1c1c28;--accent-pink:#e01ee6;--accent-purple:#8b5cf6;--accent-gradient:linear-gradient(135deg,#e01ee6 0%,#8b5cf6 100%);--text-primary:#fff;--text-secondary:#a0a0b8;--text-muted:#6b6b80;--border-subtle:rgba(255,255,255,0.06);--severity-critical:#ef4444;--severity-major:#f59e0b;--severity-minor:#3b82f6;--effort-low:#10b981;--effort-med:#f59e0b;--effort-high:#ef4444;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg-dark);color:var(--text-primary);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.container{max-width:860px;margin:0 auto;padding:0 32px;}
+.report-header{padding:80px 0 60px;border-bottom:1px solid var(--border-subtle);}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent-pink);margin-bottom:16px;}
+.report-title{font-size:48px;font-weight:800;line-height:1.1;margin-bottom:12px;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.report-caption{font-size:14px;color:var(--text-muted);margin-bottom:40px;}.report-caption a{color:var(--text-secondary);text-decoration:none;}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 32px;margin-bottom:32px;}
+.profile-item{display:flex;gap:8px;font-size:13px;}.profile-label{color:var(--text-muted);min-width:100px;flex-shrink:0;}.profile-value{color:var(--text-secondary);font-weight:500;}
+.methodology-block{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:12px;padding:28px 32px;margin:40px 0;}
+.methodology-block h3{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent-pink);margin-bottom:12px;margin-top:20px;}.methodology-block h3:first-child{margin-top:0;}
+.methodology-block p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;}.methodology-block p:last-child{margin-bottom:0;}
+.findings-section{padding:60px 0;}.findings-header{margin-bottom:48px;}.findings-header h2{font-size:28px;font-weight:700;margin-bottom:8px;}.findings-header p{font-size:14px;color:var(--text-secondary);}
+.finding-card{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:16px;padding:36px;margin-bottom:24px;transition:border-color 0.2s;}
+.finding-card:hover{border-color:rgba(224,30,230,0.2);}
+.finding-meta{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.finding-number{font-size:12px;font-weight:700;color:var(--bg-dark);background:var(--accent-gradient);width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.finding-dimension{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);}
+.badge{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:100px;}
+.badge-critical{background:rgba(239,68,68,0.15);color:var(--severity-critical);border:1px solid rgba(239,68,68,0.3);}
+.badge-major{background:rgba(245,158,11,0.15);color:var(--severity-major);border:1px solid rgba(245,158,11,0.3);}
+.badge-minor{background:rgba(59,130,246,0.15);color:var(--severity-minor);border:1px solid rgba(59,130,246,0.3);}
+.finding-title{font-size:20px;font-weight:700;margin-bottom:16px;line-height:1.3;}
+.finding-body p{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-bottom:16px;}.finding-body strong{color:var(--text-primary);font-weight:600;}
+.finding-subsection{margin-top:20px;padding-top:20px;border-top:1px solid var(--border-subtle);}
+.finding-subsection h4{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent-purple);margin-bottom:8px;}
+.finding-subsection p{font-size:14px;color:var(--text-secondary);line-height:1.7;}
+.criterion-id{font-family:'SF Mono','Fira Code',monospace;font-size:11px;color:var(--accent-purple);background:rgba(139,92,246,0.1);padding:2px 8px;border-radius:4px;}
+.tags-row{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;}
+.tag{font-size:11px;font-weight:500;padding:4px 12px;border-radius:100px;background:var(--bg-card-alt);border:1px solid var(--border-subtle);color:var(--text-muted);}
+.tag-effort-low{color:var(--effort-low);border-color:rgba(16,185,129,0.3);}.tag-effort-med{color:var(--effort-med);border-color:rgba(245,158,11,0.3);}.tag-effort-high{color:var(--effort-high);border-color:rgba(239,68,68,0.3);}
+.tag-impact-high{color:var(--severity-critical);border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.05);}.tag-impact-med{color:var(--effort-med);border-color:rgba(245,158,11,0.2);background:rgba(245,158,11,0.05);}
+.report-footer{border-top:1px solid var(--border-subtle);padding:48px 0 80px;}
+.footer-cta{background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:16px;padding:36px;text-align:center;margin-bottom:40px;}
+.footer-cta h3{font-size:22px;font-weight:700;margin-bottom:12px;}.footer-cta p{font-size:14px;color:var(--text-secondary);line-height:1.7;max-width:600px;margin:0 auto;}
+.disclaimer{font-size:12px;color:var(--text-muted);line-height:1.7;text-align:center;padding-top:24px;border-top:1px solid var(--border-subtle);}
+.brand-footer{text-align:center;margin-top:32px;font-size:12px;color:var(--text-muted);}.brand-footer span{color:var(--accent-pink);font-weight:600;}
+@media (max-width:640px){.container{padding:0 20px;}.report-title{font-size:32px;}.profile-grid{grid-template-columns:1fr;}.finding-card{padding:24px;}}
+</style></head><body><div class="container">
+<header class="report-header"><div class="eyebrow">UX Audit Report (Directional)</div><h1 class="report-title">Tazapay</h1>
+<p class="report-caption"><a href="https://tazapay.com">tazapay.com</a> &nbsp;|&nbsp; April 9, 2026</p>
+<div class="profile-grid">
+<div class="profile-item"><span class="profile-label">Industry</span><span class="profile-value">Cross-Border Payments</span></div>
+<div class="profile-item"><span class="profile-label">Stage</span><span class="profile-value">Growth (Series A, Sequoia)</span></div>
+<div class="profile-item"><span class="profile-label">GTM Model</span><span class="profile-value">Hybrid (SLG + Self-Serve)</span></div>
+<div class="profile-item"><span class="profile-label">Conversion Goal</span><span class="profile-value">Demo / Sign Up</span></div>
+<div class="profile-item"><span class="profile-label">Customer Type</span><span class="profile-value">B2B Mid-Market + Enterprise</span></div>
+<div class="profile-item"><span class="profile-label">Competitors</span><span class="profile-value">Airwallex, Wise, Nium, Stripe</span></div>
+</div>
+<div class="methodology-block">
+<h3>Methodology</h3><p>This is a directional audit — tazapay.com returned HTTP 403 to automated fetch requests (WAF protection). Findings are based on publicly indexed metadata and should be confirmed with a live browser review. A complete audit requires direct site access.</p>
+<h3>Evaluation Lens</h3><p>Tazapay sells into Heads of Payments evaluating cross-border infrastructure against Airwallex, Wise, and Stripe. Buyers compare fees, coverage, compliance posture, and integration complexity side-by-side. The site's job is to answer "what's unique about you?" in a category where feature parity is the norm.</p>
+<h3>Why This Matters</h3><p>Cross-border payments is trust-heavy and compliance-gated. Every moment a Head of Payments spends parsing differentiation is a moment they're on a competitor's page instead. Clarity directly shortens the sales cycle.</p>
+</div></header>
+<section class="findings-section"><div class="findings-header"><h2>Top 5 Findings</h2><p>Directional findings based on public metadata — confirm with live browser review.</p></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">1</div><span class="finding-dimension">Content Hierarchy & Copywriting</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">Transparent pricing is a defensible differentiator — surface it prominently</h3>
+<div class="finding-body">
+<p>Public info shows Tazapay has a remarkably transparent fee structure: 0% for local bank transfers, 1.8% for non-card, 3% for cards. Most cross-border competitors (Airwallex, Nium) hide pricing behind "talk to sales."</p>
+<p><strong>Why this matters for Tazapay:</strong> Published pricing is both a trust signal and a concrete competitive claim in a category where fee opacity is the norm. If this isn't hero-level, it's an unused weapon. Heads of Payments running vendor comparisons remember specific numbers — not "contact us for pricing."</p>
+<p><span class="criterion-id">COPY-08</span> Proof and Credibility / <span class="criterion-id">CRO-05</span> Value Proposition Clarity</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>If not already hero-level, surface "Transparent pricing — 0% local bank, 1.8% non-card, 3% cards" as a first-screen claim. Link to a full pricing page from the nav. Make this a defining piece of the positioning.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">2</div><span class="finding-dimension">Content Hierarchy & Copywriting</span><span class="badge badge-major">Major</span></div>
+<h3 class="finding-title">Coverage stats are your credibility assets — lead with them</h3>
+<div class="finding-body">
+<p>Tazapay's documented coverage (85+ markets, 173+ card markets, 35+ currencies, 100+ payout currencies, same-day settlement) are exactly the specific, verifiable claims a payments buyer wants to see.</p>
+<p><strong>Why this matters for Tazapay:</strong> Specific numerical coverage claims are far more memorable than "global payments" generic messaging. These numbers also pre-qualify buyers — a merchant selling into 60 markets knows immediately whether Tazapay covers their footprint.</p>
+<p><span class="criterion-id">COPY-03</span> Headline Specificity / <span class="criterion-id">COPY-08</span> Proof & Credibility</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Use these numbers in the hero or immediately below. Example direction: "Cross-border payments in 85+ markets, 35+ currencies, same-day settlement — and published pricing."</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-high">Impact: High</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">3</div><span class="finding-dimension">Trust Signals</span><span class="badge badge-minor">Minor</span></div>
+<h3 class="finding-title">Sequoia backing is underleveraged in a trust-heavy category</h3>
+<div class="finding-body">
+<p>Tazapay is Sequoia-backed with PayPal Alumni Fund participation. In cross-border payments — where compliance and longevity concerns are first-order — investor quality is a real vetting input for buyers.</p>
+<p><strong>Why this matters for Tazapay:</strong> For a Head of Payments choosing between Tazapay and an incumbent like Wise, "backed by Sequoia" shortens the due diligence on "will this vendor still exist in 3 years?" — a material concern when integrating payments infrastructure.</p>
+<p><span class="criterion-id">CRO-06</span> Trust Signal Placement</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Place a "Backed by Sequoia, PayPal Alumni Fund" strip near the hero or immediately below the customer-logos section. For fintech, investor quality is part of the product.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-med">Impact: Medium</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">4</div><span class="finding-dimension">Information Architecture</span><span class="badge badge-minor">Minor</span></div>
+<h3 class="finding-title">Compliance & licensing posture deserves a dedicated surface</h3>
+<div class="finding-body">
+<p>Tazapay operates through regulated entities (e.g., Tazapay Canada Corp. registered with FINTRAC-CANAFE for stablecoin MSB services). Licensing status is a hard filter for payments buyers.</p>
+<p><strong>Why this matters for Tazapay:</strong> If buyers can't immediately confirm licensing in their target markets, they disqualify. Burying regulatory info in legal footer text makes you look less compliance-forward than you actually are.</p>
+<p><span class="criterion-id">IA-07</span> Footer Utility / <span class="criterion-id">CRO-06</span> Trust Signal Placement</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Create a dedicated "Compliance & Licensing" page listing all regulatory registrations, audits (SOC 2, PCI-DSS if applicable), and data processing details. Link from main nav, not just the footer.</p></div>
+<div class="tags-row"><span class="tag tag-effort-med">Effort: Medium</span><span class="tag tag-impact-med">Impact: Medium</span></div></div>
+
+<div class="finding-card"><div class="finding-meta"><div class="finding-number">5</div><span class="finding-dimension">SEO & Discoverability</span><span class="badge badge-minor">Minor</span></div>
+<h3 class="finding-title">Aggressive bot blocking may suppress AI search visibility</h3>
+<div class="finding-body">
+<p>tazapay.com returned HTTP 403 to automated fetch requests, indicating Cloudflare-style WAF protection. While protecting against abuse is legitimate, overly strict bot rules can block AI search crawlers (GPTBot, PerplexityBot, ClaudeBot) that are becoming material referral sources for B2B research.</p>
+<p><strong>Why this matters for Tazapay:</strong> B2B payments buyers increasingly start research via AI search tools. If Tazapay's content isn't indexable by these crawlers, the site loses discoverability exactly when AI-driven research is growing. The tradeoff between WAF strictness and AI visibility is worth an explicit decision, not an accidental one.</p>
+<p><span class="criterion-id">SEO-12</span> Page Indexability</p>
+</div>
+<div class="finding-subsection"><h4>Recommendation</h4><p>Review Cloudflare bot rules. Explicitly whitelist major AI search crawlers (GPTBot, PerplexityBot, ClaudeBot, Google-Extended) if AI visibility is desired. Monitor referral traffic from AI tools as a signal.</p></div>
+<div class="tags-row"><span class="tag tag-effort-low">Effort: Low</span><span class="tag tag-impact-med">Impact: Medium</span></div></div>
+
+</section>
+<footer class="report-footer">
+<div class="footer-cta"><h3>Want the complete picture?</h3><p>This is a directional audit — a full review requires live browser access to validate hero copy, CTA placement, actual DOM-level SEO, and accessibility (axe-core). The findings above are based on publicly indexed metadata and should be confirmed with a manual pass.</p></div>
+<div class="disclaimer">This audit is based solely on publicly available information from Tazapay's marketing site (partial — direct fetch was blocked). With direct access to the product, supporting flows, and data, we can conduct a more comprehensive, strategy-led review that reflects our full AI-first approach across in-app UX, mobile, performance, accessibility, and the complete demo-to-adoption journey.</div>
+<div class="brand-footer"><span>Sari Sari Design</span> &nbsp;&middot;&nbsp; UX Audit &nbsp;&middot;&nbsp; April 2026</div>
+</footer></div></body></html>
