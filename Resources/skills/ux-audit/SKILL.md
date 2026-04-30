@@ -59,7 +59,7 @@ The available Google Drive tools vary by environment. Here's how to adapt:
   4. Use the `file_upload` browser tool to upload local files to Drive's upload input
 
 **If the browser can't reach Google Drive (timeouts):**
-- Save all deliverables locally to the workspace folder under `knowledge-base/clients/[Company Name]/`
+- Save all deliverables locally to the workspace folder under `Areas/knowledge-base/prospects/[Company Name]/`
 - Tell the user: "I've saved all files locally. Google Drive was unreachable during this session. Here are the files that need to be uploaded to the UX Audit Drive folder: [list files with paths]"
 - This is a valid outcome — never let Drive issues block the audit itself
 
@@ -201,7 +201,7 @@ Before creating any files or folders, perform the **archival cleanup** of previo
 
 **1. Locally:**
 
-1. Find or create a company folder in the workspace's `knowledge-base/clients` directory. If a folder does not exist, create it titled `[Company Name]`.
+1. Find or create a company folder in the workspace's `Areas/knowledge-base/prospects` directory. If a folder does not exist, create it titled `[Company Name]`.
 2. Find or create the "archive" subfolder inside the company folder.
 3. List ALL existing files in the company folder. Log names and count.
 4. If old audit files are found (markdown reports like `uxAuditFindings-*.md` and screenshots like `screenshot_*.png`), move them to the archive subfolder.
@@ -218,7 +218,7 @@ Follow the "Google Drive Strategy" section above. The approach depends on which 
 
 #### STEP 3.1 — GENERATE AND UPLOAD REPORT
 
-1. **Generate the .md report locally first** — write it to the workspace at `knowledge-base/clients/[Company Name]/uxAuditFindings-[Company Name]-[YYYY-MM-DD].md`
+1. **Generate the .md report locally first** — write it to the workspace at `Areas/knowledge-base/prospects/[Company Name]/uxAuditFindings-[Company Name]-[YYYY-MM-DD].md`
 
 2. The report should contain:
    1. Eyebrow: UX Audit Report
@@ -331,7 +331,7 @@ The report is a lead magnet. Every word should build confidence in Sari Sari's j
 #### Saving and Distributing the Report
 
 1. **Save the HTML file** to:
-   - The local workspace: `knowledge-base/clients/[Company Name]/ux-audit-report-[Company Name]-[YYYY-MM-DD].html`
+   - The local workspace: `Areas/knowledge-base/prospects/[Company Name]/ux-audit-report-[Company Name]-[YYYY-MM-DD].html`
    - The user's output folder (so they can view it immediately)
 
 2. **Upload to Google Drive** (best-effort) and generate a shareable link if possible.
